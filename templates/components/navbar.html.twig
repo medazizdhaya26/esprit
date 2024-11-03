@@ -1,0 +1,40 @@
+
+<header class="header-area header-sticky">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="main-nav">
+                    <a href="{{ path('app_homepage') }}" class="logo">
+                        <img src="{{ asset('images/logo-esprit.png') }}" alt="Logo Esprit" style="height:100px; width: 150px;">
+                    </a>
+
+                    {# Navigation Menu #}
+                    <ul class="nav">
+                        <li><a href="{{ path('app_homepage') }}" class="active">Home</a></li>
+                        <li><a href="{{ path('app_page_event') }}">Events</a></li>
+                        <li class="scroll-to-section"><a href="#apply">Apply</a></li>
+                        <li class="has-sub">
+                            <a href="javascript:void(0)">Pages</a>
+                            <ul class="sub-menu">
+                                <li><a href="#">Upcoming events</a></li>
+                                <li><a href="#">Meeting Details</a></li>
+                            </ul>
+                        </li>
+                        <li class="scroll-to-section"><a href="#">Courses</a></li>
+                        <li><a href="{{ path('app_page_contact') }}">Contact Us</a></li>
+                        <li><a  href="{{ path('app_page_login') }}">Sign In</a>
+                        </li>
+                    </ul>
+                    <a class="menu-trigger">
+                        <span>Menu</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+<link href="{{ asset('vendor1/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
+<link rel="stylesheet" href="{{ asset('css/templatemo-edu-meeting.css') }}">
+<link rel="stylesheet" href="{{ asset('css/owl.css') }}">
+<link rel="stylesheet" href="{{ asset('css/lightbox.css') }}">
