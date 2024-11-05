@@ -28,6 +28,11 @@ class PageController extends AbstractController
     {
         return $this->render('page/Events/index.html.twig');
     }
+    #[Route('/Club/', name: 'app_page_club')]
+    public function club(): Response
+    {
+        return $this->render('page/club/index.html.twig');
+    }
     #[Route('/login', name: 'app_page_login')]
     public function login(): Response
     {
@@ -43,6 +48,16 @@ class PageController extends AbstractController
     public function dashboared(): Response
     {
         return $this->render('page/admin/index.html.twig');
+    }
+    #[Route('/dashboared/Student', name: 'app_Entity_Students')]
+    public function Students_Entity(): Response
+    {
+        return $this->render('page/admin/Entity/Student_Entity.html.twig');
+    }
+    #[Route('/dashboared/Student', name: 'app_Entity_Enseignant')]
+    public function Enseignant_Entity(): Response
+    {
+        return $this->render('page/admin/Entity/Enseignant_Entity.html.twig');
     }
 
 }

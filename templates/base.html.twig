@@ -24,7 +24,9 @@
 <body>
 
 {% include '/components/navbar.html.twig' %}
-{% block body %}{% endblock %}
+{% block body %}
+    {% block content %}{% endblock %}
+{% endblock %}
 
 
 {# JavaScript files #}
