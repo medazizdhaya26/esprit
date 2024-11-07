@@ -6,32 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
-class Enseignant
+class Enseignant extends User
 {
-    public const ROLE_SIMPLE_USER = 'simple_user';
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 30)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(type: 'date')]
-    private ?\DateTimeInterface $date_de_naissance = null;
-
-    #[ORM\Column(length: 10)]
-    private ?string $sexe = null;
-
-    #[ORM\Column(length: 70)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 15)]
-    private ?string $telephone = null;
 
     #[ORM\Column(length: 20)]
     private ?string $matiere = null;
@@ -39,9 +15,7 @@ class Enseignant
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private ?float $salaire = null;
 
-    // New attribute role
-    #[ORM\Column(length: 20)]
-    private ?string $role = self::ROLE_SIMPLE_USER;
+
 
     #[ORM\ManyToMany(targetEntity: Club::class, inversedBy: 'superviseurs')]
     private Collection $clubs;
@@ -60,76 +34,7 @@ class Enseignant
         $this->clubs = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
-
-    public function getDateDeNaissance(): ?\DateTimeInterface
-    {
-        return $this->date_de_naissance;
-    }
-
-    public function setDateDeNaissance(?\DateTimeInterface $date_de_naissance): static
-    {
-        $this->date_de_naissance = $date_de_naissance;
-        return $this;
-    }
-
-    public function getSexe(): ?string
-    {
-        return $this->sexe;
-    }
-
-    public function setSexe(string $sexe): static
-    {
-        $this->sexe = $sexe;
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(string $telephone): static
-    {
-        $this->telephone = $telephone;
-        return $this;
-    }
 
     public function getMatiere(): ?string
     {
@@ -154,16 +59,7 @@ class Enseignant
     }
 
     // New getter and setter for role
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
 
-    public function setRole(string $role): static
-    {
-        $this->role = $role;
-        return $this;
-    }
 
     public function getClubs(): Collection
     {
