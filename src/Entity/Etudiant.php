@@ -7,35 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
-class Etudiant
+class Etudiant extends User
 {
-    public const ROLE_SIMPLE_USER = 'simple_user';
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length:30)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 30)]
-    private ?string $prenom = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $address = null;
-
-    #[ORM\Column(type: 'date')]
-    private ?\DateTimeInterface $date_de_naissance = null;
-
-    #[ORM\Column(length: 10)]
-    private ?string $sexe = null;
-
-    #[ORM\Column(length: 70)]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 15)]
-    private ?string $telephone = null;
 
     #[ORM\Column(length: 20)]
     private ?string $filiere = null;
@@ -43,11 +16,6 @@ class Etudiant
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $payement = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $role = self::ROLE_SIMPLE_USER;
-
-    #[ORM\Column]
-    private ?bool $is_validate = null;
 
     #[ORM\ManyToOne(targetEntity: Bibliotheque::class)]
     private ?Bibliotheque $bibliotheque = null;
@@ -66,87 +34,6 @@ class Etudiant
         $this->clubs = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
-
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
-
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(string $address): static
-    {
-        $this->address = $address;
-        return $this;
-    }
-
-    public function getDateDeNaissance(): ?\DateTimeInterface
-    {
-        return $this->date_de_naissance;
-    }
-
-    public function setDateDeNaissance(?\DateTimeInterface $date_de_naissance): static
-    {
-        $this->date_de_naissance = $date_de_naissance;
-        return $this;
-    }
-
-    public function getSexe(): ?string
-    {
-        return $this->sexe;
-    }
-
-    public function setSexe(string $sexe): static
-    {
-        $this->sexe = $sexe;
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(string $telephone): static
-    {
-        $this->telephone = $telephone;
-        return $this;
-    }
 
     public function getFiliere(): ?string
     {

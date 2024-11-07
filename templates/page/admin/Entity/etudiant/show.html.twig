@@ -1,0 +1,73 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block title %}Student Details{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bx bx-user me-2"></i> Student Details
+                </h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <tbody>
+                    <tr>
+                        <th scope="row" style="width: 30%;">ID</th>
+                        <td>{{ etudiant.id }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Nom</th>
+                        <td>{{ etudiant.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Prénom</th>
+                        <td>{{ etudiant.prenom }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Email</th>
+                        <td>{{ etudiant.email }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Téléphone</th>
+                        <td>{{ etudiant.telephone }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Date de Naissance</th>
+                        <td>{{ etudiant.birthday ? etudiant.birthday|date('Y-m-d') : 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">pasword
+                        </th>
+                        <td>{{ etudiant.password }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Filiere</th>
+                        <td>{{ etudiant.filiere }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Payement Status</th>
+                        <td>
+                            {% if etudiant.payement %}
+                                <span class="badge bg-success">Paid</span>
+                            {% else %}
+                                <span class="badge bg-danger">Unpaid</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ path('app_etudiant_index') }}" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back me-1"></i> Back to list
+                </a>
+                <a href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}" class="btn btn-warning">
+                    <i class="bx bx-edit-alt me-1"></i> Edit
+                </a>
+                {{ include('page/admin/Entity/etudiant/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
