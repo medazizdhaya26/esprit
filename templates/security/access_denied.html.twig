@@ -2,11 +2,11 @@
     <link href="{{ asset('vendor1/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
     <div class="gif-container" style="text-align: center; margin: 20px 0;">
-        <img src="{{ asset('images/access_denied.gif') }}" alt="Access Denied GIF" style="max-width: 100%; height: auto;">
+        <img src="{{ asset('images/access_denied1.gif') }}" alt="Access Denied GIF" style="max-width: 100%; height: auto;">
     </div>
 
     <div style="text-align: center; margin-top: 20px;">
-        <button onclick="window.location.href='{{ path('app_homepage') }}'" type="button" class="btn btn-outline-warning">return to the home page</button>
+        <button onclick="window.location.href='{{ path('app_homepage') }}'" type="button" class="btn btn-outline-danger">return to the home page</button>
     </div>
 
 {% endblock %}

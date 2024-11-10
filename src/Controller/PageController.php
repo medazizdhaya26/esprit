@@ -13,11 +13,7 @@ class PageController extends AbstractController
     {
         return $this->render('page/index.html.twig');
     }
-    #[Route('/home', name: 'app_homepage')]
-    public function home(): Response
-    {
-        return $this->render('page/home.html.twig');
-    }
+
     #[Route('/Contact', name: 'app_page_contact')]
     public function contact(): Response
     {
@@ -33,11 +29,7 @@ class PageController extends AbstractController
     {
         return $this->render('page/club/index.html.twig');
     }
-    #[Route('/home', name: 'app_page_login')]
-    public function login(): Response
-    {
-        return $this->render('page/login.html.twig');
-    }
+
     #[Route('/Events/Events_details', name: 'app_page_Event_details')]
     public function details(): Response
     {

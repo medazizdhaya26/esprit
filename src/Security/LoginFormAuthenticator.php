@@ -28,7 +28,7 @@ class LoginFormAuthenticator extends AbstractAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'app_homepage';
 
     private EntityManagerInterface $entityManager;
     private UrlGeneratorInterface $urlGenerator;

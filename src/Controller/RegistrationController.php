@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use App\Security\LoginFormAuthenticator;
 
 class RegistrationController extends AbstractController
 {
@@ -21,12 +24,11 @@ class RegistrationController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/registration', name: 'app_regestration')]
-    public function indexC(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    #[Route('/home', name: 'app_homepage')]
+    public function indexC(Request $request, AuthenticationUtils $authenticationUtils, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $authenticator): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $etudiant = new Etudiant();
         $form = $this->createForm(UserFormType::class, $etudiant);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -34,18 +36,45 @@ class RegistrationController extends AbstractController
                 $this->passwordEncoder->hashPassword($etudiant, $etudiant->getPassword())
             );
 
-            // Set their role
             $etudiant->setRoles(['ROLE_USER']);
 
-            // Save user
             $this->entityManager->persist($etudiant);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app_page_login');
+            // Authenticate and redirect user after registration
+            $response = $userAuthenticator->authenticateUser(
+                $etudiant,
+                $authenticator,
+                $request
+            );
+
+            // Redirect to dashboard if user has admin role after authentication
+            if ($etudiant->getRoles() && in_array('ROLE_ADMIN', $etudiant->getRoles(), true)) {
+                return $this->redirectToRoute('app_page_Dashboared');
+            }
+
+            return $response;
         }
 
-        return $this->render('registration/index.html.twig', [
+        $error = $authenticationUtils->getLastAuthenticationError() ?? null;
+        $lastUsername = $authenticationUtils->getLastUsername() ?? '';
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_page_Dashboared');
+        }
+
+        return $this->render('page/home.html.twig', [
             'form' => $form->createView(),
+            'last_username' => $lastUsername,
+            'error' => $error
         ]);
     }
+
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        throw new \LogicException('');
+    }
+
+
 }
