@@ -33,7 +33,7 @@ class PageController extends AbstractController
     {
         return $this->render('page/club/index.html.twig');
     }
-    #[Route('/login', name: 'app_page_login')]
+    #[Route('/home', name: 'app_page_login')]
     public function login(): Response
     {
         return $this->render('page/login.html.twig');
@@ -52,12 +52,9 @@ class PageController extends AbstractController
     #[Route('/dashboared/Student', name: 'app_Entity_Students')]
     public function Students_Entity(): Response
     {
-        return $this->render('page/admin/Entity/Student_Entity.html.twig');
+        return $this->render('page/admin/Entity/etudiant/index.html.twig');
     }
-    #[Route('/dashboared/Student', name: 'app_Entity_Enseignant')]
-    public function Enseignant_Entity(): Response
-    {
-        return $this->render('page/admin/Entity/Enseignant_Entity.html.twig');
-    }
+
+
 
 }

@@ -13,37 +13,41 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/dashboared/Student')]
 final class EtudiantController extends AbstractController
 {
-    #[Route('/', name: 'app_etudiant_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    #[Route('/', name: 'app_etudiant_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
         $etudiants = $entityManager->getRepository(Etudiant::class)->findAll();
 
-        return $this->render('page/admin/Entity/etudiant/index.html.twig', [
-            'etudiants' => $etudiants,
-        ]);
-    }
-
-    #[Route('/new', name: 'app_etudiant_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $etudiant = new Etudiant();
-        $form = $this->createForm(EtudiantType::class, $etudiant);
+        // Create the Add Student form
+        $newEtudiant = new Etudiant();
+        $form = $this->createForm(EtudiantType::class, $newEtudiant);
         $form->handleRequest($request);
 
+        // Process Add form submission
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($etudiant);
+            $entityManager->persist($newEtudiant);
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_etudiant_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_etudiant_index');
         }
 
-        return $this->render('page/admin/Entity/etudiant/new.html.twig', [
-            'etudiant' => $etudiant,
+        // Create Edit forms for each student
+        $editForms = [];
+        foreach ($etudiants as $etudiant) {
+            $editForm = $this->createForm(EtudiantType::class, $etudiant, [
+                'action' => $this->generateUrl('app_etudiant_edit', ['id' => $etudiant->getId()]),
+                'method' => 'POST',
+            ]);
+            $editForms[$etudiant->getId()] = $editForm->createView();
+        }
+
+        return $this->render('page/admin/Entity/etudiant/index.html.twig', [
+            'etudiants' => $etudiants,
             'form' => $form->createView(),
+            'form_edit' => $editForms,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_etudiant_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_etudiant_edit', methods: ['POST'])]
     public function edit(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
         $etudiant = $entityManager->getRepository(Etudiant::class)->find($id);
@@ -61,10 +65,7 @@ final class EtudiantController extends AbstractController
             return $this->redirectToRoute('app_etudiant_index');
         }
 
-        return $this->render('page/admin/Entity/etudiant/edit.html.twig', [
-            'edit_form' => $editForm->createView(),
-            'etudiant' => $etudiant,
-        ]);
+        return $this->redirectToRoute('app_etudiant_index');
     }
 
     #[Route('/{id}', name: 'app_etudiant_show', methods: ['GET'])]

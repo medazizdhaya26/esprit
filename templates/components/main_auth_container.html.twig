@@ -1,0 +1,23 @@
+<!-- templates/components/main_auth_container.html.twig -->
+<div class="container1" id="container1">
+    {% include 'components/signup_form.html.twig' %}
+    {% include 'components/login_form.html.twig' %}
+
+    <!-- Overlay Panels -->
+    <div class="overlay-container1">
+        <div class="overlay">
+            <!-- Overlay for Sign In -->
+            <div class="overlay-panel overlay-left">
+                <img src="{{ asset('images/logo-esprit.png') }}">
+                <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
+                <button class="ghost" id="signIn">Sign In</button>
+            </div>
+            <!-- Overlay for Sign Up -->
+            <div class="overlay-panel overlay-right">
+                <img src="{{ asset('images/logo-esprit.png') }}">
+                <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
+                <button class="ghost" id="signUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>

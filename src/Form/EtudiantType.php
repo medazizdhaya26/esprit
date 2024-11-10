@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Etudiant;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -34,6 +35,17 @@ class EtudiantType extends AbstractType
             ])
             ->add('password', TextType::class, [
                 'label' => 'Mot de passe',
+            ])
+            ->add('payement', ChoiceType::class, [
+                'label' => 'Payement',
+                'choices' => [
+                    'Yes' => '1','No' => '0',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                ])
+            ->add('filiere', TextType::class, [
+                'label' => 'filiere',
             ]);
 
     }

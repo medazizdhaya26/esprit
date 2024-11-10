@@ -1,4 +1,6 @@
+{# templates/components/navbar.html.twig #}
 
+<!-- Barre de Navigation -->
 <header class="header-area header-sticky">
     <div class="container">
         <div class="row">
@@ -7,17 +9,14 @@
                     <a href="{{ path('app_homepage') }}" class="logo">
                         <img src="{{ asset('images/logo-esprit.png') }}" alt="Logo Esprit" style="height:100px; width: 150px;">
                     </a>
-
-                    {# Navigation Menu #}
                     <ul class="nav">
-                        <li><a href="{{ path('app_homepage') }}" class="active">Home</a></li>
-                        <li><a href="{{ path('app_page_event') }}">Events</a></li>
-                        <li class="scroll-to-section"><a href="{{ path('app_page_club') }}">Club</a></li>
-
-                        <li class="scroll-to-section"><a href="#">Courses</a></li>
-                        <li><a href="{{ path('app_page_contact') }}">Contact Us</a></li>
-                        <li><a  href="{{ path('app_page_login') }}">Sign In</a>
-                        </li>
+                        <li><a href="{{ path('app_homepage') }}" class="active">Accueil</a></li>
+                        <li><a href="{{ path('app_page_event') }}">Événements</a></li>
+                        <li class="scroll-to-section"><a href="{{ path('app_page_club') }}">Clubs</a></li>
+                        <li class="scroll-to-section"><a href="#">Cours</a></li>
+                        <li><a href="{{ path('app_page_contact') }}">Contact</a></li>
+                        <!-- Bouton qui déclenche le modal -->
+                        <li><a href="#" data-toggle="modal" data-target="#authModal">Se Connecter</a></li>
                     </ul>
                     <a class="menu-trigger">
                         <span>Menu</span>
@@ -27,8 +26,261 @@
         </div>
     </div>
 </header>
-<link href="{{ asset('vendor1/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
-<link rel="stylesheet" href="{{ asset('css/templatemo-edu-meeting.css') }}">
-<link rel="stylesheet" href="{{ asset('css/owl.css') }}">
-<link rel="stylesheet" href="{{ asset('css/lightbox.css') }}">
+
+<!-- Modal d'authentification sans cadre blanc -->
+<div id="authModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content no-background">
+            <div class="modal-body">
+                <div class="container1" id="container1">
+                    <!-- Formulaire d'inscription -->
+                    <div class="form-container1 sign-up-container1">
+                        <form action="" method="POST">
+                            <h1>Créer un Compte</h1>
+                            <input type="text" name="first_name" placeholder="Prénom" required />
+                            <input type="text" name="last_name" placeholder="Nom de famille" required />
+                            <input type="text" name="phone" placeholder="Numéro de téléphone" required />
+                            <input type="date" name="dob" placeholder="Date de naissance" required />
+                            <input type="email" name="email" placeholder="Email" required />
+                            <input type="password" name="password" placeholder="Mot de passe" required />
+                            <button type="submit">S'inscrire</button>
+                        </form>
+                    </div>
+
+                    <!-- Formulaire de connexion -->
+                    <div class="form-container1 sign-in-container1">
+                        <form action="" method="POST">
+                            <h1>Se Connecter</h1>
+                            <input type="email" name="email" placeholder="Email" required />
+                            <input type="password" name="password" placeholder="Mot de passe" required />
+                            <a href="" class="forgot">Mot de passe oublié ?</a>
+                            <button type="submit">Se Connecter</button>
+                        </form>
+                    </div>
+
+                    <!-- Panneaux d'Overlay -->
+                    <div class="overlay-container1">
+                        <div class="overlay">
+                            <!-- Overlay pour Sign In -->
+                            <div class="overlay-panel overlay-left">
+                                <img src="{{ asset('images/logo-esprit.png') }}">
+                                <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
+                                <br><br>
+                                <button class="ghost" id="signIn">Se Connecter</button>
+                            </div>
+                            <!-- Overlay pour Sign Up -->
+                            <div class="overlay-panel overlay-right">
+                                <img src="{{ asset('images/logo-esprit.png') }}">
+                                <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
+                                <br><br>
+                                <button class="ghost" id="signUp">S'inscrire</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Custom JavaScript for the modal functionality #}
+<script>
+    // JavaScript pour basculer entre les panneaux de connexion et d'inscription
+    document.addEventListener("DOMContentLoaded", function () {
+        const container1 = document.getElementById('container1');
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+
+        if (signUpButton && signInButton && container1) {
+            signUpButton.addEventListener('click', () => {
+                container1.classList.add('right-panel-active');
+            });
+
+            signInButton.addEventListener('click', () => {
+                container1.classList.remove('right-panel-active');
+            });
+        }
+    });
+</script>
+
+{# Custom Styles for removing the white frame of the modal #}
+<style>
+    :root {
+        --primary-color: #a11515;
+        --secondary-color: #373636;
+        --overlay-color: rgb(67, 66, 66);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .modal-content.no-background {
+        background: transparent; /* Remove the white background */
+        border: none; /* Remove any border */
+        box-shadow: none; /* Remove box shadow */
+    }
+
+    .container1 {
+        background: transparent; /* Make the main container transparent */
+        border-radius:24px; /* Remove the rounded corners for a cleaner effect */
+        box-shadow: none; /* Remove the box shadow for a more seamless appearance */
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+        min-height: 600px;
+    }
+
+    .container1 .form-container1 {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .container1 .sign-in-container1 {
+        left: 0;
+        width: 50%;
+        z-index: 2;
+    }
+
+    .container1.right-panel-active .sign-in-container1 {
+        transform: translateX(100%);
+    }
+
+    .container1 .sign-up-container1 {
+        left: 0;
+        width: 50%;
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .container1.right-panel-active .sign-up-container1 {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 5;
+        animation: show 0.6s;
+    }
+
+    @keyframes show {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .container1 form {
+        background: rgba(255, 255, 255, 0.9); /* Slightly transparent background to maintain form readability */
+        display: flex;
+        flex-direction: column;
+        padding: 0 50px;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .container1 .form-container1 input {
+        background: #eee;
+        border: none;
+        padding: 12px 15px;
+        margin: 8px 0;
+        width: 100%;
+    }
+
+    .container1 button {
+        border-radius: 20px;
+        border: 1px solid var(--primary-color);
+        background: var(--primary-color);
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 12px 45px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: transform 80ms ease-in;
+        cursor: pointer;
+    }
+
+    .container1 button:active {
+        transform: scale(0.95);
+    }
+
+    .container1 button:focus {
+        outline: none;
+    }
+
+    .container1 .overlay-container1 {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: transform 0.6s ease-in-out;
+        z-index: 100;
+    }
+
+    .container1.right-panel-active .overlay-container1 {
+        transform: translateX(-100%);
+    }
+
+    .container1 .overlay {
+        background: var(--secondary-color);
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        color: #fff;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .container1.right-panel-active .overlay {
+        transform: translateX(50%);
+    }
+
+    .container1 .overlay-panel {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 40px;
+        text-align: center;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        transform: translateX(0);
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .container1 .overlay-left {
+        transform: translateX(-20%);
+    }
+
+    .container1.right-panel-active .overlay-left {
+        transform: translateX(0);
+    }
+
+    .container1 .overlay-right {
+        right: 0;
+        transform: translateX(0);
+    }
+
+    .container1.right-panel-active .overlay-right {
+        transform: translateX(20%);
+    }
+
+    .container1 .forgot {
+        margin-top: 10px;
+    }
+
+    .container1 .forgot:hover {
+        text-decoration: underline;
+    }
+</style>

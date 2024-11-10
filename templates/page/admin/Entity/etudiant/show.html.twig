@@ -6,7 +6,7 @@
     <div class="container mt-4">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">
+                <h4 class="mb-0" style="color:black">
                     <i class="bx bx-user me-2"></i> Student Details
                 </h4>
             </div>
@@ -59,15 +59,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="card-footer text-end">
-                <a href="{{ path('app_etudiant_index') }}" class="btn btn-secondary">
-                    <i class="bx bx-arrow-back me-1"></i> Back to list
-                </a>
-                <a href="{{ path('app_etudiant_edit', {'id': etudiant.id}) }}" class="btn btn-warning">
-                    <i class="bx bx-edit-alt me-1"></i> Edit
-                </a>
-                {{ include('page/admin/Entity/etudiant/_delete_form.html.twig') }}
-            </div>
+
         </div>
     </div>
 {% endblock %}
