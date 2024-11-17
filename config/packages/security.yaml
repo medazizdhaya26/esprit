@@ -9,7 +9,11 @@ security:
                 property: email  # Use 'email' or another unique identifier field
 
     firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
         main:
+            lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\LoginFormAuthenticator
             entry_point: App\Security\AccessDeniedHandler
@@ -24,7 +28,7 @@ security:
 
 
     access_control:
-         - { path: ^/dashboared, roles: ROLE_ADMIN }
+        # - { path: ^/dashboared, roles: ROLE_ADMIN }
 
 when@test:
     security:

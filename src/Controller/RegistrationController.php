@@ -7,6 +7,7 @@ use App\Form\UserFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -25,56 +26,36 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/home', name: 'app_homepage')]
-    public function indexC(Request $request, AuthenticationUtils $authenticationUtils, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $authenticator): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function indexC(Request $request, AuthenticationUtils $authenticationUtils, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $authenticator): Response
     {
+        // Create a new Etudiant instance
         $etudiant = new Etudiant();
+        // Generate the registration form
         $form = $this->createForm(UserFormType::class, $etudiant);
         $form->handleRequest($request);
 
+        // If the form is submitted and valid, proceed with registration
         if ($form->isSubmitted() && $form->isValid()) {
             $etudiant->setPassword(
                 $this->passwordEncoder->hashPassword($etudiant, $etudiant->getPassword())
             );
-
             $etudiant->setRoles(['ROLE_USER']);
-
             $this->entityManager->persist($etudiant);
             $this->entityManager->flush();
 
-            // Authenticate and redirect user after registration
-            $response = $userAuthenticator->authenticateUser(
-                $etudiant,
-                $authenticator,
-                $request
-            );
-
-            // Redirect to dashboard if user has admin role after authentication
-            if ($etudiant->getRoles() && in_array('ROLE_ADMIN', $etudiant->getRoles(), true)) {
-                return $this->redirectToRoute('app_page_Dashboared');
-            }
-
-            return $response;
+            return $this->redirectToRoute('app_homepage');
         }
 
-        $error = $authenticationUtils->getLastAuthenticationError() ?? null;
-        $lastUsername = $authenticationUtils->getLastUsername() ?? '';
-
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return $this->redirectToRoute('app_page_Dashboared');
-        }
-
+        // Render the registration form
         return $this->render('page/home.html.twig', [
-            'form' => $form->createView(),
-            'last_username' => $lastUsername,
-            'error' => $error
+            'form' => $form->createView()
         ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('');
+        // Controller for logout - the actual logout is handled by Symfony, this just defines the route
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
-
-
 }

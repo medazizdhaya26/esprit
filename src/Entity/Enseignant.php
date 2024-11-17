@@ -6,7 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
-class Enseignant extends User
+class
+Enseignant extends User
 {
 
     #[ORM\Column(length: 20)]

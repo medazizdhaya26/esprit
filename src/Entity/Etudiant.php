@@ -57,17 +57,9 @@ class Etudiant extends User
         return $this;
     }
 
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
 
-    // Setter method that allows setting the role to the constant only
-    public function setRole(): static
-    {
-        $this->role = self::ROLE_SIMPLE_USER;
-        return $this;
-    }
+
+
 
     public function getBibliotheque(): ?Bibliotheque
     {

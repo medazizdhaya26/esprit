@@ -26,9 +26,7 @@
                             </li>
                         {% endif %}
                         {% if app.user %}
-                            <p>You are logged in as {{ app.user.nom }}</p>
-                        {% else %}
-                            <p>You are not logged in.</p>
+                            <p>{{ app.user.prenom }} {{ app.user.nom }}  </p>
                         {% endif %}
 
                     </ul>
@@ -41,47 +39,41 @@
     </div>
 </header>
 
-<!-- Modal d'authentification sans cadre blanc -->
 <div id="authModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="authModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content no-background">
             <div class="modal-body">
                 <div class="container1" id="container1">
-                    <!-- Formulaire d'inscription -->
                     {% if form is defined %}
                         <div class="form-container1 sign-up-container1">
-                            {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-                            <h1>Créer un Compte</h1>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Votre Prénom</label>
-                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Votre Nom</label>
-                                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Votre Email</label>
-                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Numéro de téléphone</label>
-                                {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Date de Naissance</label>
-                                {{ form_widget(form.birthday, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Mot de Passe</label>
-                                {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                            <button type="submit">S'inscrire</button>
-                            {{ form_end(form) }}
+                            <form method="post">
+                                <h1>Créer un Compte</h1>
+                                <div class="col-12 mb-1">
+                                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Prénom'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Nom'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Email'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Numéro de téléphone'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.birthday, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Date de Naissance'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.password, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Mot de Passe'}}) }}
+                                </div>
+                                <button type="submit">S'inscrire</button>
+                            </form>
+
                         </div>
                     {% endif %}
 
-                    <!-- Formulaire de connexion -->
+
+
                     <div class="form-container1 sign-in-container1">
                         {% if not app.user %}
                             <form method="post">
@@ -112,10 +104,8 @@
                         {% endif %}
                     </div>
 
-                    <!-- Panneaux d'Overlay -->
                     <div class="overlay-container1">
                         <div class="overlay">
-                            <!-- Overlay pour Sign In -->
                             <div class="overlay-panel overlay-left">
                                 <img src="{{ asset('images/logo-esprit.png') }}">
                                 <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
@@ -137,9 +127,7 @@
     </div>
 </div>
 
-{# Custom JavaScript for the modal functionality #}
 <script>
-    // JavaScript pour basculer entre les panneaux de connexion et d'inscription
     document.addEventListener("DOMContentLoaded", function () {
         const container1 = document.getElementById('container1');
         const signUpButton = document.getElementById('signUp');
@@ -157,7 +145,6 @@
     });
 </script>
 
-{# Custom Styles for removing the white frame of the modal #}
 <style>
     :root {
         --primary-color: #a11515;
@@ -176,9 +163,9 @@
     }
 
     .container1 {
-        background: transparent; /* Make the main container transparent */
-        border-radius:24px; /* Remove the rounded corners for a cleaner effect */
-        box-shadow: none; /* Remove the box shadow for a more seamless appearance */
+        background: transparent;
+        border-radius:24px;
+        box-shadow: none;
         position: relative;
         overflow: hidden;
         width: 100%;

@@ -18,19 +18,16 @@ final class EtudiantController extends AbstractController
     {
         $etudiants = $entityManager->getRepository(Etudiant::class)->findAll();
 
-        // Create the Add Student form
         $newEtudiant = new Etudiant();
         $form = $this->createForm(EtudiantType::class, $newEtudiant);
         $form->handleRequest($request);
 
-        // Process Add form submission
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($newEtudiant);
             $entityManager->flush();
             return $this->redirectToRoute('app_etudiant_index');
         }
 
-        // Create Edit forms for each student
         $editForms = [];
         foreach ($etudiants as $etudiant) {
             $editForm = $this->createForm(EtudiantType::class, $etudiant, [
