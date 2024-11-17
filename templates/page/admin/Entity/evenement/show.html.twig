@@ -1,0 +1,54 @@
+
+{% block title %}Evenement{% endblock %}
+
+{% block body %}
+    <h1>Evenement</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ evenement.id }}</td>
+            </tr>
+            <tr>
+                <th>Responsable_nom</th>
+                <td>{{ evenement.responsableEmail }}</td>
+            </tr>
+            <tr>
+                <th>Responsable_id</th>
+                <td>{{ evenement.responsableId }}</td>
+            </tr>
+            <tr>
+                <th>Titreevets</th>
+                <td>{{ evenement.titreevets }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ evenement.description }}</td>
+            </tr>
+            <tr>
+                <th>Date_debut</th>
+                <td>{{ evenement.dateDebut ? evenement.dateDebut|date('Y-m-d ') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date_fin</th>
+                <td>{{ evenement.dateFin ? evenement.dateFin|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Lieu</th>
+                <td>{{ evenement.lieu }}</td>
+            </tr>
+            <tr>
+                <th>Nombre_participants_max</th>
+                <td>{{ evenement.nombreParticipantsMax }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_evenement_index') }}">back to list</a>
+
+    <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}">edit</a>
+
+    {{ include('page/admin/Entity/evenement/_delete_form.html.twig') }}
+{% endblock %}
