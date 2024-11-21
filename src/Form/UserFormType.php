@@ -19,8 +19,7 @@ class UserFormType extends AbstractType
             ->add('birthday', null, [
                 'widget' => 'single_text',
             ])
-            ->add('telephone')
-        ;
+            ->add('telephone');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

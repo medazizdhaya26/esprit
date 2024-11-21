@@ -1,12 +1,65 @@
+{% extends 'layout_dashboared.html.twig'  %}
+{% block title %}Edit Event{% endblock %}
 
-{% block title %}Edit Evenement{% endblock %}
-
-{% block body %}
-    <h1>Edit Evenement</h1>
-
-    {{ include('page/admin/Entity/evenement/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_evenement_index') }}">back to list</a>
-
-    {{ include('page/admin/Entity/evenement/_delete_form.html.twig') }}
+{% block content %}
+    <div class="container my-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 style="color: black">Edit Event</h3>
+            </div>
+            <div class="card-body">
+                <div class="modal-body">
+                    {{ form_start(form, {'attr': {'id': 'editEventForm'}}) }}
+                    <div class="mb-3">
+                        {{ form_label(form.titreevets, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.titreevets, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.titreevets) }}</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.date_debut, 'Start Date', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.date_debut, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.date_debut) }}</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.date_fin, 'End Date', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.date_fin, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.date_fin) }}</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.lieu, 'Location', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.lieu) }}</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.type_events, 'Event Type', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.type_events, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.type_events) }}</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.description) }}</div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.nombre_participants_max, 'Number of Places', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nombre_participants_max, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger">{{ form_errors(form.nombre_participants_max) }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Event</button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a href="{{ path('app_evenement_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+                <div>
+                    <form method="post" action="{{ path('app_evenement_delete', {'id': evenement.id}) }}" >
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evenement.id) }}">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

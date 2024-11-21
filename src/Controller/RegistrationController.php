@@ -28,13 +28,11 @@ class RegistrationController extends AbstractController
     #[Route('/home', name: 'app_homepage')]
     public function indexC(Request $request, AuthenticationUtils $authenticationUtils, UserAuthenticatorInterface $userAuthenticator, LoginFormAuthenticator $authenticator): Response
     {
-        // Create a new Etudiant instance
         $etudiant = new Etudiant();
         // Generate the registration form
         $form = $this->createForm(UserFormType::class, $etudiant);
         $form->handleRequest($request);
 
-        // If the form is submitted and valid, proceed with registration
         if ($form->isSubmitted() && $form->isValid()) {
             $etudiant->setPassword(
                 $this->passwordEncoder->hashPassword($etudiant, $etudiant->getPassword())
@@ -47,7 +45,7 @@ class RegistrationController extends AbstractController
         }
 
         // Render the registration form
-        return $this->render('page/home.html.twig', [
+        return $this->render('page/user/home.html.twig', [
             'form' => $form->createView()
         ]);
     }

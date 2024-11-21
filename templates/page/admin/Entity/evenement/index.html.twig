@@ -22,15 +22,13 @@
                                 <h4>List of Non-Validated Events</h4>
                                 <ul class="list-group" id="nonValidEventList">
                                     {% for event in evenements %}
-                                        {% if not event.valider %}
-                                            {% if not event.refuser %}
-                                                <li class="list-group-item non-valid-event" data-event-id="{{ event.id }}" data-event-title="{{ event.titreevets }}" data-event-start="{{ event.dateDebut|date('Y-m-d H:i') }}" data-event-end="{{ event.dateFin|date('Y-m-d H:i') }}" data-event-lieu="{{ event.lieu }}">
-                                                    <strong>{{ event.titreevets }}</strong><br>
-                                                    Start: {{ event.dateDebut|date('Y-m-d H:i') }}<br>
-                                                    End: {{ event.dateFin|date('Y-m-d H:i') }}<br>
-                                                    Location: {{ event.lieu }}
-                                                </li>
-                                            {% endif %}
+                                        {% if not event.valider and not event.refuser %}
+                                            <li class="list-group-item non-valid-event" data-event-id="{{ event.id }}" data-event-title="{{ event.titreevets }}" data-event-start="{{ event.dateDebut|date('Y-m-d H:i') }}" data-event-end="{{ event.dateFin|date('Y-m-d H:i') }}" data-event-lieu="{{ event.lieu }}">
+                                                <strong>{{ event.titreevets }}</strong><br>
+                                                Start: {{ event.dateDebut|date('Y-m-d H:i') }}<br>
+                                                End: {{ event.dateFin|date('Y-m-d H:i') }}<br>
+                                                Location: {{ event.lieu }}
+                                            </li>
                                         {% endif %}
                                     {% endfor %}
                                 </ul>
@@ -56,7 +54,9 @@
                                     <li>
                                         <button id="toggle-view-btn" class="btn btn-outline-dark">Show List of Non-Valid Events</button>
                                     </li>
-
+                                    <li>
+                                        <button id="add-event-btn" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addEventModal">Add Event</button>
+                                    </li>
                                 </ul>
                                 <div id="eventsListContainer" class="mt-4"></div>
                             </div>
@@ -64,21 +64,53 @@
                     </div>
                 </div>
 
-                <!-- Modal for Validation or Annulation -->
-                <div class="modal fade" id="validateDeleteModal" tabindex="-1" aria-labelledby="validateDeleteModalLabel" aria-hidden="true">
+                <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="validateDeleteModalLabel">Validate or Cancel Event</h5>
+                            <div class="modal-header bg-primary">
+                                <h5 class="modal-title "  id="addEventModalLabel">Add New Event</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p id="eventDetails"></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-success" id="validateEventBtn">Validate</button>
-                                <button type="button" class="btn btn-danger" id="cancelEventBtn">Cancel Event</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                {{ form_start(form, {'attr': {'id': 'addEventForm'}}) }}
+                                <div class="mb-3">
+                                    {{ form_label(form.titreevets, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.titreevets, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-titreevets">{{ form_errors(form.titreevets) }}</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.date_debut, 'Start Date and Time', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.date_debut, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-date-debut">{{ form_errors(form.date_debut) }}</div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form_label(form.date_fin, 'End Date and Time', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.date_fin, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-date-fin">{{ form_errors(form.date_fin) }}</div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form_label(form.lieu, 'Location', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-lieu">{{ form_errors(form.lieu) }}</div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form_label(form.type_events, 'Event Type', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.type_events, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-type-events">{{ form_errors(form.type_events) }}</div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-description">{{ form_errors(form.description) }}</div>
+                                </div>
+                                <div class="mb-3">
+                                    {{ form_label(form.nombre_participants_max, 'Number of Places', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_widget(form.nombre_participants_max, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="text-danger" id="error-nombre-participants-max">{{ form_errors(form.nombre_participants_max) }}</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="addEventButton">Add Event</button>
+                                {{ form_end(form) }}
                             </div>
                         </div>
                     </div>
@@ -87,10 +119,30 @@
         </div>
     </div>
 
-    <!-- FullCalendar and JavaScript -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('addEventForm');
+            const addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
+
+            form.addEventListener('submit', function(event) {
+                setTimeout(function() {
+                    const hasErrors = Array.from(form.querySelectorAll('.text-danger')).some(errorDiv => errorDiv.textContent.trim() !== '');
+                    if (hasErrors) {
+                        addEventModal.show();
+                    }
+                }, 100);
+            });
+
+            window.addEventListener('load', function() {
+                const hasErrors = Array.from(form.querySelectorAll('.text-danger')).some(errorDiv => errorDiv.textContent.trim() !== '');
+                if (hasErrors) {
+                    addEventModal.show();
+                }
+            });
+
+        });
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -138,8 +190,39 @@
                 ],
                 editable: true,
                 eventDrop: function(info) {
-                    updateEventDate(info.event);
-                }
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);//  mabich minghirha 3lech ma nidrouch
+                    today.setDate(today.getDate()+1)
+                    console.log(today)
+                    if (info.event.start < today ) {
+                        const modalHTML = `
+<div class="modal fade " id="pastDateModal" tabindex="-1" aria-labelledby="pastDateModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary align-content-lg-center">
+        <h5 class="modal-title  " id="pastDateModalLabel" style="color: black">Invalid Action</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <h4>You cannot move an event to a past date.</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+                        document.body.insertAdjacentHTML('afterend', modalHTML);
+
+                        const pastDateModal = new bootstrap.Modal(document.getElementById('pastDateModal'));
+                        pastDateModal.show();
+                        info.revert();
+
+                    }
+                   else {
+                        updateEventDate(info.event);
+                    }                }
             });
             calendar.render();
 
@@ -160,20 +243,9 @@
                         end: newEnd
                     })
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => location.reload())
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while updating the event. Please try again later.');
-                    });
+                    .then(data => location.reload());
             }
 
-            // Button to toggle between views (Calendar and Non-Valid Events)
             var toggleBtn = document.getElementById('toggle-view-btn');
             var calendarContainer = document.getElementById('calendar');
             var nonValidEventsContainer = document.getElementById('non-valid-events');
@@ -194,10 +266,9 @@
                 }
             });
 
-
-            // Event Click handling for Non-Validated Events
             document.querySelectorAll('.non-valid-event').forEach(function(item) {
                 item.addEventListener('click', function() {
+
                     var eventId = item.getAttribute('data-event-id');
                     var eventTitle = item.getAttribute('data-event-title');
                     var eventStart = item.getAttribute('data-event-start');
@@ -220,17 +291,7 @@
                             },
                             body: JSON.stringify({ valider: true })
                         })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => location.reload())
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('An error occurred while validating the event. Please try again later.');
-                            });
+                            .then(data => location.reload());
                     };
 
                     document.getElementById('cancelEventBtn').onclick = function() {
@@ -243,20 +304,11 @@
                             },
                             body: JSON.stringify({ refuser: true })
                         })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => location.reload())
-                            .catch(error => {
-                                console.error('Error:', error);
-                                alert('An error occurred while cancelling the event. Please try again later.');
-                            });
+                            .then(data => location.reload());
                     };
                 });
             });
         });
+
     </script>
 {% endblock %}

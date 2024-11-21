@@ -6,6 +6,7 @@ use App\Entity\Etudiant;
 use App\Form\EtudiantType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class EtudiantController extends AbstractController
 {
     #[Route('/', name: 'app_etudiant_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager,#[Autowire('%photo_dir') ]string $photoDir): Response
     {
         $etudiants = $entityManager->getRepository(Etudiant::class)->findAll();
 
@@ -23,6 +24,15 @@ final class EtudiantController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+           if  ($image= $form->get('image')->getData()){
+
+               $fileName = uniqid() . '.' . $image->guessExtension();
+               $image->move(
+                   $photoDir,
+                   $fileName
+               );
+            $newEtudiant->setImage($fileName); }
             $entityManager->persist($newEtudiant);
             $entityManager->flush();
             return $this->redirectToRoute('app_etudiant_index');

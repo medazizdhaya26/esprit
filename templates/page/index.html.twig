@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <!-- Full-Screen Video Modal -->
     <div id="introVideoModal" class="video-modal">
         <video autoplay muted id="intro-video">
             <source src="{{ asset('images/animated_logo.mp4') }}" type="video/mp4">
@@ -51,7 +50,6 @@
                 if (document.fullscreenElement) {
                     document.exitFullscreen();
                 }
-                // Redirect to app_home_page
                 window.location.href = "{{ path('app_homepage') }}";
             });
         });

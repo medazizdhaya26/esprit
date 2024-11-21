@@ -1,0 +1,299 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <!-- Main Content Sections -->
+
+    <section class="section main-banner" id="top" data-section="section1">
+        <img src="{{ asset('images/video-poster.jpg') }}">
+{#
+        <video autoplay muted loop id="bg-video">
+            <source src="{{ asset('images/ESPRIT Showreel 2021.mp4') }}" type="video/mp4" />
+        </video>
+#}
+        <div class="video-overlay header-text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="caption">
+                            <h2>Welcome to Esprit</h2>
+                            <p>This is an edu meeting HTML CSS template provided by
+                                <a rel="nofollow" href="https://templatemo.com/page/1" target="_blank">TemplateMo website</a>.
+                                This is a Bootstrap v5.1.3 layout. The video background is from Pexels, by
+                                <a rel="nofollow" href="https://www.pexels.com/@pressmaster" target="_blank">Pressmaster</a>.
+                            </p>
+                            <div class="main-button-red">
+                                <div class="scroll-to-section"><a href="#contact">Join Us Now!</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="owl-service-item owl-carousel">
+                        {% for i in 1..3 %}
+                            <div class="item">
+                                <div class="icon">
+                                    <img src="{{ asset('/images/service-icon-0' ~ i ~ '.png') }}" alt="">
+                                </div>
+                                <div class="down-content">
+                                    <p>Suspendisse tempor mauris a sem elementum bibendum. Praesent facilisis massa non vestibulum.</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="upcoming-meetings" id="meetings">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-heading">
+                        <h2 style="color: white">Upcoming Events</h2>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+
+                    <div class="main-button-red">
+                        <a href="{{ path('app_page_event') }}">All Upcoming Events</a>
+                    </div>
+
+                </div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="meeting-item">
+                                <div class="thumb">
+                                    <div class="price">
+                                        <span>FREE</span>
+                                    </div>
+                                    <a href="meeting-details.html"><img src="{{ asset('/images/meeting-01.jpg') }}" alt="New Lecturer Meeting"></a>
+                                </div>
+                                <div class="down-content">
+                                    <div class="date">
+                                        <h6>Nov <span>10</span></h6>
+                                    </div>
+                                    <a href="meeting-details.html"><h4>New Lecturers Meeting</h4></a>
+                                    <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="meeting-item">
+                                <div class="thumb">
+                                    <div class="price">
+                                        <span>FREE</span>
+                                    </div>
+                                    <a href="meeting-details.html"><img src="{{ asset('/images/meeting-02.jpg') }}" alt="Online Teaching"></a>
+                                </div>
+                                <div class="down-content">
+                                    <div class="date">
+                                        <h6>Nov <span>24</span></h6>
+                                    </div>
+                                    <a href="meeting-details.html"><h4>Online Teaching Techniques</h4></a>
+                                    <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="meeting-item">
+                                <div class="thumb">
+                                    <div class="price">
+                                        <span>$14.00</span>
+                                    </div>
+                                    <a href="meeting-details.html"><img src="{{ asset('/images/meeting-03.jpg') }}" alt="Higher Education"></a>
+                                </div>
+                                <div class="down-content">
+                                    <div class="date">
+                                        <h6>Nov <span>26</span></h6>
+                                    </div>
+                                    <a href="meeting-details.html"><h4>Higher Education Conference</h4></a>
+                                    <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="meeting-item">
+                                <div class="thumb">
+                                    <div class="price">
+                                        <span>$48.00</span>
+                                    </div>
+                                    <a href="meeting-details.html"><img src="{{ asset('/images/meeting-04.jpg') }}" alt="Student Training"></a>
+                                </div>
+                                <div class="down-content">
+                                    <div class="date">
+                                        <h6>Nov <span>30</span></h6>
+                                    </div>
+                                    <a href="meeting-details.html"><h4>Student Training Meetup</h4></a>
+                                    <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="apply-now" id="apply">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 align-self-center">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="item">
+                                <h3>APPLY FOR BACHELOR DEGREE</h3>
+                                <p>You are allowed to use this edu meeting CSS template for your school or university or business. You can feel free to modify or edit this layout.</p>
+                                <div class="main-button-red">
+                                    <div class="scroll-to-section"><a href="#contact">Join Us Now!</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="item">
+                                <h3>APPLY FOR BACHELOR DEGREE</h3>
+                                <p>You are not allowed to redistribute the template ZIP file on any other template website. Please contact us for more information.</p>
+                                <div class="main-button-yellow">
+                                    <div class="scroll-to-section"><a href="#contact">Join Us Now!</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="our-courses" id="courses">
+        <div class="container">
+            <div class="row justify-content-center">
+
+                <div class="col-lg-12">
+                    <div class="section-heading">
+                        <h2 style="color: white;text-align: center">Our Partners</h2>
+                    </div>
+
+                </div>
+                <div class="col-lg-12">
+                    <div class="owl-courses-item owl-carousel">
+                        <div class="item">
+                            <img src="{{ asset('images/course-01.jpg') }}" alt="Partner One">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-02.jpg') }}" alt="Partner Two">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-03.jpg') }}" alt="Partner Three">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-04.jpg') }}" alt="Partner Four">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-01.jpg') }}" alt="Partner One">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-02.jpg') }}" alt="Partner Two">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-03.jpg') }}" alt="Partner Three">
+                        </div>
+                        <div class="item">
+                            <img src="{{ asset('images/course-04.jpg') }}" alt="Partner Four">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="our-facts">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h2>A Few Facts About Our University</h2>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="count-area-content percentage">
+                                        <div class="count-digit">94</div>
+                                        <div class="count-title">Succesed Students</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="count-area-content">
+                                        <div class="count-digit">126</div>
+                                        <div class="count-title">Current Teachers</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="count-area-content new-students">
+                                        <div class="count-digit">2345</div>
+                                        <div class="count-title">New Students</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="count-area-content">
+                                        <div class="count-digit">32</div>
+                                        <div class="count-title">Awards</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 align-self-center">
+                    <div class="video">
+                        <a href="https://www.youtube.com/watch?v=HndV87XpkWg" target="_blank"><img src="assets/images/play-icon.png" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-us" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 align-self-center">
+                    <form id="contact" action="" method="post">
+                        <div class="row">
+                            <div class="col-lg-12"><h2>Let's get in touch</h2></div>
+                            <div class="col-lg-4"><input name="name" type="text" id="name" placeholder="YOUR NAME..." required=""></div>
+                            <div class="col-lg-4"><input name="email" type="text" id="email" pattern="[^ @]*@[^ @]*" placeholder="YOUR EMAIL..." required=""></div>
+                            <div class="col-lg-4"><input name="subject" type="text" id="subject" placeholder="SUBJECT..." required=""></div>
+                            <div class="col-lg-12"><textarea name="message" class="form-control" id="message" placeholder="YOUR MESSAGE..." required=""></textarea></div>
+                            <div class="col-lg-12"><button type="submit" id="form-submit" class="button">SEND MESSAGE NOW</button></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-3">
+                    <div class="right-info">
+                        <ul>
+                            <li><h6>Phone Number</h6><span>(+216)70 250 000</span></li>
+                            <li><h6>Email Address</h6><span>contact@esprit.tn</span></li>
+                            <li><h6>Address</h6><span>1, 2 rue André Ampère - 2083 - Technological Pole - El Ghazala</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 esprit.tn. All Rights Reserved.</p>
+        </div>
+    </section>
+{% endblock %}
+

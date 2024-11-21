@@ -18,34 +18,14 @@ class typeetud extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email') // Required by default
+            ->add('email')
 
-            ->add('password') // Required by default
-            ->add('filiere') // Required by default
+            ->add('password')
+            ->add('filiere')
             ->add('payement', null, [
-                'required' => false, // Optional field
-            ])
-            ->add('bibliotheque', EntityType::class, [
-                'class' => Bibliotheque::class,
-                'choice_label' => 'id',
-                'required' => false, // Optional field
-            ])
-            ->add('salleDeSport', EntityType::class, [
-                'class' => SalleDeSport::class,
-                'choice_label' => 'id',
-                'required' => false, // Optional field
-            ])
-            ->add('restaurant', EntityType::class, [
-                'class' => Restaurant::class,
-                'choice_label' => 'id',
-                'required' => false, // Optional field
-            ])
-            ->add('clubs', EntityType::class, [
-                'class' => Club::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-                'required' => false, // Optional field
+                'required' => false,
             ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

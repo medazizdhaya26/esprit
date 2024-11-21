@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Etudiant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -45,8 +46,19 @@ class EtudiantType extends AbstractType
                 'multiple' => false,
                 ])
             ->add('filiere', TextType::class, [
-                'label' => 'filiere',
-            ]);
+                'label' => 'filiere'
+
+            ])
+            ->add('image', FileType::class, [
+                'required' => false,
+                'mapped' => false,
+            ])
+
+
+
+
+
+        ;
 
     }
 

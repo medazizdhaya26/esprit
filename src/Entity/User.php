@@ -43,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $image = null;
+
 
     #[ORM\OneToMany(mappedBy: "user", targetEntity: Evenement::class)]
     private Collection $evenements;
@@ -170,4 +173,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    public function getImage(): ?string
+{
+    return $this->image;
+}
+
+    public function setImage(?string $image): void
+    {
+        $this->image = $image;
+    }
+
 }

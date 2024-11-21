@@ -23,24 +23,32 @@ class PageController extends AbstractController
     #[Route('/Contact', name: 'app_page_contact')]
     public function contact(): Response
     {
-        return $this->render('page/contact.html.twig');
+        return $this->render('page/user/contact.html.twig');
+    }
+    #[Route('/profile', name: 'app_user_profile')]
+    public function user_profile(EntityManagerInterface $entityManager): Response
+    {  $user = $this->getUser();
+
+        $my_events = $entityManager->getRepository(Evenement::class)->findBy(['responsable_email' =>$user->getUserIdentifier() ]);
+        $events = $entityManager->getRepository(Evenement::class)->findBy(['valider' =>true ]);
+
+        return $this->render('page/user/profile.html.twig', [
+            'my_events' => $my_events,
+            'events' => $events,
+
+        ]);
     }
     #[Route('/Events/', name: 'app_page_event')]
     public function event(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Get the currently logged-in user
         $user = $this->getUser();
-/*
-        if (!$user) {
-            $this->addFlash('error', 'You must be logged in to create an event.');
-            return $this->redirectToRoute('app_login');
-        }*/
 
-        // Create a new Evenement and set default values
         $event = new Evenement();
-        $event->setValider(false); 
-        $event->setResponsableId($user->getId());
-        $event->setResponsableEmail($user->getUserIdentifier());
+        $event->setValider(false);
+        if ($user) {
+            $event->setResponsableId($user->getId());
+            $event->setResponsableEmail($user->getUserIdentifier());
+        }
 
         // Create and handle the form
         $form = $this->createForm(EventuserType::class, $event);
@@ -57,7 +65,7 @@ class PageController extends AbstractController
 
         $events = $entityManager->getRepository(Evenement::class)->findBy(['valider' => true]);
 
-        return $this->render('page/events/index.html.twig', [
+        return $this->render('page/user/events/index.html.twig', [
             'events' => $events,
             'eventForm' => $form->createView(),
         ]);
@@ -67,7 +75,7 @@ class PageController extends AbstractController
     #[Route('/Club/', name: 'app_page_club')]
     public function club(): Response
     {
-        return $this->render('page/club/index.html.twig');
+        return $this->render('page/user/club/index.html.twig');
     }
 
     #[Route('/events/{id}', name: 'app_event_details', methods: ['GET'])]
@@ -75,7 +83,7 @@ class PageController extends AbstractController
     {
         $event = $repository->find($id);
 
-        return $this->render('page/Events/Events_details.html.twig', [
+        return $this->render('page/user/Events/Events_details.html.twig', [
             'event' => $event,
         ]);
     }
