@@ -22,13 +22,15 @@
                                 <h4>List of Non-Validated Events</h4>
                                 <ul class="list-group" id="nonValidEventList">
                                     {% for event in evenements %}
-                                        {% if not event.valider and not event.refuser %}
-                                            <li class="list-group-item non-valid-event" data-event-id="{{ event.id }}" data-event-title="{{ event.titreevets }}" data-event-start="{{ event.dateDebut|date('Y-m-d H:i') }}" data-event-end="{{ event.dateFin|date('Y-m-d H:i') }}" data-event-lieu="{{ event.lieu }}">
-                                                <strong>{{ event.titreevets }}</strong><br>
-                                                Start: {{ event.dateDebut|date('Y-m-d H:i') }}<br>
-                                                End: {{ event.dateFin|date('Y-m-d H:i') }}<br>
-                                                Location: {{ event.lieu }}
-                                            </li>
+                                        {% if not event.valider %}
+                                            {% if not event.refuser %}
+                                                <li class="list-group-item non-valid-event" data-event-id="{{ event.id }}" data-event-title="{{ event.titreevets }}" data-event-start="{{ event.dateDebut|date('Y-m-d H:i') }}" data-event-end="{{ event.dateFin|date('Y-m-d H:i') }}" data-event-lieu="{{ event.lieu }}">
+                                                    <strong>{{ event.titreevets }}</strong><br>
+                                                    Start: {{ event.dateDebut|date('Y-m-d H:i') }}<br>
+                                                    End: {{ event.dateFin|date('Y-m-d H:i') }}<br>
+                                                    Location: {{ event.lieu }}
+                                                </li>
+                                            {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 </ul>
@@ -52,11 +54,12 @@
                                     <li><span class="badge bg-secondary">&nbsp;</span> Autre</li>
                                     <br>
                                     <li>
-                                        <button id="toggle-view-btn" class="btn btn-outline-dark">Show List of Non-Valid Events</button>
+                                        <button id="toggle-view-btn" class="btn btn-outline-dark">Non-Valid Events</button>
                                     </li>
                                     <li>
                                         <button id="add-event-btn" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addEventModal">Add Event</button>
                                     </li>
+
                                 </ul>
                                 <div id="eventsListContainer" class="mt-4"></div>
                             </div>
@@ -65,52 +68,92 @@
                 </div>
 
                 <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <!-- Header -->
+                            <div class="modal-header bg-primary text-white" >
+                                <h5 class="modal-title fw-bold align-content-lg-center" id="addEventModalLabel" style="color: black">
+                                    <i class="bx bx-calendar-event me-2"></i> Add New Event
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="modal-body p-5">
+                                {{ form_start(form, {'attr': {'id': 'addEventForm', 'enctype': 'multipart/form-data'}}) }}
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.titreevets, 'Title', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.titreevets, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.titreevets) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.lieu, 'Location', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.lieu, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.lieu) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.date_debut, 'Start Date', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.date_debut, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.date_debut) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.date_fin, 'End Date', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.date_fin, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.date_fin) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.type_events, 'Event Type', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.type_events, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.type_events) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.nombre_participants_max, 'Number of Places', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.nombre_participants_max, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.nombre_participants_max) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.image, 'Event Image', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        <div class="image-upload-wrapper" style="border: 2px dashed #ccc; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; position: relative;">
+                                            <i class="fas fa-upload fa-2x mb-2"></i>
+                                            <p>Click or drag image here to upload</p>
+                                            {{ form_widget(form.image, {'attr': {'class': 'form-control-file', 'style': 'opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;'}}) }}
+                                            <div id="imagePreview" class="mt-3"></div>
+                                        </div>
+                                        <div class="text-danger mt-2">{{ form_errors(form.image) }}</div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                                        {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                                        <div class="text-danger">{{ form_errors(form.description) }}</div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" id="addEventButton">
+                                        <i class="bx bx-check me-1"></i> Add Event
+                                    </button>
+                                </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for Validation or Annulation -->
+                <div class="modal fade" id="validateDeleteModal" tabindex="-1" aria-labelledby="validateDeleteModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header bg-primary">
-                                <h5 class="modal-title "  id="addEventModalLabel">Add New Event</h5>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="validateDeleteModalLabel">Validate or Cancel Event</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                {{ form_start(form, {'attr': {'id': 'addEventForm'}}) }}
-                                <div class="mb-3">
-                                    {{ form_label(form.titreevets, 'Title', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.titreevets, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-titreevets">{{ form_errors(form.titreevets) }}</div>
-                                </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.date_debut, 'Start Date and Time', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.date_debut, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-date-debut">{{ form_errors(form.date_debut) }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    {{ form_label(form.date_fin, 'End Date and Time', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.date_fin, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-date-fin">{{ form_errors(form.date_fin) }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    {{ form_label(form.lieu, 'Location', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-lieu">{{ form_errors(form.lieu) }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    {{ form_label(form.type_events, 'Event Type', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.type_events, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-type-events">{{ form_errors(form.type_events) }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-description">{{ form_errors(form.description) }}</div>
-                                </div>
-                                <div class="mb-3">
-                                    {{ form_label(form.nombre_participants_max, 'Number of Places', {'label_attr': {'class': 'form-label'}}) }}
-                                    {{ form_widget(form.nombre_participants_max, {'attr': {'class': 'form-control'}}) }}
-                                    <div class="text-danger" id="error-nombre-participants-max">{{ form_errors(form.nombre_participants_max) }}</div>
-                                </div>
-                                <button type="submit" class="btn btn-primary" id="addEventButton">Add Event</button>
-                                {{ form_end(form) }}
+                                <p id="eventDetails"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" id="validateEventBtn">Validate</button>
+                                <button type="button" class="btn btn-danger" id="cancelEventBtn">Cancel Event</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
@@ -118,10 +161,31 @@
             </div>
         </div>
     </div>
+<style>
 
+
+</style>
+    <!-- FullCalendar and JavaScript -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageInput = document.querySelector('#addEventForm input[type="file"]');
+            const imagePreview = document.getElementById('imagePreview');
+
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Selected Image" class="img-fluid rounded" style="max-width: 100%; height: auto; border-radius: 12px;">`;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.innerHTML = '';
+                }
+            });
+        });
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('addEventForm');
             const addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
@@ -163,7 +227,7 @@
                         id: '{{ event.id }}',
                         title: '{{ event.titreevets }}',
                         start: '{{ event.dateDebut|date('Y-m-d') }}',
-                        end: '{{ event.dateFin|date('Y-m-d') }}',
+                        end: '{{ event.dateFin|date_modify('+1 day')|date('Y-m-d') }}',
                         url: '{{ path('app_evenement_show', { 'id': event.id }) }}',
                         backgroundColor:
                                 {% if event.typeEvents == 'sport' %}'#b71c1c'
@@ -220,7 +284,7 @@
                         info.revert();
 
                     }
-                   else {
+                    else {
                         updateEventDate(info.event);
                     }                }
             });
@@ -229,7 +293,7 @@
             function updateEventDate(event) {
                 const eventId = event.id;
                 const newStart = event.start.toISOString();
-                const newEnd = event.end ? event.end.toISOString() : null;
+                const newEnd = event.end.toISOString();
 
                 fetch(`/dashboared/evenement/event/update/${eventId}`, {
                     method: 'POST',
@@ -266,9 +330,9 @@
                 }
             });
 
+            // Event Click handling for Non-Validated Events
             document.querySelectorAll('.non-valid-event').forEach(function(item) {
                 item.addEventListener('click', function() {
-
                     var eventId = item.getAttribute('data-event-id');
                     var eventTitle = item.getAttribute('data-event-title');
                     var eventStart = item.getAttribute('data-event-start');
@@ -291,7 +355,17 @@
                             },
                             body: JSON.stringify({ valider: true })
                         })
-                            .then(data => location.reload());
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => location.reload())
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An error occurred while validating the event. Please try again later.');
+                            });
                     };
 
                     document.getElementById('cancelEventBtn').onclick = function() {
@@ -304,11 +378,20 @@
                             },
                             body: JSON.stringify({ refuser: true })
                         })
-                            .then(data => location.reload());
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => location.reload())
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An error occurred while cancelling the event. Please try again later.');
+                            });
                     };
                 });
             });
         });
-
     </script>
 {% endblock %}

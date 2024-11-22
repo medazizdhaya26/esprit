@@ -12,32 +12,36 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/dashboared/Student')]
-final class EtudiantController extends AbstractController
+ class EtudiantController extends AbstractController
 {
     #[Route('/', name: 'app_etudiant_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, EntityManagerInterface $entityManager,#[Autowire('%photo_dir') ]string $photoDir): Response
-    {
+    public function index(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        #[Autowire('photo_dir')] string $photoDir
+    ): Response {
         $etudiants = $entityManager->getRepository(Etudiant::class)->findAll();
 
+        // Form for creating a new student
         $newEtudiant = new Etudiant();
         $form = $this->createForm(EtudiantType::class, $newEtudiant);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $image = $form['image']->getData();
+            $newEtudiant->setRoles(['ROLE_USER']);
 
-           if  ($image= $form->get('image')->getData()){
+            if ($image) {
+                $newFilename = uniqid() . '.' . $image->guessExtension();
+                $image->move($photoDir, $newFilename);
+                $newEtudiant->setImage($newFilename);
+            }
 
-               $fileName = uniqid() . '.' . $image->guessExtension();
-               $image->move(
-                   $photoDir,
-                   $fileName
-               );
-            $newEtudiant->setImage($fileName); }
             $entityManager->persist($newEtudiant);
             $entityManager->flush();
             return $this->redirectToRoute('app_etudiant_index');
         }
 
+        // Forms for editing existing students
         $editForms = [];
         foreach ($etudiants as $etudiant) {
             $editForm = $this->createForm(EtudiantType::class, $etudiant, [
@@ -54,19 +58,33 @@ final class EtudiantController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_etudiant_edit', methods: ['POST'])]
-    public function edit(Request $request, EntityManagerInterface $entityManager, int $id): Response
-    {
-        $etudiant = $entityManager->getRepository(Etudiant::class)->find($id);
+    #[Route('/edit/{id}', name: 'app_etudiant_edit', methods: ['POST'])]
+    public function edit(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Etudiant $etudiant,
+        #[Autowire('photo_dir')] string $photoDir
+    ): Response {
+        $form = $this->createForm(EtudiantType::class, $etudiant);
+        $form->handleRequest($request);
 
-        if (!$etudiant) {
-            throw $this->createNotFoundException('No student found for id ' . $id);
-        }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $image = $form['image']->getData();
 
-        $editForm = $this->createForm(EtudiantType::class, $etudiant);
-        $editForm->handleRequest($request);
+            if ($image) {
+                if ($etudiant->getImage()) {
+                    $oldImagePath = $photoDir . '/' . $etudiant->getImage();
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
+                // Save the new image file
+                $newFilename = uniqid() . '.' . $image->guessExtension();
+                $image->move($photoDir, $newFilename);
+                $etudiant->setImage($newFilename);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_etudiant_index');
@@ -74,6 +92,7 @@ final class EtudiantController extends AbstractController
 
         return $this->redirectToRoute('app_etudiant_index');
     }
+
 
     #[Route('/{id}', name: 'app_etudiant_show', methods: ['GET'])]
     public function show(Etudiant $etudiant): Response

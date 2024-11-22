@@ -34,57 +34,49 @@
     <div class="layout-container">
 
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-            <div class="app-brand demo">
+            <!-- Brand Section -->
+            <div class="app-brand demo d-flex justify-content-between align-items-center">
                 <a href="{{ path('app_page_Dashboared') }}" class="app-brand-link">
-                    <span class="app-brand-logo demo">
-                        <img src="{{asset('images/logo-esprit.png') }}" style="width: 100px; height:100px">
-                    </span>
-                    <span class="app-brand-text demo menu-text fw-bolder ms-2"></span>
+            <span class="app-brand-logo demo">
+                <img src="{{ asset('images/logo-esprit.png') }}" alt="Esprit Logo" style="width: 200px; height: 100px;">
+            </span>
                 </a>
-                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-                    <i class="bx bx-chevron-left bx-sm align-middle"></i>
-                </a>
+                <button id="toggle-sidebar-btn" class="btn btn-sm btn-outline-primary ms-auto d-xl-none">
+                    <i class="bx bx-menu"></i>
+                </button>
             </div>
 
             <div class="menu-inner-shadow"></div>
-
+            <br><br>
             <ul class="menu-inner py-1">
-                <!-- Dashboard -->
-                <li class="menu-item active">
+                <li class="menu-item {{ app.request.attributes.get('_route') == 'app_page_Dashboared' ? 'active' : '' }}">
                     <a href="{{ path('app_page_Dashboared') }}" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-home-circle"></i>
                         <div data-i18n="Analytics">Dashboard</div>
                     </a>
                 </li>
 
-
-
-                <li class="menu-header small text-uppercase">
-                    <span class="menu-header-text">Entity</span>
-                </li>
-
-                <li class="menu-item">
-                    <a href="{{ path('app_etudiant_index') }}" class="menu-link ">
-                        <i class="menu-icon tf-icons bx bx-layout"></i>
-                        <div data-i18n="Layouts">Student:   </div>
+                <br>
+                <li class="menu-item {{ app.request.attributes.get('_route') == 'app_etudiant_index' ? 'active' : '' }}">
+                    <a href="{{ path('app_etudiant_index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user"></i>
+                        <div data-i18n="Layouts">Students</div>
                     </a>
                 </li>
 
-                <li class="menu-item">
-                    <a href="{{ path('app_evenement_index') }}" class="menu-link ">
-                        <i class="menu-icon tf-icons bx bx-layout"></i>
-                        <div data-i18n="Layouts">Enseignant   </div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="{{ path('app_evenement_index') }}" class="menu-link ">
-                        <i class="menu-icon tf-icons bx bx-layout"></i>
-                        <div data-i18n="Layouts"> Event managements   </div>
+                <li class="menu-item {{ app.request.attributes.get('_route') == 'app_enseignant_index' ? 'active' : '' }}">
+                    <a href="{{ path('app_enseignant_index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-chalkboard"></i>
+                        <div data-i18n="Layouts">Enseignants</div>
                     </a>
                 </li>
 
-                <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
-
+                <li class="menu-item {{ app.request.attributes.get('_route') == 'app_evenement_index' ? 'active' : '' }}">
+                    <a href="{{ path('app_evenement_index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-calendar-event"></i>
+                        <div data-i18n="Layouts">Event Management</div>
+                    </a>
+                </li>
             </ul>
         </aside>
 
@@ -115,7 +107,6 @@
                             />
                         </div>
                     </div>
-                    <!-- /Search -->
 
                     <ul class="navbar-nav flex-row align-items-center ms-auto">
 
@@ -183,9 +174,39 @@
         </div>
     </div>
 </div>
+<style>
+    #layout-menu.collapsed {
+        width: 80px;
+        overflow: hidden;
+        transition: width 0.3s ease-in-out;
+    }
 
+    #layout-menu.collapsed .menu-inner .menu-item .menu-link div {
+        display: none;
+    }
+
+    #layout-menu.collapsed .app-brand-text {
+        display: none;
+    }
+
+    #layout-menu.collapsed .app-brand-logo img {
+        width: 50px;
+        height: 50px;
+        transition: width 0.3s ease-in-out;
+    }
+</style>
 <script src="{{ asset('vendor1/bootstrap/js/bootstrap.min.js') }}"></script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("layout-menu");
+        const toggleBtn = document.getElementById("toggle-sidebar-btn");
+
+        toggleBtn.addEventListener("click", function () {
+            sidebar.classList.toggle("collapsed");
+        });
+    });
+</script>
 
 <script src="{{ asset('/vendor1/js/helpers.js') }}"></script>
 <script src="{{ asset('/js/config.js') }}"></script>

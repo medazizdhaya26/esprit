@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Evenement;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -102,6 +103,14 @@ class EvenementType extends AbstractType
                 ],
                 'attr' => [
                     'class' => 'form-control'
+                ]
+            ])
+            ->add('image', FileType::class, [
+                'required' => false,
+                'mapped' => false,
+                'label' => 'Photo de profil',
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\Image(['maxSize' => '25M'])
                 ]
             ])
             ->add('type_events', ChoiceType::class, [

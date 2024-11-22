@@ -48,6 +48,12 @@ class Evenement
     #[ORM\Column(length: 50)]
     private ?string $type_events = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $image = null;
+
+
+
+
     #[ORM\OneToMany(mappedBy: "evenement", targetEntity: Reservation::class, cascade: ["persist", "remove"])]
     private Collection $reservations;
 
@@ -129,7 +135,15 @@ class Evenement
         $this->date_fin = $date_fin;
         return $this;
     }
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
 
+    public function setImage(?string $image): void
+    {
+        $this->image = $image;
+    }
     public function getLieu(): ?string
     {
         return $this->lieu;

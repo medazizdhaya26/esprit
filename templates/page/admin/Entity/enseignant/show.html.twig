@@ -1,65 +1,75 @@
 {% extends 'layout_dashboared.html.twig' %}
 
-{% block title %}Student Details{% endblock %}
+{% block title %}Professor Details{% endblock %}
 
 {% block content %}
     <div class="container mt-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0" style="color:black">
-                    <i class="bx bx-user me-2"></i> Student Details
-                </h4>
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h2 class="mb-0" style="color: black ">
+                    <i class="bx bx-user-circle me-2"></i> Professor Details
+                </h2>
             </div>
             <div class="card-body">
-                <table class="table table-hover">
-                    <tbody>
-                    <tr>
-                        <th scope="row" style="width: 30%;">ID</th>
-                        <td>{{ etudiant.id }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Nom</th>
-                        <td>{{ etudiant.nom }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Prénom</th>
-                        <td>{{ etudiant.prenom }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Email</th>
-                        <td>{{ etudiant.email }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Téléphone</th>
-                        <td>{{ etudiant.telephone }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Date de Naissance</th>
-                        <td>{{ etudiant.birthday ? etudiant.birthday|date('Y-m-d') : 'N/A' }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">pasword
-                        </th>
-                        <td>{{ etudiant.password }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Filiere</th>
-                        <td>{{ etudiant.filiere }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Payement Status</th>
-                        <td>
-                            {% if etudiant.payement %}
-                                <span class="badge bg-success">Paid</span>
-                            {% else %}
-                                <span class="badge bg-danger">Unpaid</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div class="row">
+                    <!-- Profile Picture -->
+                    <div class="col-md-4 text-center">
+                        {% if  enseignant.image %}
+                            <img src="{{ asset('photo_dir/' ~ enseignant.image) }}"
+                                 alt="{{ enseignant.nom }}"
+                                 class="rounded-circle shadow-sm"
+                                 style="width: 200px; height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center bg-light border rounded-circle shadow-sm"
+                                 style="width: 200px; height: 200px;">
+                                <i class="bx bx-user text-secondary" style="font-size: 100px;"></i>
+                            </div>
+                        {% endif %}
+                        <h4 class="mt-3 text-primary">{{ enseignant.nom }} {{ enseignant.prenom }}</h4>
+                    </div>
 
+                    <!-- Professor Details -->
+                    <div class="col-md-8">
+                        <table class="table table-borderless">
+                            <tbody>
+                            <tr>
+                                <th>ID:</th>
+                                <td>{{ enseignant.id }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ enseignant.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Téléphone:</th>
+                                <td>{{ enseignant.telephone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date de Naissance:</th>
+                                <td>{{ enseignant.birthday ? enseignant.birthday|date('Y-m-d') : 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Mot de Passe:</th>
+                                <td>*******************</td>
+                            </tr>
+                            <tr>
+                                <th>Matière:</th>
+                                <td>{{ enseignant.matiere }}</td>
+                            </tr>
+                            <tr>
+                                <th>Salaire:</th>
+                                <td>{{ enseignant.salaire ? enseignant.salaire ~ ' €' : 'N/A' }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center bg-light">
+                <a href="{{ path('app_enseignant_index') }}" class="btn btn-primary">
+                    <i class="bx bx-arrow-back me-1"></i> Back to List
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}

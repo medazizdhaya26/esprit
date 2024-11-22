@@ -7,6 +7,7 @@ use App\Form\EvenementType;
 use App\Repository\EvenementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,10 +15,16 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/dashboared/evenement')]
 
-final class EvenementController extends AbstractController
+ class EvenementController extends AbstractController
 {
     #[Route('/', name: 'app_evenement_index', methods: ['GET', 'POST'])]
-    public function index(EvenementRepository $evenementRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(
+        EvenementRepository $evenementRepository,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        #[Autowire('photo_dir')] string $photoDir
+
+    ): Response
     {
         $evenement = new Evenement();
         $evenement->setResponsableEmail('admin@esprit.tn');
@@ -28,6 +35,15 @@ final class EvenementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $image = $form['image']->getData();
+
+            if ($image) {
+                $newFilename = uniqid() . '.' . $image->guessExtension();
+                $image->move($photoDir, $newFilename);
+                $evenement->setImage($newFilename);
+            }
+
             $entityManager->persist($evenement);
             $entityManager->flush();
 
@@ -51,12 +67,23 @@ final class EvenementController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_evenement_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Evenement $evenement, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Evenement $evenement,
+                         EntityManagerInterface $entityManager,
+                         #[Autowire('photo_dir')] string $photoDir
+    ): Response
     {
         $form = $this->createForm(EvenementType::class, $evenement);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $image = $form['image']->getData();
+
+            if ($image) {
+                $newFilename = uniqid() . '.' . $image->guessExtension();
+                $image->move($photoDir, $newFilename);
+                $evenement->setImage($newFilename);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
@@ -131,7 +158,6 @@ final class EvenementController extends AbstractController
 
         if (isset($data['end'])) {
             $dateFin = new \DateTime($data['end']);
-            $dateFin->add(new \DateInterval('P1D'));
             $event->setDateFin($dateFin);
         }
 

@@ -28,7 +28,6 @@
                         {% if app.user %}
                             <p>{{ app.user.prenom }} {{ app.user.nom }}  </p>
                         {% endif %}
-
                     </ul>
                     <a class="menu-trigger">
                         <span>Menu</span>
@@ -44,47 +43,40 @@
         <div class="modal-content no-background">
             <div class="modal-body">
                 <div class="container1" id="container1">
-                    {% if form is defined %}
-                        <div class="form-container1 sign-up-container1">
-                            <form method="post">
-                                <h1>Créer un Compte</h1>
-                                <div class="col-12 mb-1">
-                                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Prénom'}}) }}
-                                </div>
-                                <div class="col-12 mb-3">
-                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Nom'}}) }}
-                                </div>
-                                <div class="col-12 mb-3">
-                                    {{ form_widget(form.email, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Email'}}) }}
-                                </div>
-                                <div class="col-12 mb-3">
-                                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Numéro de téléphone'}}) }}
-                                </div>
-                                <div class="col-12 mb-3">
-                                    {{ form_widget(form.birthday, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Date de Naissance'}}) }}
-                                </div>
-                                <div class="col-12 mb-3">
-                                    {{ form_widget(form.password, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Mot de Passe'}}) }}
-                                </div>
-                                <button type="submit">S'inscrire</button>
-                            </form>
-
-                        </div>
-                    {% endif %}
-
-
-
+                    <div class="form-container1 sign-up-container1">
+                        <form method="post" id="registrationForm">
+                            <h1>Créer un Compte</h1>
+                            <div class="col-12 mb-1">
+                                <input type="text" name="prenom" class="form-control no-margin" placeholder="Votre Prénom" required />
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="text" name="nom" class="form-control no-margin" placeholder="Votre Nom" required />
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="email" name="email" class="form-control no-margin" placeholder="Votre Email" required />
+                                <div class="input-error text-danger" id="email-error" style="display: none;"></div>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="text" name="telephone" class="form-control no-margin" placeholder="Numéro de téléphone" required />
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="date" name="birthday" class="form-control no-margin" placeholder="Date de Naissance" required />
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="password" name="password" class="form-control no-margin" placeholder="Mot de Passe" required />
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="password" name="password_confirmation" class="form-control no-margin" placeholder="Confirmer le Mot de Passe" required />
+                            </div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <button type="submit">S'inscrire</button>
+                        </form>
+                    </div>
                     <div class="form-container1 sign-in-container1">
                         {% if not app.user %}
                             <form method="post">
                                 {% if error is defined and error %}
                                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                                {% endif %}
-
-                                {% if app.user %}
-                                    <div class="mb-3">
-                                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-                                    </div>
                                 {% endif %}
 
                                 <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
@@ -93,17 +85,12 @@
                                 <label for="inputPassword">Password</label>
                                 <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
 
-                                <input type="hidden" name="_csrf_token"
-                                       value="{{ csrf_token('authenticate') }}"
-                                >
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                                <button class="btn btn-lg btn-danger" type="submit">
-                                    Sign in
-                                </button>
+                                <button class="btn btn-lg btn-danger" type="submit">Sign in</button>
                             </form>
                         {% endif %}
                     </div>
-
                     <div class="overlay-container1">
                         <div class="overlay">
                             <div class="overlay-panel overlay-left">
@@ -112,7 +99,6 @@
                                 <br><br>
                                 <button class="ghost" id="signIn">Se Connecter</button>
                             </div>
-                            <!-- Overlay pour Sign Up -->
                             <div class="overlay-panel overlay-right">
                                 <img src="{{ asset('images/logo-esprit.png') }}">
                                 <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
@@ -142,6 +128,83 @@
                 container1.classList.remove('right-panel-active');
             });
         }
+
+        const registrationForm = document.getElementById("registrationForm");
+        if (registrationForm) {
+            registrationForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                clearErrors(registrationForm);
+                const formData = new FormData(registrationForm);
+                const data = Object.fromEntries(formData);
+                const errors = validateInputs(data);
+                if (errors.length > 0) {
+                    displayErrors(errors, registrationForm);
+                    return;
+                }
+                try {
+                    const response = await fetch("/api/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        registrationForm.reset();
+                        container1.classList.remove('right-panel-active');
+                    } else {
+                        if (result.error.includes("Email is already in use")) {
+                            const emailField = registrationForm.querySelector('[name="email"]');
+                            const errorElement = document.createElement("div");
+                            errorElement.className = "input-error text-danger";
+                            errorElement.textContent = "Email est déjà utilisé.";
+                            emailField.insertAdjacentElement('afterend', errorElement);
+                        } else {
+                            displayErrors([{ field: "general", message: result.error }], registrationForm);
+                        }
+                    }
+                } catch (error) {
+                    displayErrors([{ field: "general", message: "Une erreur est survenue: " + error.message }], registrationForm);
+                }
+            });
+        }
+
+        function validateInputs(data) {
+            const errors = [];
+            if (!data.prenom || !/^[a-zA-Z\s]+$/.test(data.prenom)) errors.push({ field: "prenom", message: "Prénom est requis et doit contenir uniquement des lettres." });
+            if (!data.nom || !/^[a-zA-Z\s]+$/.test(data.nom)) errors.push({ field: "nom", message: "Nom est requis et doit contenir uniquement des lettres." });
+            if (!data.email || !/^\S+@\S+\.\S+$/.test(data.email)) errors.push({ field: "email", message: "Email invalide." });
+            if (!data.password || data.password.length < 8) errors.push({ field: "password", message: "Mot de passe doit contenir au moins 8 caractères." });
+            if (data.password !== data.password_confirmation) errors.push({ field: "password_confirmation", message: "Les mots de passe ne correspondent pas." });
+            if (!data.telephone || !/^\d{8,}$/.test(data.telephone)) errors.push({ field: "telephone", message: "Numéro de téléphone invalide." });
+            if (!data.birthday || !/^\d{4}-\d{2}-\d{2}$/.test(data.birthday)) errors.push({ field: "birthday", message: "Date de naissance invalide." });
+            return errors;
+        }
+
+        function displayErrors(errors, form) {
+            errors.forEach((error) => {
+                if (error.field === "general") {
+                    const errorElement = document.createElement("div");
+                    errorElement.className = "input-error text-danger general-error";
+                    errorElement.textContent = error.message;
+                    form.insertAdjacentElement('afterbegin', errorElement);
+                } else {
+                    const field = form.querySelector(`[name="${error.field}"]`);
+                    if (field) {
+                        const errorElement = document.createElement("div");
+                        errorElement.className = "input-error text-danger";
+                        errorElement.textContent = error.message;
+                        field.insertAdjacentElement('afterend', errorElement);
+                    }
+                }
+            });
+        }
+
+        function clearErrors(form) {
+            const errorElements = form.querySelectorAll(".input-error, .general-error");
+            errorElements.forEach((el) => el.remove());
+        }
     });
 </script>
 
@@ -158,13 +221,13 @@
 
     .modal-content.no-background {
         background: transparent;
-        border: none; /* Remove any border */
-        box-shadow: none; /* Remove box shadow */
+        border: none;
+        box-shadow: none;
     }
 
     .container1 {
         background: transparent;
-        border-radius:24px;
+        border-radius: 24px;
         box-shadow: none;
         position: relative;
         overflow: hidden;
@@ -214,7 +277,7 @@
     }
 
     .container1 form {
-        background: rgba(255, 255, 255, 0.9); /* Slightly transparent background to maintain form readability */
+        background: rgba(255, 255, 255, 0.9);
         display: flex;
         flex-direction: column;
         padding: 0 50px;

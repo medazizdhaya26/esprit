@@ -1,50 +1,51 @@
 {% extends 'layout_dashboared.html.twig' %}
 
 {% block content %}
+
     <div class="card shadow-lg mt-4 border-0 rounded-3">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">All Students</h5>
-            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
                 <i class="bx bx-user-plus"></i> Add Student
             </button>
         </div>
 
-        <div class="table-border-bottom-0">
+        <div class="table-responsive">
             <table class="table table-hover table-striped text-center align-middle">
                 <thead class="table-light">
                 <tr>
                     <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Téléphone</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
                     <th>Email</th>
+                    <th>Phone</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for etudiant in etudiants %}
+                {% for student in etudiants %}
                     <tr>
-                        <td>{{ etudiant.id }}</td>
-                        <td>{{ etudiant.nom }}</td>
-                        <td>{{ etudiant.prenom }}</td>
-                        <td>{{ etudiant.telephone }}</td>
-                        <td>{{ etudiant.email }}</td>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.nom }}</td>
+                        <td>{{ student.prenom }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.telephone }}</td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="{{ path('app_etudiant_show', {'id': etudiant.id}) }}" class="dropdown-item text-dark">
+                                    <a href="{{ path('app_etudiant_show', {'id': student.id}) }}" class="dropdown-item text-dark">
                                         <i class="bx bx-show"></i> Show
                                     </a>
-                                    <a type="button" class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editStudentModal-{{ etudiant.id }}">
+                                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editStudentModal-{{ student.id }}">
                                         <i class="bx bx-edit-alt"></i> Edit
                                     </a>
-                                    <form method="post" action="{{ path('app_etudiant_delete', {'id': etudiant.id}) }}" style="display:inline;">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ etudiant.id) }}">
+                                    <form method="post" action="{{ path('app_etudiant_delete', {'id': student.id}) }}" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ student.id) }}">
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bx bx-trash me-1"></i> Delete
+                                            <i class="bx bx-trash"></i> Delete
                                         </button>
                                     </form>
                                 </div>
@@ -52,71 +53,88 @@
                         </td>
                     </tr>
 
-                    <div class="modal fade" id="editStudentModal-{{ etudiant.id }}" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                    <div class="modal fade" id="editStudentModal-{{ student.id }}" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title" id="editStudentModalLabel" style="color: #0c0c0c">Edit Student</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="modal-header bg-primary text-white" >
+                                    <h5 class="modal-title" id="editStudentModalLabel" style="color: black" >
+                                        <i class="bx bx-edit"></i> Edit Student
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    {{ form_start(form_edit[etudiant.id]) }}
+                                <div class="modal-body p-4">
+                                    {{ form_start(form_edit[student.id], {'attr': {'id': 'editStudentForm-' ~ student.id, 'enctype': 'multipart/form-data'}}) }}
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].nom, 'Nom') }}
-                                            {{ form_widget(form_edit[etudiant.id].nom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter Last Name'}}) }}
+                                            {{ form_label(form_edit[student.id].nom, 'Nom') }}
+                                            {{ form_widget(form_edit[student.id].nom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter Last Name'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].nom) }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].prenom, 'Prénom') }}
-                                            {{ form_widget(form_edit[etudiant.id].prenom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter First Name'}}) }}
+                                            {{ form_label(form_edit[student.id].prenom, 'Prénom') }}
+                                            {{ form_widget(form_edit[student.id].prenom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter First Name'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].prenom) }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].email, 'Email') }}
-                                            {{ form_widget(form_edit[etudiant.id].email, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'example@domain.com'}}) }}
+                                            {{ form_label(form_edit[student.id].email, 'Email') }}
+                                            {{ form_widget(form_edit[student.id].email, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'example@domain.com'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].email) }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].telephone, 'Téléphone') }}
-                                            {{ form_widget(form_edit[etudiant.id].telephone, {'attr': {'class': 'form-control rounded-3', 'placeholder': '+123456789'}}) }}
+                                            {{ form_label(form_edit[student.id].telephone, 'Téléphone') }}
+                                            {{ form_widget(form_edit[student.id].telephone, {'attr': {'class': 'form-control rounded-3', 'placeholder': '+123456789'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].telephone) }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].birthday, 'Birthday') }}
-                                            {{ form_widget(form_edit[etudiant.id].birthday, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'YYYY-MM-DD'}}) }}
+                                            {{ form_label(form_edit[student.id].birthday, 'Birthday') }}
+                                            {{ form_widget(form_edit[student.id].birthday, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'YYYY-MM-DD'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].birthday) }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].password, 'Password') }}
-                                            {{ form_widget(form_edit[etudiant.id].password, {'attr': {'class': 'form-control rounded-3', 'placeholder': '********'}}) }}
+                                            {{ form_label(form_edit[student.id].password, 'Password') }}
+                                            {{ form_widget(form_edit[student.id].password, {'attr': {'class': 'form-control rounded-3', 'placeholder': '********'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].password) }}</div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].payement, 'Payement') }}
+                                            {{ form_label(form_edit[student.id].payement, 'Payement') }}
                                             <div class="d-flex align-items-center">
-                                                {{ form_widget(form_edit[etudiant.id].payement.0, {'attr': {'class': 'form-check-input me-2'}}) }}
-                                                <label class="form-check-label me-3">{{ form_edit[etudiant.id].payement.0.vars.label }}</label>
-                                                {{ form_widget(form_edit[etudiant.id].payement.1, {'attr': {'class': 'form-check-input me-2'}}) }}
-                                                <label class="form-check-label">{{ form_edit[etudiant.id].payement.1.vars.label }}</label>
+                                                {{ form_widget(form_edit[student.id].payement.0, {'attr': {'class': 'form-check-input me-2'}}) }}
+                                                <label class="form-check-label me-3">{{ form_edit[student.id].payement.0.vars.label }}</label>
+                                                {{ form_widget(form_edit[student.id].payement.1, {'attr': {'class': 'form-check-input me-2'}}) }}
+                                                <label class="form-check-label">{{ form_edit[student.id].payement.1.vars.label }}</label>
                                             </div>
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].payement) }}</div>
                                         </div>
-
-
                                         <div class="col-md-6 mb-3">
-                                            {{ form_label(form_edit[etudiant.id].filiere, 'Filiere') }}
-                                            {{ form_widget(form_edit[etudiant.id].filiere, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter Filiere'}}) }}
+                                            {{ form_label(form_edit[student.id].filiere, 'Filiere') }}
+                                            {{ form_widget(form_edit[student.id].filiere, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter Filiere'}}) }}
+                                            <div class="text-danger">{{ form_errors(form_edit[student.id].filiere) }}</div>
                                         </div>
-
+                                        <div class="col-md-12 mb-4">
+                                            <div class="image-upload-wrapper" style="border: 2px dashed #ccc; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; position: relative;">
+                                                <i class="fas fa-upload fa-2x mb-2"></i>
+                                                <p>Click or drag image here to upload</p>
+                                                {{ form_widget(form_edit[student.id].image, {'attr': {'class': 'form-control-file', 'style': 'opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;'}}) }}
+                                                {% if student.image %}
+                                                    <div id="editImagePreview-{{ student.id }}" class="mt-3">
+                                                        <img src="{{ asset('uploads/students/' ~ student.image) }}" alt="Current Image" class="img-fluid rounded" style="max-width: 100%; height: auto; border-radius: 12px;">
+                                                    </div>
+                                                {% else %}
+                                                    <div id="editImagePreview-{{ student.id }}" class="mt-3"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="text-danger mt-2">{{ form_errors(form_edit[student.id].image) }}</div>
+                                        </div>
                                     </div>
+
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                    {{ form_end(form_edit[student.id]) }}
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-dark text-black-100" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn bg-primary text-white">Save changes</button>
-                                </div>
-                                {{ form_end(form_edit[etudiant.id]) }}
                             </div>
                         </div>
                     </div>
-
-                {% else %}
-                    <tr>
-                        <td colspan="6" class="text-muted">No records found</td>
-                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -124,38 +142,46 @@
     </div>
 
     <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-primary ">
-                    <h5 class="modal-title" id="addStudentModalLabel" style="color:black">Add New Student</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addStudentModalLabel" style="color: black">
+                        <i class="bx bx-user-plus"></i> Add Student
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    {{ form_start(form) }}
+                <div class="modal-body p-4">
+                    {{ form_start(form, {'attr': {'id': 'addStudentForm', 'enctype': 'multipart/form-data'}}) }}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.nom, 'Nom') }}
                             {{ form_widget(form.nom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter Last Name'}}) }}
+                            <div class="text-danger">{{ form_errors(form.nom) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.prenom, 'Prénom') }}
                             {{ form_widget(form.prenom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter First Name'}}) }}
+                            <div class="text-danger">{{ form_errors(form.prenom) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.email, 'Email') }}
                             {{ form_widget(form.email, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'example@domain.com'}}) }}
+                            <div class="text-danger">{{ form_errors(form.email) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.telephone, 'Téléphone') }}
                             {{ form_widget(form.telephone, {'attr': {'class': 'form-control rounded-3', 'placeholder': '+123456789'}}) }}
+                            <div class="text-danger">{{ form_errors(form.telephone) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.birthday, 'Date de Naissance') }}
                             {{ form_widget(form.birthday, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'YYYY-MM-DD'}}) }}
+                            <div class="text-danger">{{ form_errors(form.birthday) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.password, 'Password') }}
                             {{ form_widget(form.password, {'attr': {'class': 'form-control rounded-3', 'placeholder': '********'}}) }}
+                            <div class="text-danger">{{ form_errors(form.password) }}</div>
                         </div>
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.payement, 'Payement') }}
@@ -165,22 +191,112 @@
                                 {{ form_widget(form.payement.1, {'attr': {'class': 'form-check-input me-2'}}) }}
                                 <label class="form-check-label">{{ form.payement.1.vars.label }}</label>
                             </div>
+                            <div class="text-danger">{{ form_errors(form.payement) }}</div>
                         </div>
-
-
                         <div class="col-md-6 mb-3">
                             {{ form_label(form.filiere, 'Filiere') }}
                             {{ form_widget(form.filiere, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Enter Filiere'}}) }}
+                            <div class="text-danger">{{ form_errors(form.filiere) }}</div>
                         </div>
-
+                        <div class="col-md-12 mb-4">
+                            {{ form_label(form.image, 'Student Image') }}
+                            <div class="image-upload-wrapper" style="border: 2px dashed #ccc; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; position: relative;">
+                                <i class="fas fa-upload fa-2x mb-2"></i>
+                                <p>Click or drag image here to upload</p>
+                                {{ form_widget(form.image, {'attr': {'class': 'form-control-file', 'style': 'opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;'}}) }}
+                                <div id="addImagePreview" class="mt-3"></div>
+                            </div>
+                            <div class="text-danger mt-2">{{ form_errors(form.image) }}</div>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-dark text-black-100" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn bg-primary text-white">Add Student</button>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Add Student</button>
                     </div>
                     {{ form_end(form) }}
                 </div>
             </div>
         </div>
     </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addImageInput = document.querySelector('#addStudentModal input[type="file"]');
+            const addImagePreview = document.getElementById('addImagePreview');
+
+            addImageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        addImagePreview.innerHTML = `<img src="${e.target.result}" alt="Selected Image" class="img-fluid rounded" style="max-width: 100%; height: auto; border-radius: 12px;">`;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    addImagePreview.innerHTML = '';
+                }
+            });
+
+            document.querySelectorAll('[id^="editStudentModal-"]').forEach(function(modal) {
+                const etudiantId = modal.id.split('-')[1];
+                const editImageInput = modal.querySelector('input[type="file"]');
+                const editImagePreview = document.getElementById(`editImagePreview-${etudiantId}`);
+
+                editImageInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            editImagePreview.innerHTML = `<img src="${e.target.result}" alt="Selected Image" class="img-fluid rounded" style="max-width: 100%; height: auto; border-radius: 12px;">`;
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        editImagePreview.innerHTML = '';
+                    }
+                });
+            });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Handle Add Student Modal reopening
+                const addStudentModal = new bootstrap.Modal(document.getElementById('addStudentModal'));
+
+                window.addEventListener('load', function () {
+                    const hasAddErrors = Array.from(document.querySelectorAll('#addStudentForm .text-danger'))
+                        .some(errorDiv => errorDiv.textContent.trim() !== '');
+                    if (hasAddErrors) {
+                        addStudentModal.show();
+                    }
+                });
+
+                document.querySelectorAll('[id^="editStudentModal-"]').forEach(function (modal) {
+                    const modalId = modal.id;
+                    const editForm = modal.querySelector('form');
+
+                    const hasEditErrors = Array.from(editForm.querySelectorAll('.text-danger'))
+                        .some(errorDiv => errorDiv.textContent.trim() !== '');
+
+                    if (hasEditErrors) {
+                        const editStudentModal = new bootstrap.Modal(document.getElementById(modalId));
+                        editStudentModal.show();
+                    }
+
+                    editForm.addEventListener('submit', function () {
+                        setTimeout(() => {
+                            const postSubmitErrors = Array.from(editForm.querySelectorAll('.text-danger'))
+                                .some(errorDiv => errorDiv.textContent.trim() !== '');
+                            if (postSubmitErrors) {
+                                const reopenModal = new bootstrap.Modal(document.getElementById(modalId));
+                                reopenModal.show();
+                            }
+                        }, 100);
+                    });
+                });
+            });
+
+
+        });
+    </script>
+
+
+
 {% endblock %}
