@@ -20,8 +20,6 @@ class   Reservation
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private ?int $nombre_places = null;
 
     #[ORM\Column(type: "datetime")]
     private ?DateTimeInterface $date_reservation = null;
@@ -57,16 +55,6 @@ class   Reservation
         return $this;
     }
 
-    public function getNombrePlaces(): ?int
-    {
-        return $this->nombre_places;
-    }
-
-    public function setNombrePlaces(int $nombre_places): static
-    {
-        $this->nombre_places = $nombre_places;
-        return $this;
-    }
 
     public function getDateReservation(): ?DateTimeInterface
     {

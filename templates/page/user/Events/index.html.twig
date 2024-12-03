@@ -45,7 +45,7 @@
                                         <div class="thumb">
                                             <div class="price"><span>{{ event.typeEvents }}</span></div>
                                             <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                <img src="{{ asset('images/' ~ (event.image|default('meeting-02.jpg'))) }}" alt="">
+                                                <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
                                             </a>
                                         </div>
                                         <div class="down-content">
@@ -111,15 +111,6 @@
     </div>
 
 
-
-    <style>
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-        }
 
         .footer p {
             margin: 0;

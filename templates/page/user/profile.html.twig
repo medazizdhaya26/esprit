@@ -5,200 +5,212 @@
     <br><br><br><br>
     {% if app.user %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-8">
-                <div class="card" style="border-radius: 24px">
-                    <div class="card-body pb-0">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <div class="text-center border-end">
-                                    <img src="{{ asset('/photo_dir/' ~ app.user.image) }}"
-                                         class="img-fluid avatar-xxl rounded-circle"
-                                         alt="{{ app.user.prenom }} {{ app.user.nom }}">
-                                    <h4 class="text-primary font-size-20 mt-3 mb-2">{{ app.user.prenom }} {{ app.user.nom }}</h4>
-                                </div>
-                            </div><!-- end col -->
-                            <div class="col-md-9">
-                                <div class="ms-3">
-                                    <div>
-                                        <h4 class="card-title mb-2">Biography</h4>
-                                        <p class="mb-0 text-muted">
-                                            {{ app.user.biography|default('No biography available.') }}
-                                        </p>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="card" style="border-radius: 24px">
+                        <div class="card-body pb-0">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <div class="text-center border-end">
+                                        <img src="{{ asset('/photo_dir/' ~ app.user.image) }}"
+                                             class="img-fluid avatar-xxl rounded-circle"
+                                             alt="{{ app.user.prenom }} {{ app.user.nom }}">
+                                        <h4 class="text-primary font-size-20 mt-3 mb-2">{{ app.user.prenom }} {{ app.user.nom }}</h4>
                                     </div>
-                                    <div class="row my-4">
-                                        <div class="col-md-12">
-                                            <div>
-                                                <p class="text-muted mb-2 fw-medium"><i class="mdi mdi-email-outline me-2"></i>
-                                                    {{ app.user.userIdentifier }}
-                                                </p>
-                                                <p class="text-muted fw-medium mb-0"><i class="mdi mdi-phone-in-talk-outline me-2"></i>
-                                                    {{ app.user.telephone }}
-                                                </p>
-                                            </div>
-                                        </div><!-- end col -->
-                                    </div><!-- end row -->
-
-                                    <ul class="nav nav-tabs nav-tabs-custom border-bottom-0 mt-3 nav-justified" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link px-4 active" data-bs-toggle="tab" href="#projects-tab" role="tab">
-                                                <i class="fas fa-calendar-check"></i> My Events
-                                            </a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link px-4" data-bs-toggle="tab" href="#upcoming-tab" role="tab">
-                                                <i class="mdi mdi-menu-open"></i> Upcoming Events
-                                            </a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link px-4" data-bs-toggle="tab" href="#team-tab" role="tab">
-                                                <i class="mdi mdi-account-group-outline"></i> Team
-                                            </a>
-                                        </li>
-                                    </ul>
-
-                                </div>
-                            </div><!-- end col -->
-                        </div><!-- end row -->
-                    </div><!-- end card body -->
-                </div>
-
-                <div class="card" style="border-radius: 24px">
-                    <div class="tab-content p-4">
-                        <!-- My Events Tab -->
-                        <div class="tab-pane active show" id="projects-tab" role="tabpanel">
-                            <div class="row grid">
-                                {% for event in my_events  %}
-                                    <div class="col-lg-4 templatemo-item-col all">
-                                        <div class="meeting-item">
-                                            <div class="thumb">
-                                                <div class="price"><span>{{ event.typeEvents }}</span></div>
-                                                <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                    <img src="{{ asset('images/' ~ (event.image|default('meeting-02.jpg'))) }}" alt="{{ event.titreevets }}">
-                                                </a>
-                                            </div>
-                                            <div class="down-content">
-                                                <div class="date">
-                                                    <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
-                                                </div>
-                                                <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                    <h4>{{ event.titreevets }}</h4>
-                                                </a>
-                                                <p class="description">{{ event.description }}</p>
-                                            </div>
+                                </div><!-- end col -->
+                                <div class="col-md-9">
+                                    <div class="ms-3">
+                                        <div>
+                                            <h4 class="card-title mb-2">Biography</h4>
+                                            <p class="mb-0 text-muted">
+                                                {{ app.user.biography|default('No biography available.') }}
+                                            </p>
                                         </div>
-                                    </div>
- {#                               {% else %}
-                                    <p class="text-muted">No validated events available.</p>#}
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        <!-- Upcoming Events Tab -->
-                        <div class="tab-pane" id="upcoming-tab" role="tabpanel">
-                            <div class="row ">
-                                {% for event in events %}
-                                    <div class="col-lg-4 templatemo-item-col all">
-                                        <div class="meeting-item">
-                                            <div class="thumb">
-                                                <div class="price"><span>{{ event.typeEvents }}</span></div>
-                                                <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                    <img src="{{ asset('images/' ~ (event.image|default('meeting-02.jpg'))) }}" alt="{{ event.titreevets }}">
-                                                </a>
-                                            </div>
-                                            <div class="down-content">
-                                                <div class="date">
-                                                    <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
+                                        <div class="row my-4">
+                                            <div class="col-md-12">
+                                                <div>
+                                                    <p class="text-muted mb-2 fw-medium"><i class="mdi mdi-email-outline me-2"></i>
+                                                        {{ app.user.userIdentifier }}
+                                                    </p>
+                                                    <p class="text-muted fw-medium mb-0"><i class="mdi mdi-phone-in-talk-outline me-2"></i>
+                                                        {{ app.user.telephone }}
+                                                    </p>
                                                 </div>
-                                                <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                    <h4>{{ event.titreevets }}</h4>
-                                                </a>
-                                                <p class="description">{{ event.description }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-{#
-=                                    <p class="text-muted">No upcoming events available.</p>
-#}
-                                {% endfor %}
-                            </div>
-                        </div>
+                                            </div><!-- end col -->
+                                        </div><!-- end row -->
 
-                        <!-- Team Tab -->
-                        <div class="tab-pane" id="team-tab" role="tabpanel">
-                            <h4 class="card-title mb-4">Team</h4>
-                            <p class="text-muted">Details about the team go here.</p>
-                        </div>
+                                        <ul class="nav nav-tabs nav-tabs-custom border-bottom-0 mt-3 nav-justified" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link px-4 active" data-bs-toggle="tab" href="#projects-tab" role="tab">
+                                                    <i class="fas fa-calendar-check"></i> My Events
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link px-4" data-bs-toggle="tab" href="#upcoming-tab" role="tab">
+                                                    <i class="mdi mdi-menu-open"></i> Upcoming Events
+                                                </a>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div><!-- end col -->
+                            </div><!-- end row -->
+                        </div><!-- end card body -->
                     </div>
-                </div><!-- end card -->
-            </div><!-- end col -->
 
-            <div class="col-xl-4">
-                <div class="card" style="border-radius: 24px">
-                    <div class="card-body">
-                        <div class="pb-2">
-                            <h4 class="card-title mb-3">About</h4>
-                            <p>Hi I'm Jansh, has been the industry's standard dummy text To an English
-                                person, it will seem like
-                                simplified.</p>
-                            <ul class="ps-3 mb-0">
-                                <li>it will seem like simplified.</li>
-                                <li>To achieve this, it would be necessary to have uniform pronunciation</li>
-                            </ul>
-                            <!-- end ul -->
-                        </div>
-                        <hr>
-                        <div class="pt-2">
-                            <h4 class="card-title mb-4">My Skill</h4>
-                            <div class="d-flex gap-2 flex-wrap">
-                                <span class="badge badge-soft-secondary p-2">HTML</span>
-                                <span class="badge badge-soft-secondary p-2">Bootstrap</span>
-                                <span class="badge badge-soft-secondary p-2">Scss</span>
-                                <span class="badge badge-soft-secondary p-2">Javascript</span>
-                                <span class="badge badge-soft-secondary p-2">React</span>
-                                <span class="badge badge-soft-secondary p-2">Angular</span>
+                    <div class="card" style="border-radius: 24px">
+                        <div class="tab-content p-4">
+                            <!-- My Events Tab -->
+                            <div class="tab-pane active show" id="projects-tab" role="tabpanel">
+                                <div class="row grid">
+                                    <h5>Validated Events</h5>
+                                    <br>
+                                    <br>
+                                    {% for event in validatedEvents %}
+                                        <div class="col-lg-4 templatemo-item-col all">
+                                            <div class="meeting-item">
+                                                <div class="thumb">
+                                                    <div class="price"><span>{{ event.typeEvents }}</span></div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
+                                                    </a>
+                                                </div>
+                                                <div class="down-content">
+                                                    <div class="date">
+                                                        <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
+                                                    </div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <h4>{{ event.titreevets }}</h4>
+                                                    </a>
+                                                    <p class="description">{{ event.description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                    <h5>Non-Validated Events</h5>
+                                    {% for event in nonValidatedEvents %}
+                                        <div class="col-lg-4 templatemo-item-col all">
+                                            <div class="meeting-item">
+                                                <div class="thumb">
+                                                    <div class="price"><span>{{ event.typeEvents }}</span></div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
+                                                    </a>
+                                                </div>
+                                                <div class="down-content">
+                                                    <div class="date">
+                                                        <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
+                                                    </div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <h4>{{ event.titreevets }}</h4>
+                                                    </a>
+                                                    <p class="description">{{ event.description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Upcoming Events Tab -->
+                            <div class="tab-pane" id="upcoming-tab" role="tabpanel">
+                                <div class="row">
+                                    {% for event in reservedEvents %}
+                                        <div class="col-lg-4 templatemo-item-col all">
+                                            <div class="meeting-item">
+                                                <div class="thumb">
+                                                    <div class="price"><span>{{ event.typeEvents }}</span></div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
+                                                    </a>
+                                                </div>
+                                                <div class="down-content">
+                                                    <div class="date">
+                                                        <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
+                                                    </div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <h4>{{ event.titreevets }}</h4>
+                                                    </a>
+                                                    <p class="description">{{ event.description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
-                    </div><!-- end cardbody -->
-                </div><!-- end card -->
+                    </div><!-- end card -->
+                </div><!-- end col -->
 
-                <div class="card" style="border-radius: 24px">
-                    <div class="card-body">
-                        <div>
-                            <h4 class="card-title mb-4">Personal Details</h4>
-                            <div class="table-responsive">
-                                <table class="table table-bordered mb-0">
-                                    <tbody>
-                                    <tr>
-                                        <th scope="row">Name</th>
-                                        <td>  {{ app.user.prenom }}   {{ app.user.nom }}
-                                        </td>
-                                    </tr><!-- end tr -->
-                                    <tr>
-                                        <th scope="row">Location</th>
-                                        <td></td>
-                                    </tr><!-- end tr -->
+                    <!-- Personal Details and Skills Section -->
+                    <div class="col-xl-4">
+                        <div class="card" style="border-radius: 24px">
+                            <div class="card-body">
+                                <div class="pb-2">
+                                    <h4 class="card-title mb-3">About</h4>
+                                    <p>Hi I'm Jansh, has been the industry's standard dummy text To an English
+                                        person, it will seem like
+                                        simplified.</p>
+                                    <ul class="ps-3 mb-0">
+                                        <li>it will seem like simplified.</li>
+                                        <li>To achieve this, it would be necessary to have uniform pronunciation</li>
+                                    </ul>
+                                    <!-- end ul -->
+                                </div>
+                                <hr>
+                                <div class="pt-2">
+                                    <h4 class="card-title mb-4">My Skill</h4>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge badge-soft-secondary p-2">HTML</span>
+                                        <span class="badge badge-soft-secondary p-2">Bootstrap</span>
+                                        <span class="badge badge-soft-secondary p-2">Scss</span>
+                                        <span class="badge badge-soft-secondary p-2">Javascript</span>
+                                        <span class="badge badge-soft-secondary p-2">React</span>
+                                        <span class="badge badge-soft-secondary p-2">Angular</span>
+                                    </div>
+                                </div>
+                            </div><!-- end cardbody -->
+                        </div><!-- end card -->
 
-                                    <tr>
-                                        <th scope="row">class</th>
-                                        <td>{{ app.user.filiere }}</td>
-                                    </tr><!-- end tr -->
-                                    </tbody><!-- end tbody -->
-                                </table><!-- end table -->
-                            </div>
-                        </div>
-                    </div><!-- end card body -->
-                </div><!-- end card -->
+                        <div class="card" style="border-radius: 24px">
+                            <div class="card-body">
+                                <div>
+                                    <h4 class="card-title mb-4">Personal Details</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mb-0">
+                                            <tbody>
+                                            <tr>
+                                                <th scope="row">Name</th>
+                                                <td>  {{ app.user.prenom }}   {{ app.user.nom }}
+                                                </td>
+                                            </tr><!-- end tr -->
+                                            <tr>
+                                                <th scope="row">Location</th>
+                                                <td></td>
+                                            </tr><!-- end tr -->
 
-            </div><!-- end col -->
+                                            <tr>
+                                                <th scope="row">class</th>
+                                                <td>{{ app.user.filiere }}</td>
+                                            </tr><!-- end tr -->
+                                            </tbody><!-- end tbody -->
+                                        </table><!-- end table -->
+                                    </div>
+                                </div>
+                            </div><!-- end card body -->
+                        </div><!-- end card -->
+
+                    </div><!-- end col -->
+            </div>
         </div>
-
-    </div>
-{% endif %}
+    {% endif %}
 
 
-    <style>
+
+
+<style>
 
     body{margin-top:20px;
     background:#f7f8fa

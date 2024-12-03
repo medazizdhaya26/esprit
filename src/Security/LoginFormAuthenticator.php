@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use \Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class LoginFormAuthenticator extends AbstractAuthenticator
 {
@@ -43,12 +43,14 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         $this->passwordHasher = $passwordHasher;
     }
 
+    // Determine if this request supports authentication
     public function supports(Request $request): bool
     {
         return self::LOGIN_ROUTE === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
+    // Validate credentials and create the Passport object
     public function authenticate(Request $request): Passport
     {
         $credentials = [
@@ -58,11 +60,13 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         ];
         $request->getSession()->set(Security::LAST_USERNAME, $credentials['email']);
 
+        // CSRF token validation
         $csrfToken = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($csrfToken)) {
             throw new InvalidCsrfTokenException();
         }
 
+        // Fetch user by email
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
         if (!$user) {
             throw new UserNotFoundException('Email could not be found.');
@@ -75,8 +79,10 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         );
     }
 
+    // Redirect on successful authentication
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): Response
     {
+        // Redirect to the originally requested URL or a default page
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
@@ -84,12 +90,13 @@ class LoginFormAuthenticator extends AbstractAuthenticator
         $user = $token->getUser();
 
         if (in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_page_Dashboared'));
+            return new RedirectResponse($this->urlGenerator->generate('app_page_Dashboared'));  // Corrected route name
         }
 
         return new RedirectResponse($this->urlGenerator->generate('app_homepage'));
     }
 
+    // Handle failed authentication
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);

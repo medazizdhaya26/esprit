@@ -95,8 +95,6 @@ class RegistrationController extends AbstractController
     #[Route('/home', name: 'app_homepage')]
     public function indexC(): Response
     {
-
-
         return $this->render('page/user/home.html.twig');
     }
 

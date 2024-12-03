@@ -23,7 +23,7 @@
                             <div class="date">
                                 <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
                             </div>
-                            <img src="{{ asset('images/' ~ (event.image|default('meeting-02.jpg'))) }}" alt="Event Image">
+                            <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
                         </div>
                         <div class="down-content">
                             <h4>{{ event.titreevets }}</h4>
@@ -46,7 +46,11 @@
                                 </div>
                                 <div class="col-lg-4 col-md-12">
                                     <div class="main-button-red">
-                                        <a href="{{ path('app_page_event') }}">Book now</a>
+                                        {% if app.user %}
+                                            <form action="{{ path('app_event_reserve', {'id': event.id}) }}" method="post">
+                                                <button type="submit" class="btn btn-danger" style="border-radius: 25px">Reserve Your Spot</button>
+                                            </form>
+                                         {% endif %}
                                     </div>
                                 </div>
                                 <div class="col-lg-12">

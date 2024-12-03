@@ -21,7 +21,7 @@ security:
                 path: app_logout
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 60
+                lifetime: 604800
                 path: /home
                 always_remember_me: true
             access_denied_url: /access-denied
@@ -29,7 +29,7 @@ security:
 
     access_control:
          - { path: ^/dashboared, roles: ROLE_ADMIN }
-         - { path: ^/profile, roles: ROLE_ADMIN}
+         - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:
