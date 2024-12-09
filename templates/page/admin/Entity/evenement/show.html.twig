@@ -1,4 +1,5 @@
 {% extends 'layout_dashboared.html.twig' %}
+
 {% block title %}Event Details{% endblock %}
 
 {% block content %}
@@ -8,10 +9,10 @@
             {% if evenement.image %}
                 <img src="{{ asset('photo_dir/' ~ evenement.image) }}" alt="{{ evenement.titreevets }}" class="w-100 h-100" style="object-fit: cover; border-radius: 24px;">
             {% else %}
-                <img src="{{ asset('images/default_events.jpg') }}" alt="Default Event Image" class="w-100 h-100" style="object-fit: cover; border-radius: 24px; ">
+                <img src="{{ asset('images/default_events.jpg') }}" alt="Default Event Image" class="w-100 h-100" style="object-fit: cover; border-radius: 24px;">
             {% endif %}
             <div class="position-absolute bottom-0 start-0 p-4 bg-dark text-white" style="opacity: 0.9; border-radius: 24px;">
-                <h1 style="color: black" >{{ evenement.titreevets }}</h1>
+                <h1 style="color: black">{{ evenement.titreevets }}</h1>
             </div>
         </div>
 
@@ -55,11 +56,45 @@
                             <div>
                                 <p style="font-size: 1.4rem;"><strong>ID:</strong> {{ evenement.responsableId }}</p>
                                 <p class="mb-0" style="font-size: 1.4rem;"><strong>Email:</strong> {{ evenement.responsableEmail }}</p>
-
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Reservations Section -->
+        <div class="container mt-5">
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h3 class="card-title text-dark font-weight-bold mb-4"><i class="fas fa-list"></i> Reservations</h3>
+                {% if reservations is not empty %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Reservation Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.id }}</td>
+                                <td>{{ reservation.nom }}</td>
+                                <td>{{ reservation.email }}</td>
+                                <td>{{ reservation.dateReservation|date('M d, Y H:i') }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4">No reservations found for this event.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No reservations found for this event.</p>
+                {% endif %}
             </div>
         </div>
 

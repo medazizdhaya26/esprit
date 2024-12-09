@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
     <br><br><br><br>
     {% if app.user %}
 
@@ -51,8 +50,12 @@
                                                     <i class="mdi mdi-menu-open"></i> Upcoming Events
                                                 </a>
                                             </li>
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link px-4" data-bs-toggle="tab" href="#non-validated-tab" role="tab">
+                                                    <i class="mdi mdi-menu-open"></i> Non-Validated Events
+                                                </a>
+                                            </li>
                                         </ul>
-
                                     </div>
                                 </div><!-- end col -->
                             </div><!-- end row -->
@@ -63,34 +66,11 @@
                         <div class="tab-content p-4">
                             <!-- My Events Tab -->
                             <div class="tab-pane active show" id="projects-tab" role="tabpanel">
-                                <div class="row grid">
-                                    <h5>Validated Events</h5>
-                                    <br>
-                                    <br>
-                                    {% for event in validatedEvents %}
-                                        <div class="col-lg-4 templatemo-item-col all">
-                                            <div class="meeting-item">
-                                                <div class="thumb">
-                                                    <div class="price"><span>{{ event.typeEvents }}</span></div>
-                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                        <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
-                                                    </a>
-                                                </div>
-                                                <div class="down-content">
-                                                    <div class="date">
-                                                        <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
-                                                    </div>
-                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
-                                                        <h4>{{ event.titreevets }}</h4>
-                                                    </a>
-                                                    <p class="description">{{ event.description }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
+                                <h5>Validated Events</h5>
 
-                                    <h5>Non-Validated Events</h5>
-                                    {% for event in nonValidatedEvents %}
+                                <div class="row grid">
+
+                                    {% for event in validatedEvents %}
                                         <div class="col-lg-4 templatemo-item-col all">
                                             <div class="meeting-item">
                                                 <div class="thumb">
@@ -140,69 +120,96 @@
                                     {% endfor %}
                                 </div>
                             </div>
+
+                            <!-- Non-Validated Events Tab -->
+                            <div class="tab-pane" id="non-validated-tab" role="tabpanel">
+                                <div class="row">
+                                    {% for event in nonValidatedEvents %}
+                                        <div class="col-lg-4 templatemo-item-col all">
+                                            <div class="meeting-item">
+                                                <div class="thumb">
+                                                    <div class="price"><span>{{ event.typeEvents }}</span></div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
+                                                    </a>
+                                                </div>
+                                                <div class="down-content">
+                                                    <div class="date">
+                                                        <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
+                                                    </div>
+                                                    <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                        <h4>{{ event.titreevets }}</h4>
+                                                    </a>
+                                                    <p class="description">{{ event.description }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div><!-- end card -->
                 </div><!-- end col -->
 
-                    <!-- Personal Details and Skills Section -->
-                    <div class="col-xl-4">
-                        <div class="card" style="border-radius: 24px">
-                            <div class="card-body">
-                                <div class="pb-2">
-                                    <h4 class="card-title mb-3">About</h4>
-                                    <p>Hi I'm Jansh, has been the industry's standard dummy text To an English
-                                        person, it will seem like
-                                        simplified.</p>
-                                    <ul class="ps-3 mb-0">
-                                        <li>it will seem like simplified.</li>
-                                        <li>To achieve this, it would be necessary to have uniform pronunciation</li>
-                                    </ul>
-                                    <!-- end ul -->
+                <!-- Personal Details and Skills Section -->
+                <div class="col-xl-4">
+                    <div class="card" style="border-radius: 24px">
+                        <div class="card-body">
+                            <div class="pb-2">
+                                <h4 class="card-title mb-3">About</h4>
+                                <p>Hi I'm Jansh, has been the industry's standard dummy text To an English
+                                    person, it will seem like
+                                    simplified.</p>
+                                <ul class="ps-3 mb-0">
+                                    <li>it will seem like simplified.</li>
+                                    <li>To achieve this, it would be necessary to have uniform pronunciation</li>
+                                </ul>
+                                <!-- end ul -->
+                            </div>
+                            <hr>
+                            <div class="pt-2">
+                                <h4 class="card-title mb-4">My Skill</h4>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge-soft-secondary p-2">HTML</span>
+                                    <span class="badge badge-soft-secondary p-2">Bootstrap</span>
+                                    <span class="badge badge-soft-secondary p-2">Scss</span>
+                                    <span class="badge badge-soft-secondary p-2">Javascript</span>
+                                    <span class="badge badge-soft-secondary p-2">React</span>
+                                    <span class="badge badge-soft-secondary p-2">Angular</span>
                                 </div>
-                                <hr>
-                                <div class="pt-2">
-                                    <h4 class="card-title mb-4">My Skill</h4>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <span class="badge badge-soft-secondary p-2">HTML</span>
-                                        <span class="badge badge-soft-secondary p-2">Bootstrap</span>
-                                        <span class="badge badge-soft-secondary p-2">Scss</span>
-                                        <span class="badge badge-soft-secondary p-2">Javascript</span>
-                                        <span class="badge badge-soft-secondary p-2">React</span>
-                                        <span class="badge badge-soft-secondary p-2">Angular</span>
-                                    </div>
+                            </div>
+                        </div><!-- end cardbody -->
+                    </div><!-- end card -->
+
+                    <div class="card" style="border-radius: 24px">
+                        <div class="card-body">
+                            <div>
+                                <h4 class="card-title mb-4">Personal Details</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row">Name</th>
+                                            <td>  {{ app.user.prenom }}   {{ app.user.nom }}
+                                            </td>
+                                        </tr><!-- end tr -->
+                                        <tr>
+                                            <th scope="row">Location</th>
+                                            <td></td>
+                                        </tr><!-- end tr -->
+
+                                        <tr>
+                                            <th scope="row">Class</th>
+                                            <td>{{ app.user.filiere }}</td>
+                                        </tr><!-- end tr -->
+                                        </tbody><!-- end tbody -->
+                                    </table><!-- end table -->
                                 </div>
-                            </div><!-- end cardbody -->
-                        </div><!-- end card -->
+                            </div>
+                        </div><!-- end card body -->
+                    </div><!-- end card -->
 
-                        <div class="card" style="border-radius: 24px">
-                            <div class="card-body">
-                                <div>
-                                    <h4 class="card-title mb-4">Personal Details</h4>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered mb-0">
-                                            <tbody>
-                                            <tr>
-                                                <th scope="row">Name</th>
-                                                <td>  {{ app.user.prenom }}   {{ app.user.nom }}
-                                                </td>
-                                            </tr><!-- end tr -->
-                                            <tr>
-                                                <th scope="row">Location</th>
-                                                <td></td>
-                                            </tr><!-- end tr -->
-
-                                            <tr>
-                                                <th scope="row">class</th>
-                                                <td>{{ app.user.filiere }}</td>
-                                            </tr><!-- end tr -->
-                                            </tbody><!-- end tbody -->
-                                        </table><!-- end table -->
-                                    </div>
-                                </div>
-                            </div><!-- end card body -->
-                        </div><!-- end card -->
-
-                    </div><!-- end col -->
+                </div><!-- end col -->
             </div>
         </div>
     {% endif %}
@@ -411,22 +418,22 @@
     .meeting-item {
         width: 100%; /* Ensures it fits within the grid column */
         max-width: 350px; /* Optional: Set a maximum width for larger screens */
-        height: 380px; /* Fixed height to ensure uniformity */
+        height: 380px;
         display: flex;
         flex-direction: column;
-        border: 1px solid #ddd; /* Optional: Add a border for better definition */
-        border-radius:24px; /* Rounded corners */
-        overflow: hidden; /* Ensures no overflowing content */
-        margin: 10px auto; /* Center the cards and add some spacing */
-        background-color: #fff; /* Ensure a consistent background color */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for a professional look */
+        border: 1px solid #ddd;
+        border-radius:24px;
+        overflow: hidden;
+        margin: 10px auto;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .meeting-item .thumb img {
-        width: 100%; /* Ensures the image fits the card width */
-        height: 200px; /* Fixed height for images */
-        object-fit: cover; /* Ensures the image scales correctly */
-        border-bottom: 1px solid #ddd; /* Optional: Add a separator below the image */
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-bottom: 1px solid #ddd;
     }
 
     </style>

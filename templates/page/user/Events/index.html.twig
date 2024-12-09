@@ -22,16 +22,13 @@
                         <div class="col-lg-12">
                             <div class="filters d-flex justify-content-between align-items-center">
                                 <ul class="d-inline-flex">
-                                    <li data-filter="*" class="active">All Events</li>
-                                    <li data-filter=".soon">Soon</li>
-                                    <li data-filter=".imp">Important</li>
-                                    <li data-filter=".att">Attractive</li>
+
                                 </ul>
 
                                 {% if app.user %}
-                                <button  class="btn btn-danger" style="border-radius: 25px" data-bs-toggle="modal" data-bs-target="#createEventModal">
-                                    Create Event
-                                </button>
+
+                                    <button id="add-event-btn" class="btn btn-danger" style="border-radius: 25px" data-bs-toggle="modal" data-bs-target="#addEventModal">create Event</button>
+
                                 {% endif %}
                             </div>
                         </div>
@@ -66,51 +63,79 @@
         </div>
     </section>
 
-    <div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content shadow-lg rounded">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="createEventModalLabel">Create a New Event</h5>
+    <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Header -->
+                <div class="modal-header bg-primary text-white" >
+                    <h5 class="modal-title fw-bold align-content-lg-center" id="addEventModalLabel" style="color: black">
+                        <i class="bx bx-calendar-event me-2"></i> Add New Event
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <div class="modal-body">
-                    <p class="text-muted mb-3">Fill in the form below to create a new event. Fields marked with <span class="text-danger">*</span> are required.</p>
-                    {{ form_start(eventForm, { 'attr': {'class': 'needs-validation'} }) }}
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            {{ form_row(eventForm.titreevets, {'attr': {'class': 'form-control'}}) }}
+                <!-- Body -->
+                <div class="modal-body p-5">
+                    {{ form_start(form, {'attr': {'id': 'addEventForm', 'enctype': 'multipart/form-data'}}) }}
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.titreevets, 'Title', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.titreevets, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.titreevets) }}</div>
                         </div>
-                        <div class="col-md-6">
-                            {{ form_row(eventForm.type_events, {'attr': {'class': 'form-control'}}) }}
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.lieu, 'Location', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.lieu, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.lieu) }}</div>
                         </div>
-                        <div class="col-md-6">
-                            {{ form_row(eventForm.date_debut, {'attr': {'class': 'form-control'}}) }}
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.date_debut, 'Start Date', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.date_debut, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.date_debut) }}</div>
                         </div>
-                        <div class="col-md-6">
-                            {{ form_row(eventForm.date_fin, {'attr': {'class': 'form-control'}}) }}
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.date_fin, 'End Date', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.date_fin, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.date_fin) }}</div>
                         </div>
-                        <div class="col-12">
-                            {{ form_row(eventForm.description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.type_events, 'Event Type', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.type_events, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.type_events) }}</div>
                         </div>
-                        <div class="col-md-6">
-                            {{ form_row(eventForm.lieu, {'attr': {'class': 'form-control'}}) }}
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.nombre_participants_max, 'Number of Places', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.nombre_participants_max, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.nombre_participants_max) }}</div>
                         </div>
-                        <div class="col-md-6">
-                            {{ form_row(eventForm.nombre_participants_max, {'attr': {'class': 'form-control'}}) }}
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.image, 'Event Image', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            <div class="image-upload-wrapper" style="border: 2px dashed #ccc; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; position: relative;">
+                                <i class="fas fa-upload fa-2x mb-2"></i>
+                                <p>Click or drag image here to upload</p>
+                                {{ form_widget(form.image, {'attr': {'class': 'form-control-file', 'style': 'opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer;'}}) }}
+                                <div id="imagePreview" class="mt-3"></div>
+                            </div>
+                            <div class="text-danger mt-2">{{ form_errors(form.image) }}</div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg'}}) }}
+                            <div class="text-danger">{{ form_errors(form.description) }}</div>
                         </div>
                     </div>
-                    <div class="mt-4 text-end">
-                        <button type="submit" class="btn btn-success px-4">Create Event</button>
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-danger" style="border-radius: 25px" id="addEventButton">
+                            <i class="bx bx-check me-1"></i> Add Event
+                        </button>
                     </div>
-                    {{ form_end(eventForm) }}
+                    {{ form_end(form) }}
                 </div>
             </div>
         </div>
     </div>
 
-
+<style>
 
         .footer p {
             margin: 0;
@@ -246,6 +271,26 @@
             background-color: #a11515 !important;
         }
     </style>
+<script>  document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('addEventForm');
+        const addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
 
+        form.addEventListener('submit', function(event) {
+            setTimeout(function() {
+                const hasErrors = Array.from(form.querySelectorAll('.text-danger')).some(errorDiv => errorDiv.textContent.trim() !== '');
+                if (hasErrors) {
+                    addEventModal.show();
+                }
+            }, 100);
+        });
+
+        window.addEventListener('load', function() {
+            const hasErrors = Array.from(form.querySelectorAll('.text-danger')).some(errorDiv => errorDiv.textContent.trim() !== '');
+            if (hasErrors) {
+                addEventModal.show();
+            }
+        });
+
+    });</script>
 
 {% endblock %}

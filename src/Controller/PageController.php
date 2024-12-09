@@ -5,16 +5,39 @@ namespace App\Controller;
 use App\Entity\Evenement;
 use App\Entity\Reservation;
 use App\Entity\User;
+use App\Form\EvenementType;
 use App\Form\EventuserType;
 use App\Repository\EvenementRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 class PageController extends AbstractController
 {
+
+
+    #[Route('/send-email', name: 'send_email')]
+    public function sendEmail(MailerInterface $mailer): Response
+    {
+        $email = (new Email())
+            ->from('azizdhaya26@gmail.com')
+            ->to('jessem.hamdi147@gmail.com')  // Replace with the recipient's email
+            ->subject('Test Email from Symfony')
+            ->text('This is a test email sent from Symfony using the Gmail SMTP server.')
+            ->html('<p>This is a <strong>test</strong> email sent from Symfony using the Gmail SMTP server.</p>');
+
+        try {
+            $mailer->send($email);
+            return new Response('Email sent successfully!', 200);
+        } catch (\Exception $e) {
+            return new Response('Failed to send email: ' . $e->getMessage(), 500);
+        }
+    }
     #[Route('/', name: 'app_main_page')]
     public function index(): Response
     {
@@ -31,7 +54,6 @@ class PageController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Get reserved events for the user
         $reservations = $entityManager->getRepository(Reservation::class)->findBy([
             'email' => $user->getUserIdentifier()
         ]);
@@ -89,7 +111,7 @@ class PageController extends AbstractController
         }
 
         // Create and handle the form
-        $form = $this->createForm(EventuserType::class, $event);
+        $form = $this->createForm(EvenementType::class, $event);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -101,11 +123,21 @@ class PageController extends AbstractController
             return $this->redirectToRoute('app_page_event');
         }
 
-        $events = $entityManager->getRepository(Evenement::class)->findBy(['valider' => true]);
+        $currentDate = new DateTime();
+
+        // Query events that are validated and have an end date greater than today
+        $events = $entityManager->getRepository(Evenement::class)->createQueryBuilder('e')
+            ->where('e.valider = :valider')
+            ->andWhere('e.date_fin > :currentDate')
+            ->setParameter('valider', true)
+            ->setParameter('currentDate', $currentDate)
+            ->getQuery()
+            ->getResult();
+
 
         return $this->render('page/user/events/index.html.twig', [
             'events' => $events,
-            'eventForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -130,25 +162,25 @@ class PageController extends AbstractController
     #[Route('/events/{id}/reserve', name: 'app_event_reserve', methods: ['POST'])]
     public function reserveEvent(EvenementRepository $repository, int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Find the event by ID
         $event = $repository->find($id);
         if (!$event) {
             throw $this->createNotFoundException('Event not found');
         }
 
-        // Ensure the user is authenticated
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException('You need to be logged in to make a reservation.');
         }
+        if ($event->getResponsableEmail() == $user->getUserIdentifier()) {
+            $this->addFlash('error', 'You cannot reserve a spot for your own event.');
+            return $this->redirectToRoute('app_event_details', ['id' => $event->getId()]);
+        }
 
-        // Check if the event is fully booked
         if ($event->getNombreParticipantsMax() !== null && $event->getReservations()->count() >= $event->getNombreParticipantsMax()) {
             $this->addFlash('error', 'The event has reached its maximum participant capacity.');
             return $this->redirectToRoute('app_event_details', ['id' => $event->getId()]);
         }
 
-        // Check if the user has already reserved this event
         foreach ($event->getReservations() as $existingReservation) {
             if ($existingReservation->getEmail() === $user->getUserIdentifier()) {
                 $this->addFlash('error', 'You have already reserved a spot for this event.');
@@ -156,19 +188,17 @@ class PageController extends AbstractController
             }
         }
 
-        // Create a new reservation and set its properties
         $reservation = new Reservation();
         $reservation->setEvenement($event);
         $reservation->setNom($user->getNom());
         $reservation->setEmail($user->getUserIdentifier());
         $reservation->setDateReservation(new \DateTime());
 
-        // Add the reservation to the event
         $event->addReservation($reservation);
 
-        // Persist and flush the reservation
         $entityManager->persist($reservation);
         $entityManager->flush();
+        $this->addFlash('success', 'You have successfully reserved a spot for this event.');
 
 
         return $this->redirectToRoute('app_event_details', ['id' => $event->getId()]);

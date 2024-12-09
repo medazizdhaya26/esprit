@@ -28,8 +28,8 @@ security:
 
 
     access_control:
-         - { path: ^/dashboared, roles: ROLE_ADMIN }
-         - { path: ^/profile, roles: ROLE_USER }
+       #  - { path: ^/dashboared, roles: ROLE_ADMIN }
+      #   - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:

@@ -5,12 +5,15 @@ namespace App\Controller;
 use App\Entity\Evenement;
 use App\Form\EvenementType;
 use App\Repository\EvenementRepository;
+use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/dashboared/evenement')]
@@ -59,10 +62,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 
     #[Route('/{id}', name: 'app_evenement_show', methods: ['GET'])]
-    public function show(Evenement $evenement): Response
+    public function show(Evenement $evenement, ReservationRepository $reservationRepository): Response
     {
+        // Fetch the reservations for the current event
+        $reservations = $reservationRepository->findBy(['evenement' => $evenement]);
+
         return $this->render('page/admin/Entity/evenement/show.html.twig', [
             'evenement' => $evenement,
+            'reservations' => $reservations,
         ]);
     }
 
@@ -161,12 +168,14 @@ use Symfony\Component\Routing\Attribute\Route;
             $event->setDateFin($dateFin);
         }
 
-        // Persister les changements dans la base de données
         $entityManager->persist($event);
         $entityManager->flush();
 
         return new JsonResponse(['success' => true]);
     }
+
+
+
 
 
 

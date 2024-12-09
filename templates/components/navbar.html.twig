@@ -9,25 +9,35 @@
                     <ul class="nav">
                         <li><a href="{{ path('app_homepage') }}" class="active">Accueil</a></li>
                         <li><a href="{{ path('app_page_event') }}">Événements</a></li>
-                        <li class="scroll-to-section"><a href="{{ path('app_page_club') }}">Clubs</a></li>
-                        <li class="scroll-to-section"><a href="#">Cours</a></li>
+                        <li><a href="{{ path('app_page_club') }}" class="scroll-to-section">Clubs</a></li>
+                        <li><a href="#" class="scroll-to-section">Cours</a></li>
                         <li><a href="{{ path('app_page_contact') }}">Contact</a></li>
 
-                        <!-- Display either Login or Logout depending on authentication status -->
+                        <!-- User section -->
                         {% if app.user %}
-                            <li>
-                                <form action="{{ path('app_logout') }}" method="post">
-                                    <button type="submit" class="btn btn-outline-danger">Logout</button>
-                                </form>
+                            <li class="nav-item dropdown">
+                                <!-- User's Name and Avatar -->
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ app.user.prenom }} {{ app.user.nom }}
+
+                                    <img src="{{ asset(app.user.image ? 'photo_dir/' ~ app.user.image : 'images/user_avatar.png') }}" alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                    <li><a class="dropdown-item"    href="{{ path('app_user_profile') }}">Profile</a></li>
+                                    <li>
+                                        <form action="{{ path('app_logout') }}" method="post">
+                                            <button type="submit" class="dropdown-item">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </li>
                         {% else %}
                             <li>
                                 <a href="#" data-toggle="modal" data-target="#authModal">Se Connecter</a>
                             </li>
                         {% endif %}
-                        {% if app.user %}
-                            <p>{{ app.user.prenom }} {{ app.user.nom }}  </p>
-                        {% endif %}
+
                     </ul>
                     <a class="menu-trigger">
                         <span>Menu</span>
@@ -114,6 +124,10 @@
 </div>
 
 <script>
+    document.getElementById('navbarDropdown').addEventListener('click', function() {
+        var dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="navbarDropdown"]');
+        dropdownMenu.classList.toggle('show');
+    });
     document.addEventListener("DOMContentLoaded", function () {
         const container1 = document.getElementById('container1');
         const signUpButton = document.getElementById('signUp');

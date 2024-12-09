@@ -222,6 +222,64 @@
 <script src="{{ asset('/js/dashboards-analytics.js') }}"></script>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Loop through flash messages and create toasts
+        {% for type, messages in app.session.flashbag.all() %}
+        {% for message in messages %}
+        showToast('{{ type }}', '{{ message }}');
+        {% endfor %}
+        {% endfor %}
+    });
+
+    // Function to show toast notifications
+    function showToast(type, message) {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.classList.add('align-items-center');
+        toast.classList.add('text-white');
+        toast.classList.add('border-0');
+        toast.classList.add('mb-3');
+        toast.classList.add('shadow-sm');
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        // Set the toast's background color based on the type
+        if (type === 'success') {
+            toast.classList.add('bg-success');
+        } else if (type === 'error') {
+            toast.classList.add('bg-danger');
+        } else if (type === 'warning') {
+            toast.classList.add('bg-warning');
+        } else if (type === 'info') {
+            toast.classList.add('bg-info');
+        }
+
+        // Add the toast's content with some padding
+        toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body p-3">
+                        <strong>${message}</strong>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+        // Append toast to container
+        toastContainer.appendChild(toast);
+
+        // Show the toast (via Bootstrap's Toast API)
+        const toastInstance = new bootstrap.Toast(toast);
+        toastInstance.show();
+
+        // Automatically hide the toast after 5 seconds
+        setTimeout(function () {
+            toastInstance.hide();
+        }, 5000);
+    }
+</script>
 
 </body>
 </html>

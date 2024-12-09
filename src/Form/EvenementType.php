@@ -42,6 +42,12 @@ class EvenementType extends AbstractType
                     new Assert\NotBlank([
                         'message' => 'Description cannot be blank.',
                     ]),
+                    new Assert\Length([
+                        'min' => 10,
+                        'minMessage' => 'Title must be at least {{ limit }} characters long.',
+                        'max' => 255,
+                        'maxMessage' => 'Title cannot be longer than {{ limit }} characters.',
+                    ]),
                 ],
                 'attr' => [
                     'class' => 'form-control'
@@ -84,6 +90,10 @@ class EvenementType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank([
                         'message' => 'Location cannot be blank.',
+                    ]),
+                    new Assert\Length([
+                        'min' => 3,
+                        'minMessage' => 'Title must be at least {{ limit }} characters long.',
                     ]),
                 ],
                 'attr' => [
