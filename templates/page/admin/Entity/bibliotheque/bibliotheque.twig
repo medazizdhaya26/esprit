@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<section class="heading-page header-text" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h6>Explorez nos espaces</h6>
+                <h2>Nos Bibliothèques</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="library-page" id="library">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="filters d-flex justify-content-between align-items-center">
+                    <ul class="d-inline-flex">
+                        <li data-filter="*" class="active">Toutes les bibliothèques</li>
+                        <li data-filter=".disponible">Disponibles</li>
+                        <li data-filter=".non-disponible">Non Disponibles</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Library Items -->
+        <div class="row grid">
+            {% for bibliotheque in bibliotheques %}
+                <div class="col-lg-4 templatemo-item-col all {% if bibliotheque.horairesOuverture is not empty %}disponible{% else %}non-disponible{% endif %}">
+                    <div class="library-item">
+                        <div class="thumb">
+                            <a href="{{ path('app_bibliotheque_show', {id: bibliotheque.id}) }}">
+                                <img src="{{ asset('uploads/images/' ~ (bibliotheque.image ? bibliotheque.image : 'default-library.jpg')) }}" alt="{{ bibliotheque.nom }}" class="img-fluid library-cover">
+                            </a>
+                        </div>
+                        <div class="down-content">
+                            <a href="{{ path('app_bibliotheque_show', {id: bibliotheque.id}) }}">
+                                <h4>{{ bibliotheque.nom }}</h4>
+                            </a>
+                            <p class="description">Capacité : {{ bibliotheque.capacite }} personnes</p>
+                            <p class="contact">Contact : {{ bibliotheque.contactAdministratif }}</p>
+                            <p class="horaires">
+                                Horaires : 
+                                <span class="{{ bibliotheque.horairesOuverture is not empty ? 'text-success' : 'text-danger' }}">
+                                    {{ bibliotheque.horairesOuverture is not empty ? bibliotheque.horairesOuverture : 'Non Disponibles' }}
+                                </span>
+                            </p>
+                            <a href="{{ path('app_bibliotheque_show', {id: bibliotheque.id}) }}" class="btn btn-primary mt-3">Voir les détails</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .library-item {
+        width: 100%;
+        max-width: 350px;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 10px auto;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .library-item .thumb {
+        width: 100%;
+        height: 60%;
+    }
+
+    .library-item .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .down-content {
+        padding: 10px;
+        height: 40%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .down-content h4 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .down-content p {
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+    }
+
+    .description, .contact, .horaires {
+        font-size: 14px;
+        color: #777;
+        margin-top: 5px;
+    }
+
+    .horaires .text-success {
+        color: green;
+    }
+
+    .horaires .text-danger {
+        color: red;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 16px;
+        background-color: #0056b3;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 10px;
+    }
+
+    .btn:hover {
+        background-color: #004494;
+    }
+</style>
+
+{% endblock %}

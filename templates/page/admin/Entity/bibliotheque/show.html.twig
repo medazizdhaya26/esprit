@@ -1,0 +1,141 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block title %}Détails de la Bibliothèque{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="text-primary">
+            <i class="bx bx-book me-2"></i> Détails de la Bibliothèque
+        </h4>
+        <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-outline-secondary">
+            <i class="bx bx-arrow-back"></i> Retour
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0" style="color: white;">Informations Générales</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <th style="width: 30%;">ID</th>
+                        <td>{{ bibliotheque.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ bibliotheque.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Capacité</th>
+                        <td>{{ bibliotheque.capacite }}</td>
+                    </tr>
+                    <tr>
+                        <th>Horaires d'Ouverture</th>
+                        <td>
+                            {% if bibliotheque.horairesOuverture is not empty %}
+                                {{ bibliotheque.horairesOuverture }}
+                            {% else %}
+                                <span class="text-muted">Non définis</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Contact Administratif</th>
+                        <td>{{ bibliotheque.contactAdministratif }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ bibliotheque.description|default('Non fournie') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+   <!-- Section des bibliothécaires -->
+   <div class="card shadow-sm border-0 rounded-3 mt-4">
+       <div class="card-header bg-success text-white">
+           <h5 class="mb-0">Bibliothécaires Associés</h5>
+       </div>
+       <div class="card-body">
+           {% if bibliotheque.bibliothecaires is not empty %}
+               <table class="table table-striped">
+                   <thead>
+                       <tr>
+                           <th>ID</th>
+                           <th>Nom</th>
+                           <th>Prénom</th>
+                           <th>Email</th>
+                           <th>Téléphone</th>
+                           <th>Spécialité</th>
+                           <th>Actions</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       {% for bibliothecaire in bibliotheque.bibliothecaires %}
+                           <tr>
+                               <td>{{ bibliothecaire.id }}</td>
+                               <td>{{ bibliothecaire.nom }}</td>
+                               <td>{{ bibliothecaire.prenom }}</td>
+                               <td>{{ bibliothecaire.email }}</td>
+                               <td>{{ bibliothecaire.telephone }}</td>
+                               <td>{{ bibliothecaire.specialisation|default('Non spécifiée') }}</td>
+                               <td>
+                                   <!-- Bouton Show pour afficher l'image du bibliothécaire -->
+                                   <button class="btn btn-info btn-sm" onclick="showImage('{{ asset('uploads/images/' ~ bibliothecaire.image) }}', '{{ bibliothecaire.nom }}')">
+                                       <i class="bx bx-show"></i>
+                                   </button>
+
+                                   <!-- Formulaire de suppression -->
+                                   <form method="post" action="{{ path('app_bibliothecaire_remove', { bibliotheque_id: bibliotheque.id, bibliothecaire_id: bibliothecaire.id }) }}" style="display: inline;">
+                                       <input type="hidden" name="_token" value="{{ csrf_token('delete_bibliothecaire' ~ bibliothecaire.id) }}">
+                                       <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment dissocier ce bibliothécaire ?')">
+                                           Supprimer
+                                       </button>
+                                   </form>
+                               </td>
+                           </tr>
+                       {% endfor %}
+                   </tbody>
+               </table>
+           {% else %}
+               <p class="text-muted">Aucun bibliothécaire n'est associé à cette bibliothèque.</p>
+           {% endif %}
+       </div>
+   </div>
+   
+   <!-- Modale pour afficher l'image du bibliothécaire -->
+   <div id="imageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+       <div class="modal-dialog" role="document">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h5 class="modal-title" id="imageModalLabel">Image de <span id="bibliothecaireNom"></span></h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                   <img id="imageModalContent" src="" alt="Image du Bibliothécaire" class="img-fluid">
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <script>
+       // Fonction JavaScript pour afficher l'image
+       function showImage(imagePath, nom) {
+           // Mettre à jour la source de l'image dans la modale
+           document.getElementById('imageModalContent').src = imagePath;
+           // Mettre à jour le nom du bibliothécaire dans le titre de la modale
+           document.getElementById('bibliothecaireNom').textContent = nom;
+           // Afficher la modale
+           var myModal = new bootstrap.Modal(document.getElementById('imageModal'), {
+               keyboard: false
+           });
+           myModal.show();
+       }
+   </script>
+
+</div>
+{% endblock %}

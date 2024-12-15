@@ -1,0 +1,23 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<div class="card shadow-lg mt-4 border-0 rounded-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Détails du Foyer</h5>
+        <a href="{{ path('app_foyer_index') }}" class="btn btn-outline-secondary">
+            <i class="bx bx-arrow-back"></i> Retour à la Liste
+        </a>
+    </div>
+    <div class="card-body">
+        <ul class="list-group">
+            <li class="list-group-item"><strong>ID :</strong> {{ foyer.id }}</li>
+            <li class="list-group-item"><strong>Nom :</strong> {{ foyer.nomFoyer }}</li>
+            <li class="list-group-item"><strong>Nombre Total de Chambres :</strong> {{ foyer.nombreChambresSingle + foyer.nombreChambresDouble }}</li>
+            <li class="list-group-item"><strong>Chambres Simples :</strong> {{ foyer.nombreChambresSingle }}</li>
+            <li class="list-group-item"><strong>Chambres Doubles :</strong> {{ foyer.nombreChambresDouble }}</li>
+            <li class="list-group-item"><strong>Nombre d'Étages :</strong> {{ foyer.nombreEtage }}</li>
+            <li class="list-group-item"><strong>Lieu :</strong> {{ foyer.lieuFoyer }}</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

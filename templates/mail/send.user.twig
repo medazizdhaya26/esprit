@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border-radius: 8px 8px 0 0;
+        }
+        .email-body {
+            margin: 20px 0;
+        }
+        .reservation-details {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-container">
+        <div class="email-header">
+            <h2>Reservation Confirmation</h2>
+        </div>
+
+        <div class="email-body">
+            <p>Dear {{ data.email }},</p>
+            <p>Thank you for your reservation!</p>
+            
+            <div class="reservation-details">
+                <h3>Reservation Details:</h3>
+                <p><strong>Foyer:</strong> {{ data.foyer }}</p>
+                <p><strong>Niveau Universitaire:</strong> {{ data.niveauUniversitaire }}</p>
+                <p><strong>Room Type:</strong> {{ data.typeChambre }}</p>
+                <p><strong>Numero chambre:</strong> {{ data.chambre.numeroChambre }}</p>
+            </div>
+
+            <p>If you have any questions or need to make changes, please contact us at <a href="mailto:yosr.mrabet@esprit.tn">yosr.mrabet@esprit.tn</a>.</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for choosing our services!</p>
+            <p>Best regards,<br>Esprit Team</p>
+        </div>
+    </div>
+
+</body>
+</html>

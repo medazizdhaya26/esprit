@@ -1,0 +1,359 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<!-- Flash Messages -->
+{% for label, messages in app.flashes %}
+    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+
+<div class="card shadow-lg mt-4 border-0 rounded-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Listes Bibliothécaires</h5>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addBibliothecaireModal">
+            <i class="bx bx-user-plus"></i> Ajouter Bibliothécaire
+        </button>
+    </div>
+
+   <!-- Formulaire de filtre -->
+<!-- Formulaire de filtre -->
+    <form class="d-flex justify-content-start p-3 w-100" method="get">
+        <div class="col-md-3 col-4">
+            <label for="specialisation" class="form-label">Filtrer par spécialisation</label>
+            <select id="specialisation" name="specialisation" class="form-select form-select-sm">
+                <option value="">-- Choisir une spécialité --</option>
+                {% for spec in specialisations %}
+                    <option value="{{ spec }}" {% if app.request.get('specialisation') == spec %} selected {% endif %}>
+                        {{ spec }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3 col-4">
+            <label for="bibliotheque" class="form-label">Filtrer par bibliothèque</label>
+            <select id="bibliotheque" name="bibliotheque" class="form-select form-select-sm">
+                <option value="">-- Choisir une bibliothèque --</option>
+                {% for bib in bibliotheques %}
+                    <option value="{{ bib.id }}" {% if app.request.get('bibliotheque') == bib.id %} selected {% endif %}>
+                        {{ bib.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+
+        <div class="col-md-2 d-flex align-items-end mt-4">
+            <button type="submit" class="btn btn-outline-primary">Filtrer</button>
+            <a href="{{ path('app_bibliothecaire_index') }}" class="btn btn-outline-secondary">Réinitialiser</a>
+        </div>
+    </form>
+
+ <!-- Affichage des filtres appliqués -->
+<div class="filters-applied mt-3">
+    {% if app.request.get('specialisation') %}
+        <span class="badge bg-primary">Filtré par spécialisation : {{ app.request.get('specialisation') }}</span>
+    {% endif %}
+
+    {% if app.request.get('bibliotheque') %}
+        <span class="badge bg-info">
+            Filtré par bibliothèque : 
+            {% set filteredBibliotheque = bibliotheques | filter(bib => bib.id == app.request.get('bibliotheque')) %}
+            {{ filteredBibliotheque|length > 0 ? filteredBibliotheque|first.nom : 'Inconnu' }}
+        </span>
+    {% endif %}
+</div>
+
+<div class="table-border-bottom-0">
+    <table class="table table-hover table-striped text-center align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>
+                    <a href="{{ path('app_bibliothecaire_index', { sort: 'id', direction: app.request.get('direction') == 'asc' and app.request.get('sort') == 'id' ? 'desc' : 'asc' }) }}">
+                        ID
+                        {% if app.request.get('sort') == 'id' %}
+                            <i class="bx {{ app.request.get('direction') == 'asc' ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('app_bibliothecaire_index', { 
+                        sort: 'nom', 
+                        direction: app.request.get('sort') == 'nom' and app.request.get('direction') == 'asc' ? 'desc' : 'asc' 
+                    }) }}">
+                        Nom
+                        {% if app.request.get('sort') == 'nom' %}
+                            <i class="bx {{ app.request.get('direction') == 'asc' ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>
+                    <a href="{{ path('app_bibliothecaire_index', { 
+                        sort: 'prenom', 
+                        direction: app.request.get('sort') == 'prenom' and app.request.get('direction') == 'asc' ? 'desc' : 'asc' 
+                    }) }}">
+                        Prénom
+                        {% if app.request.get('sort') == 'prenom' %}
+                            <i class="bx {{ app.request.get('direction') == 'asc' ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>Email</th>
+                <th>Bibliothèque</th>
+                <th>
+                    <a href="{{ path('app_bibliothecaire_index', { 
+                        sort: 'specialisation', 
+                        direction: app.request.get('sort') == 'specialisation' and app.request.get('direction') == 'asc' ? 'desc' : 'asc' 
+                    }) }}">
+                        Spécialité
+                        {% if app.request.get('sort') == 'specialisation' %}
+                            <i class="bx {{ app.request.get('direction') == 'asc' ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for bibliothecaire in bibliothecaires %}
+                <tr>
+                    <td>{{ bibliothecaire.id }}</td>
+                    <td>{{ bibliothecaire.nom }}</td>
+                    <td>{{ bibliothecaire.prenom }}</td>
+                    <td>{{ bibliothecaire.email }}</td>
+                    <td>{{ bibliothecaire.bibliotheque ? bibliothecaire.bibliotheque.nom : ' ' }}</td>
+                    <td>{{ bibliothecaire.specialisation | capitalize }}</td>
+
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ path('app_bibliothecaire_show', {'id': bibliothecaire.id}) }}" class="dropdown-item text-dark">
+                                    <i class="bx bx-show"></i> Show
+                                </a>
+                                <a type="button" class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editBibliothecaireModal-{{ bibliothecaire.id }}">
+                                    <i class="bx bx-edit-alt"></i> Edit
+                                </a>
+                                <form method="post" action="{{ path('app_bibliothecaire_delete', {'id': bibliothecaire.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ bibliothecaire.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bx bx-trash me-1"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>    
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+{# Modal for Editing Bibliothécaire #}
+{% for bibliothecaire in bibliothecaires %}
+        <div class="modal fade" id="editBibliothecaireModal-{{ bibliothecaire.id }}" tabindex="-1" aria-labelledby="editBibliothecaireModalLabel-{{ bibliothecaire.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="editBibliothecaireModalLabel-{{ bibliothecaire.id }}">Modifier Bibliothécaire</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        {{ form_start(edit_forms[bibliothecaire.id], {'attr': {'enctype': 'multipart/form-data'}}) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].nom, 'Nom') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].nom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez le nom'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].prenom, 'Prénom') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].prenom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez le prénom'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].email, 'Email') }}
+                                <div class="input-group">
+                                    {{ form_widget(edit_forms[bibliothecaire.id].email, {
+                                        'attr': {
+                                            'class': 'form-control rounded-3',
+                                            'placeholder': 'Entrez l\'email',
+                                            'id': 'emailField' ~ bibliothecaire.id
+                                        }
+                                    }) }}
+                                    <span class="input-group-text" id="emailDomainButton{{ bibliothecaire.id }}" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">@</span>
+                                    <ul class="dropdown-menu" aria-labelledby="emailDomainButton{{ bibliothecaire.id }}">
+                                        <li><a class="dropdown-item" href="#" data-domain="@esprit.tn">@esprit.tn</a></li>
+                                        <li><a class="dropdown-item" href="#" data-domain="@tekup.tn">@tekup.tn</a></li>
+                                        <li><a class="dropdown-item" href="#" data-domain="@sesame.tn">@sesame.tn</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].telephone, 'Téléphone') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].telephone, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez le numéro de téléphone'}}) }}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].adresse, 'Adresse') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].adresse, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez l\'adresse'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].dateNaissance, 'Date de Naissance') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].dateNaissance, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].specialisation, 'Spécialisation') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].specialisation, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez la spécialisation'}}) }}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].competences, 'Compétences') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].competences, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].bibliotheque, 'Bibliothèque') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].bibliotheque, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                {{ form_label(edit_forms[bibliothecaire.id].image, 'Image') }}
+                                {{ form_widget(edit_forms[bibliothecaire.id].image, {'attr': {'class': 'form-control rounded-3', 'type': 'file'}}) }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Fermer</button>
+                            <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+                        </div>
+                        {{ form_end(edit_forms[bibliothecaire.id]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(edit_forms[bibliothecaire.id]) }}
+{% endfor %}
+
+{# Add Bibliothécaire Modal #}
+    <div class="modal fade" id="addBibliothecaireModal" tabindex="-1" aria-labelledby="addBibliothecaireModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addBibliothecaireModalLabel">Ajouter un Bibliothécaire</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.nom, 'Nom') }}
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez le nom'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.prenom, 'Prénom') }}
+                            {{ form_widget(form.prenom, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez le prénom'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.email, 'Email') }}
+                            <div class="input-group">
+                                {{ form_widget(form.email, {
+                                    'attr': {
+                                        'class': 'form-control rounded-3',
+                                        'placeholder': 'Entrez Ton email',
+                                        'data-mode': form.email.vars.value is empty ? 'add' : 'edit' ,
+                                    }
+                                }) }}
+                                <span class="input-group-text" id="emailDomainButtonAdd" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">@</span>
+                                <ul class="dropdown-menu" aria-labelledby="emailDomainButtonAdd">
+                                    <li><a class="dropdown-item" href="#" data-domain="@esprit.tn">@esprit.tn</a></li>
+                                    <li><a class="dropdown-item" href="#" data-domain="@tekup.tn">@tekup.tn</a></li>
+                                    <li><a class="dropdown-item" href="#" data-domain="@sesame.tn">@sesame.tn</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.telephone, 'Téléphone') }}
+                            {{ form_widget(form.telephone, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez le numéro de téléphone'}}) }}
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            {{ form_label(form.adresse, 'Adresse') }}
+                            {{ form_widget(form.adresse, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez l\'adresse'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.dateNaissance, 'Date de Naissance') }}
+                            {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.specialisation, 'Spécialisation') }}
+                            {{ form_widget(form.specialisation, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Entrez la spécialisation'}}) }}
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            {{ form_label(form.competences, 'Compétences') }}
+                            {{ form_widget(form.competences, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            {{ form_label(form.bibliotheque, 'Bibliothèque') }}
+                            {{ form_widget(form.bibliotheque, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            {{ form_label(form.image, 'Image') }}
+                            {{ form_widget(form.image, {'attr': {'class': 'form-control rounded-3', 'type': 'file'}}) }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Pour le formulaire d'ajout
+    const addModalDropdownItems = document.querySelectorAll('#addBibliothecaireModal .dropdown-item');
+    const addEmailField = document.querySelector('#addBibliothecaireModal .form-control[type="email"]');
+    
+    addModalDropdownItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            const domain = this.getAttribute('data-domain');
+            const emailInput = this.closest('.input-group').querySelector('input');
+            
+            // Supprimer tout domaine existant
+            let emailValue = emailInput.value.split('@')[0];
+            emailInput.value = emailValue + domain;
+        });
+    });
+
+    // Pour les formulaires d'édition
+    document.querySelectorAll('[id^="editBibliothecaireModal-"]').forEach(modal => {
+        const editDropdownItems = modal.querySelectorAll('.dropdown-item');
+        
+        editDropdownItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
+                const domain = this.getAttribute('data-domain');
+                const emailInput = this.closest('.input-group').querySelector('input');
+                
+                // Supprimer tout domaine existant
+                let emailValue = emailInput.value.split('@')[0];
+                emailInput.value = emailValue + domain;
+            });
+        });
+    });
+});
+</script>
+
+
+
+{% endblock %}

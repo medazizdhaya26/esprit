@@ -1,0 +1,345 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+
+<style>
+/* Personnalisation des boutons ronds */
+.btn-circle {
+    border-radius: 50%;
+    width: 40px;   /* Taille réduite */
+    height: 40px;  /* Taille réduite */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px; /* Taille du texte */
+    padding: 0;
+    margin-right: 15px; /* Espacement entre les boutons */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Pour l'animation de la couleur */
+    color: white;  /* Le texte est en blanc */
+}
+
+/* Cacher les boutons radio natifs */
+.btn-circle input[type="radio"] {
+    display: none;
+}
+
+/* Couleurs de fond pâles par défaut */
+.btn-success {
+    background-color: #a2d8a4;  /* Couleur verte pâle */
+    border: 2px solid #28a745;   /* Bordure verte claire */
+}
+
+.btn-danger {
+    background-color: #f5c6cb;  /* Couleur rouge pâle */
+    border: 2px solid #dc3545;   /* Bordure rouge claire */
+}
+
+/* État actif : bouton sélectionné */
+.btn.active {
+    font-weight: bold;
+    color: white;
+}
+
+.btn-success.active {
+    background-color: #218838; /* Vert plus foncé pour "Disponible" */
+    border-color: #1e7e34;  /* Bordure plus foncée */
+}
+
+.btn-danger.active {
+    background-color: #c82333; /* Rouge plus foncé pour "Non disponible" */
+    border-color: #bd2130;  /* Bordure plus foncée */
+}
+
+/* Effet de survol (pour un effet visuel supplémentaire) */
+.btn-circle:hover {
+    opacity: 0.8;  /* Légère transparence au survol */
+}
+</style>
+
+    <div class="card shadow-lg mt-4 border-0 rounded-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Listes Livres</h5>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addBookModal">
+                <i class="bx bx-book-plus"></i> Ajouter un Livre
+            </button>
+        </div>
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'success' ? 'success' : 'danger' }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        <!-- Formulaire de filtre -->
+        <form class="d-flex justify-content-start p-3 w-100" method="get">
+            <div class="col-md-2 col-4">
+                <label for="categorie" class="form-label">Filtrer par catégorie</label>
+                <select id="categorie" name="categorie" class="form-select form-select-sm">
+                    <option value="">-- Choisir une catégorie --</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat }}" {% if app.request.get('categorie') == cat %} selected {% endif %}>
+                            {{ cat }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 col-4">
+                <label for="auteur" class="form-label">Filtrer par auteur</label>
+                <select id="auteur" name="auteur" class="form-select form-select-sm">
+                    <option value="">-- Choisir un auteur --</option>
+                    {% for auth in auteurs %}
+                        <option value="{{ auth }}" {% if app.request.get('auteur') == auth %} selected {% endif %}>
+                            {{ auth }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 col-4 me-3">
+                <label for="langue" class="form-label">Filtrer par langue</label>
+                <select id="langue" name="langue" class="form-select form-select-sm">
+                    <option value="">-- Choisir une langue --</option>
+                    {% for lang in langues %}
+                        <option value="{{ lang }}" {% if app.request.get('langue') == lang %} selected {% endif %}>
+                            {{ lang }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3 col-5">
+                <label for="stock" class="form-label">Disponibilité</label>
+                <div class="d-flex justify-content-start">
+                    <!-- Bouton Disponible (vert) -->
+                    <label class="btn btn-success btn-circle {% if app.request.get('stock') == 'disponible' %} active {% endif %}">
+                        <input type="radio" name="stock" value="disponible" {% if app.request.get('stock') == 'disponible' %} checked {% endif %} hidden>
+                        D
+                    </label>
+
+                    <!-- Bouton Non disponible (rouge) -->
+                    <label class="btn btn-danger btn-circle {% if app.request.get('stock') == 'non_disponible' %} active {% endif %}">
+                        <input type="radio" name="stock" value="non_disponible" {% if app.request.get('stock') == 'non_disponible' %} checked {% endif %} hidden>
+                        N
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end mt-4">
+                <button type="submit" class="btn btn-outline-primary">Filtrer</button>
+                <a href="{{ path('app_livre_index') }}" class="btn btn-outline-secondary">Réinitialiser</a>
+                <button id="delete-all-books" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> 🗑️
+                </button>
+            </div>
+        </form>
+        <!-- Affichage des filtres appliqués -->
+            <div class="filters-applied mt-3">
+                {% if app.request.get('categorie') %}
+                    <span class="badge bg-primary">Filtré par catégorie : {{ app.request.get('categorie') }}</span>
+                {% endif %}
+
+                {% if app.request.get('auteur') %}
+                    <span class="badge bg-info">Filtré par auteur : {{ app.request.get('auteur') }}</span>
+                {% endif %}
+
+                {% if app.request.get('langue') %}
+                    <span class="badge bg-warning">Filtré par langue : {{ app.request.get('langue') }}</span>
+                {% endif %}
+                
+
+            </div>
+
+        <div class="table-border-bottom-0">
+            <table class="table table-hover table-striped text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Catégorie</th>
+                        <th>Année</th>
+                        <th>Langue</th>
+                        <th>Stock</th>
+                        <th>Disponibilité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for livre in livres %}
+                        <tr>
+                            <td>{{ livre.titre }}</td>
+                            <td>{{ livre.auteur }}</td>
+                            <td>{{ livre.categorie }}</td>
+                            <td>{{ livre.datePublication ? livre.datePublication|date('Y') : '' }}</td>
+                            <td>{{ livre.langue }}</td>
+                            <td>{{ livre.stock }}</td>
+                            <td>
+                                {% if livre.stock > 0 %}
+                                    <span class="badge bg-success">Disponible</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Non disponible</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('app_livre_show', {'id': livre.id}) }}" class="dropdown-item text-dark">
+                                            <i class="bx bx-show"></i> Voir
+                                        </a>
+                                        <a type="button" class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editBookModal-{{ livre.id }}">
+                                            <i class="bx bx-edit-alt"></i> Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('app_livre_delete', {'id': livre.id}) }}" style="display:inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livre.id) }}">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bx bx-trash me-1"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        {# Modal de modification pour chaque livre #}
+                        <div class="modal fade" id="editBookModal-{{ livre.id }}" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="mb-0 text-white">Modifier le Livre</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{ form_start(form_edit[livre.id]) }}
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].titre, 'Titre') }}
+                                                {{ form_widget(form_edit[livre.id].titre, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Titre'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].auteur, 'Auteur') }}
+                                                {{ form_widget(form_edit[livre.id].auteur, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Nom de l\'Auteur'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].categorie, 'Catégorie') }}
+                                                {{ form_widget(form_edit[livre.id].categorie, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Catégorie'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].datePublication, 'Année de Publication') }}
+                                                {{ form_widget(form_edit[livre.id].datePublication, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir l\'Année'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].nombrePages, 'Nombre de Pages') }}
+                                                {{ form_widget(form_edit[livre.id].nombrePages, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Nombre de Pages'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].stock, 'Stock') }}
+                                                {{ form_widget(form_edit[livre.id].stock, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Quantité'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].langue, 'Langue') }}
+                                                {{ form_widget(form_edit[livre.id].langue, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Langue'}}) }}
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                {{ form_label(form_edit[livre.id].description, 'Description') }}
+                                                {{ form_widget(form_edit[livre.id].description,{'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir une Description', 'rows': '3'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Fermer</button>
+                                        <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+                                    </div>
+                                    {{ form_end(form_edit[livre.id]) }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {# Modal d'ajout d'un livre #}
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="mb-0 text-white">Ajouter un Livre</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(form) }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.titre, 'Titre') }}
+                            {{ form_widget(form.titre, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Titre'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.auteur, 'Auteur') }}
+                            {{ form_widget(form.auteur, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Nom de l\'Auteur'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.categorie, 'Catégorie') }}
+                            {{ form_widget(form.categorie, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Catégorie'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.datePublication, 'Année de Publication') }}
+                            {{ form_widget(form.datePublication, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir l\'Année'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.nombrePages, 'Nombre de Pages') }}
+                            {{ form_widget(form.nombrePages, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Nombre de Pages'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.stock, 'Stock') }}
+                            {{ form_widget(form.stock, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Quantité'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.langue, 'Langue') }}
+                            {{ form_widget(form.langue, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Langue'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.description, 'Description') }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir une Description', 'rows': '3'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn bg-primary text-white">Ajouter</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('delete-all-books').addEventListener('click', function() {
+            // Confirmation de la suppression
+            if (confirm('Êtes-vous sûr de vouloir supprimer tous les livres ? Cette action est irréversible.')) {
+                // requête AJAX pour supprimer tous les livres
+                fetch("{{ path('app_livre_delete_all') }}", {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message); // Afficher le message de succès
+                        location.reload(); // Recharger la page pour voir les livres supprimés
+                    } else {
+                        alert('Erreur lors de la suppression des livres.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue.');
+                });
+            }
+        });
+    </script>
+{% endblock %}

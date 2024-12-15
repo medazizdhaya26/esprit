@@ -1,0 +1,65 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+    <div class="card shadow-lg mt-4 border-0 rounded-3">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-white">Modifier le Livre</h5>
+            <a href="{{ path('app_livre_index') }}" class="btn btn-outline-light">
+                <i class="bx bx-arrow-back"></i> Retour 
+            </a>
+        </div>
+
+        <div class="card-body">
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type == 'success' ? 'success' : 'danger' }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {{ form_start(edit_form) }}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.titre, 'Titre') }}
+                    {{ form_widget(edit_form.titre, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Titre du Livre'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.auteur, 'Auteur') }}
+                    {{ form_widget(edit_form.auteur, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Nom de l\'Auteur'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.categorie, 'Catégorie') }}
+                    {{ form_widget(edit_form.categorie, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Catégorie'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.datePublication, 'Année de Publication') }}
+                    {{ form_widget(edit_form.datePublication, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir l\'Année de Publication'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.nombrePages, 'Nombre de Pages') }}
+                    {{ form_widget(edit_form.nombrePages, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir le Nombre de Pages'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.stock, 'Stock') }}
+                    {{ form_widget(edit_form.stock, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Quantité en Stock'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.langue, 'Langue') }}
+                    {{ form_widget(edit_form.langue, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir la Langue'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(edit_form.description, 'Description') }}
+                    {{ form_widget(edit_form.description,{'attr': {'class': 'form-control rounded-3', 'placeholder': 'Saisir une Description', 'rows': '3'}}) }}
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn bg-primary text-white me-2">Enregistrer</button>
+                <a href="{{ path('app_livre_index') }}" class="btn btn-outline-secondary">Annuler</a>
+            </div>
+            
+            {{ form_end(edit_form) }}
+            
+        </div>
+    </div>
+{% endblock %}

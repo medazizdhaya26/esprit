@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+<!-- Section Header -->
+<section class="foyer-heading-page header-text" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h6>Découvrez Nos Foyers Universitaires</h6>
+                <h2>Liste des foyers</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Foyers -->
+<section class="meetings-page" id="meetings">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row grid">
+                    {% for foyer in foyers %}
+                        <div class="col-lg-6 col-md-6 col-sm-12 mb-5"> <!-- Colonnes pour cartes plus grandes -->
+                            <div class="card shadow border-0" style="background-color: #f9f9f9;"> <!-- Arrière-plan carte -->
+                                <!-- Image Section -->
+                                <div class="card-img-top">
+                                    <img src="{{ asset('images/' ~ (foyer.image|default('foyer1.jpg'))) }}" 
+                                         alt="{{ foyer.nomFoyer }}" 
+                                         class="img-fluid rounded-top" 
+                                         style="height: 300px; object-fit: cover;"> <!-- Hauteur augmentée -->
+                                </div>
+
+                                <!-- Content Section -->
+                                <div class="card-body text-center">
+                                    <!-- Nom du Foyer -->
+                                    <h3 class="fw-bold text-dark">{{ foyer.nomFoyer }}</h3>
+
+                                    <!-- Localisation -->
+                                    <p class="text-muted mb-3">
+                                        <i class="bi bi-geo-alt text-danger"></i> {{ foyer.lieuFoyer }}
+                                    </p>
+
+                                    <!-- Nombre de Chambres -->
+                                    <p class="text-muted mb-4">
+                                        <i class="bi bi-door-closed"></i> Chambres Totales : {{ foyer.nombreChambre }}
+                                    </p>
+
+                                    <!-- Bouton Voir Détails -->
+                                    <a href="{{ path('app_foyer_details', {id: foyer.id}) }}" class="btn btn-outline-dark btn-lg">
+                                        Voir Détails
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Styles -->
+<style>
+.foyer-heading-page {
+    background-image: url('{{ asset('images/foyer.jpg') }}'); /* Chemin de l'image */
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    color: white;
+    overflow: hidden;
+}
+
+/* Superposition sombre */
+.foyer-heading-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.foyer-heading-page h6,
+.foyer-heading-page h2 {
+    position: relative;
+    z-index: 2;
+}
+
+.foyer-heading-page h6 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #fff;
+}
+
+.foyer-heading-page h2 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.meeting-item {
+    width: 100%;
+    max-width: 350px;
+    height: 380px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    overflow: hidden;
+    margin: 10px auto;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meeting-item .thumb img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+.down-content h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.down-content p {
+    font-size: 14px;
+    color: #666;
+}
+
+.description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    line-height: 1.5;
+    max-height: calc(1.5em * 3);
+}
+
+
+
+/* Section Arrière-Plan */
+.meetings-page {
+    background-color: #ececec; /* Couleur d'arrière-plan */
+    padding: 50px 0; /* Espacement autour des cartes */
+}
+
+/* Carte Design */
+.card {
+    border-radius: 15px; /* Coins arrondis */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9f9f9; /* Couleur de fond */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Effet zoom au survol */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Ombre accentuée */
+}
+
+.card-img-top img {
+    width: 100%;
+    height: 300px; /* Hauteur augmentée pour les images */
+    object-fit: cover; /* Adapter l'image sans déformation */
+}
+
+/* Texte et Informations */
+.card-body {
+    padding: 25px; /* Plus d'espacement interne */
+}
+
+.card-body h3 {
+    font-size: 24px; /* Texte plus grand pour le titre */
+    margin-bottom: 15px;
+}
+
+.card-body p {
+    font-size: 16px; /* Taille de texte augmentée */
+    color: #666;
+}
+
+/* Bouton */
+.btn-lg {
+    padding: 12px 30px; /* Bouton plus large et espacé */
+    font-size: 16px;
+    border-radius: 25px; /* Boutons arrondis */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-lg:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Icônes */
+.bi {
+    margin-right: 8px; /* Espacement des icônes */
+}
+</style>
+
+
+
+{% endblock %}

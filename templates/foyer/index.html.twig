@@ -1,0 +1,175 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<div class="card shadow-lg mt-4 border-0 rounded-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Tous les Foyers</h5>
+        
+        <!-- Barre de recherche -->
+        <form class="d-flex" method="get" action="{{ path('app_foyer_index') }}">
+            <input type="text" class="form-control rounded-3" name="search" placeholder="Rechercher par nom du foyer" value="{{ searchTerm }}">
+            <button class="btn btn-outline-secondary ms-2" type="submit">
+                <i class="bx bx-search"></i> Rechercher
+            </button>
+        </form>
+
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addFoyerModal">
+            <i class="bx bx-building-house"></i> Ajouter un Foyer
+        </button>
+    </div>
+
+    <div class="table-border-bottom-0">
+        <table class="table table-hover table-striped text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>
+                        <a href="{{ path('app_foyer_index', {'sort_by': 'total_chambres', 'sort_order': sortOrder == 'asc' ? 'desc' : 'asc', 'search': searchTerm}) }}" class="btn btn-link p-0">
+                            Total Chambres
+                            {% if sortBy == 'total_chambres' %}
+                                {% if sortOrder == 'asc' %}
+                                    <i class="bx bx-sort-up"></i>
+                                {% else %}
+                                    <i class="bx bx-sort-down"></i>
+                                {% endif %}
+                            {% else %}
+                                <i class="bx bx-sort"></i>
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th>Chambres Simples</th>
+                    <th>Chambres Doubles</th>
+                    <th>Nombre d'Étages</th>
+                    <th>Lieu</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for foyer in foyers %}
+                <tr>
+                    <td>{{ foyer.id }}</td>
+                    <td>{{ foyer.nomFoyer }}</td>
+                    <td>{{ foyer.nombreChambresSingle + foyer.nombreChambresDouble }}</td>
+                    <td>{{ foyer.nombreChambresSingle }}</td>
+                    <td>{{ foyer.nombreChambresDouble }}</td>
+                    <td>{{ foyer.nombreEtage }}</td>
+                    <td>{{ foyer.lieuFoyer }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ path('app_foyer_show', {'id': foyer.id}) }}" class="dropdown-item text-dark">
+                                    <i class="bx bx-show"></i> Voir
+                                </a>
+                                <a href="#" class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editFoyerModal-{{ foyer.id }}">
+                                    <i class="bx bx-edit-alt"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_foyer_delete', {'id': foyer.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ foyer.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bx bx-trash"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-muted">Aucun foyer trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{# Modal Add Foyer #}
+<div class="modal fade" id="addFoyerModal" tabindex="-1" aria-labelledby="addFoyerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addFoyerModalLabel">Ajouter un Nouveau Foyer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.nomFoyer, 'Nom du Foyer') }}
+                        {{ form_widget(form.nomFoyer, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Ex : Résidence Universitaire'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.nombreEtage, 'Nombre d\'Étages') }}
+                        {{ form_widget(form.nombreEtage, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Ex : 3'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.lieuFoyer, 'Lieu') }}
+                        {{ form_widget(form.lieuFoyer, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Ex : Tunis, Ariana'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.nombreChambresSingle, 'Chambres Simples') }}
+                        {{ form_widget(form.nombreChambresSingle, {'attr': {'class': 'form-control rounded-3'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.nombreChambresDouble, 'Chambres Doubles') }}
+                        {{ form_widget(form.nombreChambresDouble, {'attr': {'class': 'form-control rounded-3'}}) }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn bg-primary text-white">Ajouter</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Modals de modification #}
+{% for foyer in foyers %}
+    <div class="modal fade" id="editFoyerModal-{{ foyer.id }}" tabindex="-1" aria-labelledby="editFoyerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title" id="editFoyerModalLabel">Modifier le Foyer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(form_edit[foyer.id]) }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form_edit[foyer.id].nomFoyer, 'Nom du Foyer') }}
+                            {{ form_widget(form_edit[foyer.id].nomFoyer, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Ex : Résidence Universitaire'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form_edit[foyer.id].nombreEtage, 'Nombre d\'Étages') }}
+                            {{ form_widget(form_edit[foyer.id].nombreEtage, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form_edit[foyer.id].lieuFoyer, 'Lieu') }}
+                            {{ form_widget(form_edit[foyer.id].lieuFoyer, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form_edit[foyer.id].nombreChambresSingle, 'Chambres Simples') }}
+                            {{ form_widget(form_edit[foyer.id].nombreChambresSingle, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form_edit[foyer.id].nombreChambresDouble, 'Chambres Doubles') }}
+                            {{ form_widget(form_edit[foyer.id].nombreChambresDouble, {'attr': {'class': 'form-control rounded-3'}}) }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn bg-warning text-white">Sauvegarder</button>
+                    </div>
+                    {{ form_end(form_edit[foyer.id]) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

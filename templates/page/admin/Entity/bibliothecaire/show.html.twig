@@ -1,0 +1,83 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block title %}Bibliothécaire{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="display-4 text-center" style="color: black;">Bibliothécaire</h1>
+
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0" style="font-weight: bold; color: white;">Détails du bibliothécaire</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td>{{ bibliothecaire.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom</th>
+                            <td>{{ bibliothecaire.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prénom</th>
+                            <td>{{ bibliothecaire.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ bibliothecaire.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Téléphone</th>
+                            <td>{{ bibliothecaire.telephone }}</td>
+                        </tr>
+                        <tr>
+                            <th>Adresse</th>
+                            <td>{{ bibliothecaire.adresse }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date de Naissance</th>
+                            <td>{{ bibliothecaire.dateNaissance|date('d/m/Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Spécialité</th>
+                            <td>{{ bibliothecaire.specialisation }}</td>
+                        </tr>
+                        {% if bibliothecaire.image %}
+                        <tr>
+                            <th>Image</th>
+                            <td>
+                                <!-- Lien pour ouvrir la modale -->
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                    <img src="{{ asset('uploads/images/' ~ bibliothecaire.image) }}" alt="Image de {{ bibliothecaire.nom }}" class="img-fluid" style="max-width: 200px;">
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ path('app_bibliothecaire_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour afficher l'image -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel"> {{ bibliothecaire.nom }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--AGRANDIR IMAGE -->
+                    <img src="{{ asset('uploads/images/' ~ bibliothecaire.image) }}" alt="Image de {{ bibliothecaire.nom }}" class="img-fluid w-100 h-100" style="object-fit: contain;">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

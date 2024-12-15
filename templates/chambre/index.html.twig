@@ -1,0 +1,163 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+ 
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <a href="{{ path('app_chambre_index', {sort: 'all'}) }}" 
+           class="btn btn-outline-primary {% if currentSort == 'all' %}active{% endif %}">
+            Toutes
+        </a>
+        <a href="{{ path('app_chambre_index', {sort: 'available'}) }}" 
+           class="btn btn-outline-success {% if currentSort == 'available' %}active{% endif %}">
+            Disponibles
+        </a>
+        <a href="{{ path('app_chambre_index', {sort: 'occupied'}) }}" 
+           class="btn btn-outline-danger {% if currentSort == 'occupied' %}active{% endif %}">
+            Occupées
+        </a>
+    </div>
+</div>
+        <div class="card shadow-lg mt-4 border-0 rounded-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Toutes les Chambres</h5>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addChambreModal">
+                    <i class="bx bx-bed"></i> Ajouter une Chambre
+                </button>
+            </div>
+
+            <div class="table-border-bottom-0">
+                <table class="table table-hover table-striped text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Numéro</th>
+                            <th>Type</th>
+                            <th>Climatiseur</th>
+                            <th>Chauffage</th>
+                            <th>Places Disponibles</th>
+                            <th>Disponibilité</th>
+                            <th>Foyer</th>
+                            <th>Prix par Trimestre</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for chambre in chambres %}
+                        <tr>
+                            <td>{{ chambre.id }}</td>
+                            <td>{{ chambre.numeroChambre }}</td>
+                            <td>{{ chambre.type|capitalize }}</td>
+                            <td>{{ chambre.climatiseur ? 'Oui' : 'Non' }}</td>
+                            <td>{{ chambre.chauffageCentral ? 'Oui' : 'Non' }}</td>
+                            <td>{{ chambre.placesDisponibles }}</td>
+                            <td>
+                                {% if chambre.estDisponible %}
+                                    <span class="badge bg-success">Disponible</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Occupée</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ chambre.foyer.nomFoyer }}</td>
+                            <td>{{ chambre.calculerPrixTrimestre() }} DT</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{{ path('app_chambre_show', {'id': chambre.id}) }}" class="dropdown-item text-dark">
+                                            <i class="bx bx-show"></i> Voir
+                                        </a>
+                                        <a href="#" class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editChambreModal-{{ chambre.id }}">
+                                            <i class="bx bx-edit-alt"></i> Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('app_chambre_delete', {'id': chambre.id}) }}" style="display:inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ chambre.id) }}">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bx bx-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="9" class="text-muted">Aucune chambre trouvée</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {# Modal Add Chambre #}
+        <div class="modal fade" id="addChambreModal" tabindex="-1" aria-labelledby="addChambreModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="addChambreModalLabel">Ajouter une Nouvelle Chambre</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(form) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.numeroChambre, 'Numéro de Chambre') }}
+                                {{ form_widget(form.numeroChambre, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Ex : 01'}}) }}
+                                {% for error in form.numeroChambre.vars.errors %}
+                <div class="text-danger">{{ error.message }}</div>
+            {% endfor %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.type, 'Type de Chambre') }}
+                                {{ form_widget(form.type, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.climatiseur, 'Climatiseur') }}
+                                {{ form_widget(form.climatiseur, {'attr': {'class': 'form-check-input'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.chauffageCentral, 'Chauffage Central') }}
+                                {{ form_widget(form.chauffageCentral, {'attr': {'class': 'form-check-input'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.estDisponible, 'Disponible') }}
+                                {{ form_widget(form.estDisponible, {'attr': {'class': 'form-check-input'}}) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.foyer, 'Foyer Associé') }}
+                                {{ form_widget(form.foyer, {'attr': {'class': 'form-control rounded-3'}}) }}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn bg-primary text-white">Ajouter</button>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <script>
+        // Vérifier si des erreurs de formulaire existent après le rendu du modal
+       // document.addEventListener('DOMContentLoaded', function () {
+           // const errorMessages = document.querySelectorAll('.text-danger');
+            //if (errorMessages.length > 0) {
+               // const modal = new bootstrap.Modal(document.getElementById('addChambreModal'));
+               // modal.show(); // Assurez-vous que le modal reste ouvert si des erreurs sont présentes
+           // }
+       // });
+    </script>
+{% endblock %}

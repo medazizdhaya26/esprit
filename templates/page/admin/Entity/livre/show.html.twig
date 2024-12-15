@@ -1,0 +1,56 @@
+{% extends 'layout_dashboared.html.twig' %} 
+
+{% block title %}Détails du Livre - {{ livre.titre }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h1 class="h3 mb-4 text-gray-800 text-center">Détails du Livre</h1>
+    
+    <div class="card shadow">
+        <div class="card-header py-3 text-center">
+            <h2 class="m-0 font-weight-bold text-primary">{{ livre.titre }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3 d-flex justify-content-center">
+                    <div class="border border-2 rounded p-3" style="border-color: #007bff; background-color: #e9f7fe;">
+                        <h3>Informations générales</h3>
+                        <p><strong>Auteur :</strong> {{ livre.auteur }}</p>
+                        <p><strong>Catégorie :</strong> {{ livre.categorie ?? 'Non spécifiée' }}</p>
+                        <p><strong>Nombre de pages :</strong> {{ livre.nombrePages ?? 'Non spécifié' }}</p>
+                        <p><strong>Date de publication :</strong> {{ livre.datePublication ? livre.datePublication|date('d/m/Y') : 'Non spécifiée' }}</p>
+                        <p><strong>Langue :</strong> {{ livre.langue ?? 'Non spécifiée' }}</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3 d-flex justify-content-center">
+                    <div class="border border-2 rounded p-3" style="border-color: #28a745; background-color: #e9f7e1;">
+                        <h3>Description</h3>
+                        <p>{{ livre.description ?? 'Aucune description disponible.' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 d-flex justify-content-center">
+                    <div class="border border-3 rounded p-3" style="border-color: #800000; background-color: #f2f2f2;">
+                        <h3>Stock et disponibilité</h3>
+                        <p><strong>Stock :</strong> {{ livre.stock }}</p>
+                        <p><strong>Disponibilité :</strong> 
+                            {% if livre.stock == 0 %}
+                                <span class="badge bg-danger">Non disponible</span>
+                                <br>
+                                <small class="text-muted">Date estimée de disponibilité : {{ availabilityDate|date('d/m/Y') }}</small>
+                            {% else %}
+                                <span class="badge bg-success">Disponible</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{{ path('app_livre_index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

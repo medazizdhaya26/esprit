@@ -1,0 +1,95 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<!-- Flash Messages -->
+{% for label, messages in app.flashes %}
+    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+
+<!-- Edit Bibliothèque Form -->
+<div class="card shadow-lg mt-4 border-0 rounded-3">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bx bx-edit-alt"></i> Modifier la Bibliothèque</h5>
+        <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-outline-light">
+            <i class="bx bx-arrow-back"></i> Retour
+        </a>
+    </div>
+
+    <div class="card-body">
+        {{ form_start(edit_form) }}
+        <div class="row">
+            <!-- Nom -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(edit_form.nom, 'Nom', { 'label_attr': { 'class': 'form-label' } }) }}
+                {{ form_widget(edit_form.nom, { 'attr': { 'class': 'form-control', 'placeholder': 'Entrez le nom' } }) }}
+                {{ form_errors(edit_form.nom) }}
+            </div>
+
+            <!-- Capacité -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(edit_form.capacite, 'Capacité', { 'label_attr': { 'class': 'form-label' } }) }}
+                {{ form_widget(edit_form.capacite, { 'attr': { 'class': 'form-control', 'placeholder': 'Entrez la capacité' } }) }}
+                {{ form_errors(edit_form.capacite) }}
+            </div>
+
+            <!-- Contact Administratif -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(edit_form.contactAdministratif, 'Contact Administratif', { 'label_attr': { 'class': 'form-label' } }) }}
+                {{ form_widget(edit_form.contactAdministratif, { 'attr': { 'class': 'form-control', 'placeholder': 'Entrez le contact administratif' } }) }}
+                {{ form_errors(edit_form.contactAdministratif) }}
+            </div>
+
+            <!-- Horaires d'ouverture -->
+            <div class="col-md-6 mb-3">
+                {{ form_label(edit_form.horairesOuverture, 'Horaires d\'ouverture', { 'label_attr': { 'class': 'form-label' } }) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {% for key, choice in edit_form.horairesOuverture %}
+                            {% if loop.index0 < (edit_form.horairesOuverture|length / 2) %}
+                                <div class="form-check">
+                                    {{ form_widget(choice, { 'attr': { 'class': 'form-check-input' } }) }}
+                                    {{ form_label(choice, null, { 'label_attr': { 'class': 'form-check-label' } }) }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        {% for key, choice in edit_form.horairesOuverture %}
+                            {% if loop.index0 >= (edit_form.horairesOuverture|length / 2) %}
+                                <div class="form-check">
+                                    {{ form_widget(choice, { 'attr': { 'class': 'form-check-input' } }) }}
+                                    {{ form_label(choice, null, { 'label_attr': { 'class': 'form-check-label' } }) }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {{ form_errors(edit_form.horairesOuverture) }}
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            {{ form_label(edit_form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
+            {{ form_widget(edit_form.description, { 'attr': { 'class': 'form-control', 'rows': 5, 'placeholder': 'Ajoutez une description' } }) }}
+            {{ form_errors(edit_form.description) }}
+        </div>
+
+        <!-- Boutons -->
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="bx bx-save"></i> Enregistrer
+            </button>
+            <a href="{{ path('app_bibliotheque_index') }}" class="btn btn-outline-secondary ms-2">
+                <i class="bx bx-x"></i> Annuler
+            </a>
+        </div>
+        {{ form_end(edit_form) }}
+    </div>
+</div>
+{% endblock %}

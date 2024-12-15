@@ -1,0 +1,203 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<!-- Flash Messages -->
+{% for label, messages in app.flashes %}
+    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+<!-- Card Bibliothèques -->
+<div class="card shadow-lg mt-4 border-0 rounded-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Toutes les Bibliothèques</h5>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addBibliothequeModal">
+            <i class="bx bx-book"></i> Ajouter une Bibliothèque
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Capacité</th>
+                    <th>Contact</th>
+                    <th>Disponibilité</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for bibliotheque in bibliotheques %}
+                <tr>
+                    <td>{{ bibliotheque.id }}</td>
+                    <td>{{ bibliotheque.nom }}</td>
+                    <td>{{ bibliotheque.capacite }}</td>
+                    <td>{{ bibliotheque.contactAdministratif }}</td>
+                    <td>
+                        {% if bibliotheque.horairesOuverture is not empty %}
+                            {{ bibliotheque.horairesOuverture }}
+                        {% else %}
+                            Pas d'horaires définis
+                        {% endif %}
+                    </td>
+                   <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ path('app_bibliotheque_show', {'id': bibliotheque.id}) }}" class="dropdown-item text-dark">
+                                    <i class="bx bx-show"></i> Voir
+                                </a>
+                                <a type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#editBibliothequeModal-{{ bibliotheque.id }}">
+                                    <i class="bx bx-edit-alt"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_bibliotheque_delete', {'id': bibliotheque.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ bibliotheque.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bx bx-trash me-1"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-muted">Aucune bibliothèque trouvée</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Ajouter Bibliothèque -->
+<div class="modal fade" id="addBibliothequeModal" tabindex="-1" aria-labelledby="addBibliothequeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addBibliothequeModalLabel">Ajouter une Bibliothèque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form) }}
+                <div class="mb-3">
+                    {{ form_label(form.nom) }}
+                    {{ form_widget(form.nom, { 'attr': { 'class': 'form-control' } }) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.capacite) }}
+                    {{ form_widget(form.capacite, { 'attr': { 'class': 'form-control' } }) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.contactAdministratif) }}
+                    {{ form_widget(form.contactAdministratif, { 'attr': { 'class': 'form-control' } }) }}
+                </div>
+                <div class="mb-4">
+                    {{ form_label(form.horairesOuverture) }}
+                    <div class="row ps-2">
+                        <div class="col-md-6">
+                            {% for key, choice in form.horairesOuverture %}
+                                {% if loop.index0 < (form.horairesOuverture|length / 2) %}
+                                    <div class="form-check mb-2">
+                                        {{ form_widget(choice, { 'attr': { 'class': 'form-check-input' } }) }}
+                                        {{ form_label(choice, null, { 'label_attr': { 'class': 'form-check-label' } }) }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {% for key, choice in form.horairesOuverture %}
+                                {% if loop.index0 >= (form.horairesOuverture|length / 2) %}
+                                    <div class="form-check mb-2">
+                                        {{ form_widget(choice, { 'attr': { 'class': 'form-check-input' } }) }}
+                                        {{ form_label(choice, null, { 'label_attr': { 'class': 'form-check-label' } }) }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'rows': 3 } }) }}
+                </div>
+                <div class="modal-footer pt-3 border-top">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier Bibliothèque -->
+{% for bibliotheque in bibliotheques %}
+<div class="modal fade" id="editBibliothequeModal-{{ bibliotheque.id }}" tabindex="-1" aria-labelledby="editBibliothequeModalLabel-{{ bibliotheque.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editBibliothequeModalLabel-{{ bibliotheque.id }}">Modifier la bibliothèque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form_edit[bibliotheque.id]) }}
+                <div class="mb-3">
+                    {{ form_label(form_edit[bibliotheque.id].nom) }}
+                    {{ form_widget(form_edit[bibliotheque.id].nom, { 'attr': { 'class': 'form-control' } }) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form_edit[bibliotheque.id].capacite) }}
+                    {{ form_widget(form_edit[bibliotheque.id].capacite, { 'attr': { 'class': 'form-control' } }) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form_edit[bibliotheque.id].contactAdministratif) }}
+                    {{ form_widget(form_edit[bibliotheque.id].contactAdministratif, { 'attr': { 'class': 'form-control' } }) }}
+                </div>
+                <div class="mb-4">
+                    {{ form_label(form_edit[bibliotheque.id].horairesOuverture) }}
+                    <div class="row ps-2">
+                        <div class="col-md-6">
+                            {% for key, choice in form_edit[bibliotheque.id].horairesOuverture %}
+                                {% if loop.index0 < (form_edit[bibliotheque.id].horairesOuverture|length / 2) %}
+                                    <div class="form-check mb-2">
+                                        {{ form_widget(choice, { 'attr': { 'class': 'form-check-input' } }) }}
+                                        {{ form_label(choice, null, { 'label_attr': { 'class': 'form-check-label' } }) }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {% for key, choice in form_edit[bibliotheque.id].horairesOuverture %}
+                                {% if loop.index0 >= (form_edit[bibliotheque.id].horairesOuverture|length / 2) %}
+                                    <div class="form-check mb-2">
+                                        {{ form_widget(choice, { 'attr': { 'class': 'form-check-input' } }) }}
+                                        {{ form_label(choice, null, { 'label_attr': { 'class': 'form-check-label' } }) }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form_edit[bibliotheque.id].description) }}
+                    {{ form_widget(form_edit[bibliotheque.id].description, { 'attr': { 'class': 'form-control', 'rows': 3 } }) }}
+                </div>
+                <div class="modal-footer pt-3 border-top">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </div>
+                {{ form_end(form_edit[bibliotheque.id]) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
