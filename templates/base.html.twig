@@ -42,6 +42,7 @@
 <script src="{{ asset('js/video.js') }}"></script>
 <script src="{{ asset('js/slick-slider.js') }}"></script>
 <script src="{{ asset('js/custom.js') }}"></script>
+<script src="{{ asset('js/crud.js') }}"></script>
 
 <script>
     $(document).ready(function() {
@@ -141,6 +142,48 @@
             toastInstance.hide();
         }, 5000);
     }
+
+
+
+        $(document).ready(function() {
+        $('.nav li:first').addClass('active');
+
+        var showSection = function(section, isAnimate) {
+        var direction = section.replace(/#/, ''),
+        reqSection = $('.section').filter('[data-section="' + direction + '"]'),
+        reqSectionPos = reqSection.offset().top - $('.header-sticky').outerHeight();
+
+        if (isAnimate) {
+        $('html, body').animate({ scrollTop: reqSectionPos }, 800);
+    } else {
+        $('html, body').scrollTop(reqSectionPos);
+    }
+    };
+
+        var checkSection = function() {
+        $('.section').each(function() {
+        var $this = $(this),
+        topEdge = $this.offset().top - 80,
+        bottomEdge = topEdge + $this.height(),
+        wScroll = $(window).scrollTop();
+
+        if (topEdge < wScroll && bottomEdge > wScroll) {
+        var currentId = $this.data('section'),
+        reqLink = $('a').filter('[href*="#' + currentId + '"]');
+        reqLink.closest('li').addClass('active').siblings().removeClass('active');
+    }
+    });
+    };
+
+        $('.main-menu, .responsive-menu, .scroll-to-section').on('click', 'a', function(e) {
+        e.preventDefault();
+        showSection($(this).attr('href'), true);
+    });
+
+        $(window).scroll(function() {
+        checkSection();
+    });
+    });
 </script>
 
 </body>

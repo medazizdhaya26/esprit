@@ -3,22 +3,31 @@
 namespace App\Controller;
 
 use App\Entity\Abonnement;
+use App\Entity\Chambre;
 use App\Entity\Evenement;
+use App\Entity\Notification;
 use App\Entity\Reservation;
+use App\Entity\ReservChambre;
 use App\Entity\SalleDeSport;
 use App\Entity\User;
 use App\Form\EvenementType;
 use App\Form\EventuserType;
+use App\Form\ReservChambreType;
+use App\Message\NewReservationNotificationMessage;
 use App\Repository\EvenementRepository;
+use App\Repository\FoyerRepository;
 use App\Repository\ProduitRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -376,6 +385,160 @@ class PageController extends AbstractController
             'produit' => $produit,
         ]);
     }
+
+    #[Route('/foyers', name: 'app_foyer_list')]
+    public function listFoyers(FoyerRepository $foyerRepository): Response
+    {
+        $foyers = $foyerRepository->findAll();
+
+        return $this->render('page/foyeruser/index.html.twig', [
+            'foyers' => $foyers,
+        ]);
+    }
+
+
+
+
+
+    #[Route('/foyers/{id}', name: 'app_foyer_details', methods: ['GET', 'POST'])]
+    public function foyerDetails(
+        FoyerRepository $repository,
+        EntityManagerInterface $entityManager,
+        Request $request,
+        MessageBusInterface $messageBus,
+        int $id
+    ): Response {
+        // Récupérer le foyer
+        $foyer = $repository->find($id);
+
+        if (!$foyer) {
+            throw $this->createNotFoundException('Foyer non trouvé.');
+        }
+
+        // Définir une description statique
+        $description = "Le foyer universitaire " . $foyer->getNomFoyer() . " offre des chambres simples et doubles. Il est situé à " . $foyer->getLieuFoyer() . ".";
+
+        // Création du formulaire de réservation
+        $reservation = new ReservChambre();
+        $reservation->setFoyer($foyer);
+        $form = $this->createForm(ReservChambreType::class, $reservation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                // Access chambre directly from the form data
+                $chambreId = $request->get('reserv_chambre')['chambre'];
+                $chambre = $entityManager->getRepository(Chambre::class)->find($chambreId);
+
+                if (!$chambre) {
+                    // Handle case where chambre is not found
+                    $this->addFlash('error', 'Chambre non trouvée.');
+                    return $this->redirectToRoute('app_foyer_details', ['id' => $id]);
+                }
+
+                // Set the chambre in the reservation entity
+                $reservation->setChambre($chambre);
+
+                // Persist the reservation
+                $entityManager->persist($reservation);
+                $entityManager->flush();
+
+                // notification
+                $message = new NewReservationNotificationMessage(
+                    $reservation->getId(),
+                );
+                $messageBus->dispatch($message);
+
+                $this->addFlash('success', 'Votre réservation a été enregistrée avec succès.');
+
+                return $this->redirectToRoute('app_foyer_details', ['id' => $id]);
+            } catch (\Exception $e) {
+                // Handle any exception that occurs during the process
+                $this->addFlash('error', 'Une erreur est survenue : ' . $e->getMessage());
+                return $this->redirectToRoute('app_foyer_details', ['id' => $id]);
+            }
+        }
+
+        // Rendu de la vue avec le formulaire
+        return $this->render('page/foyeruser/foyeruser_details.html.twig', [
+            'foyer' => $foyer,
+            'description' => $description,
+            'reservationForm' => $form->createView(),
+        ]);
+    }
+
+
+    #[Route('/foyers/{id}/chambres', name: 'app_foyer_chambres', methods: ['GET'])]
+    public function getChambresByType(FoyerRepository $foyerRepository, Request $request, int $id): JsonResponse
+    {
+        $foyer = $foyerRepository->find($id);
+
+        if (!$foyer) {
+            return new JsonResponse(['error' => 'Foyer not found'], 404);
+        }
+
+        $type = $request->query->get('type');
+        if (!in_array($type, ['single', 'double'], true)) {
+            return new JsonResponse(['error' => 'Invalid type'], 400);
+        }
+
+        $chambres = $foyer->getChambres()->filter(function ($chambre) use ($type) {
+            return $chambre->getType() === $type && $chambre->isEstDisponible();
+        });
+
+        $chambresData = $chambres->map(function ($chambre) {
+            return [
+                'id' => $chambre->getId(),
+                'nom' => $chambre->getNumeroChambre(),
+            ];
+        })->toArray();
+
+        return new JsonResponse($chambresData);
+    }
+
+    #[Route('/dashboared/api/notifications', name: 'notifications', options : ['expose' => true])]
+    public function notificationJson(ManagerRegistry $doctrine): JsonResponse
+    {
+        $currentUser = $this->getUser();
+
+        $notifications = $doctrine->getRepository(Notification::class)->findBy(
+            ['idUser' => $currentUser->getId(), 'isRead' => 0]);
+
+        $notificationArray = [];
+        foreach ($notifications as $notification) {
+            $notificationArray[] = [
+                'id' => $notification->getId(),
+                'message' => $notification->getMessage(),
+                'type' => $notification->getType(),
+                'idType' => $notification->getIdType(),
+            ];
+        }
+
+        return new JsonResponse($notificationArray);
+    }
+
+    #[Route('/dashboared/api/mark-as-read-notification/{notificationId}', name: 'mark.as.read.notification', options : ['expose' => true])]
+    public function markAsReadNotification(ManagerRegistry $doctrine, $notificationId): JsonResponse
+    {
+        $em = $doctrine->getManager();
+        $currentUser = $this->getUser();
+        $notification = $doctrine->getRepository(Notification::class)->findOneBy([
+            'id' => $notificationId,
+            'idUser' => $currentUser->getId(),
+        ]);
+        $notification->setRead(true);
+        $em->persist($notification);
+        $em->flush();
+
+        return new JsonResponse(['success' => 'Notification As Reader successfully'], Response::HTTP_OK);
+    }
+
+
+
+
+
+
+
 
 
 
