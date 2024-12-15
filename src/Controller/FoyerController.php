@@ -55,7 +55,6 @@ final class FoyerController extends AbstractController
                 $newFoyer->setNombreChambre($newFoyer->getNombreChambresSingle() + $newFoyer->getNombreChambresDouble());
                 $entityManager->persist($newFoyer);
                 $entityManager->flush();
-                $this->addFlash('success', 'Foyer ajouté avec succès!');
                 return $this->redirectToRoute('app_foyer_index');
             }
         }

@@ -56,6 +56,38 @@
                     </a>
                 </li>
 
+                <!-- Gestion Bibliothèques -->
+
+                <li class="menu-item menu-gestion-bibliotheques">
+                    <a href="#" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-folder"></i>
+                        <div class="menu-header-text">Gestion des Bibliothèques</div>
+                    </a>
+                    <ul class="submenu">
+                        <li class="menu-item menu-bibliotheque">
+                            <a href="{{ path('app_bibliotheque_index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-library"></i>
+                                <div>Bibliothèque</div>
+                            </a>
+                        </li>
+                        <li class="menu-item menu-livre">
+                            <a href="{{ path('app_livre_index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-book"></i>
+                                <div>Livre</div>
+                            </a>
+                        </li>
+                        <li class="menu-item menu-bibliothecaire">
+                            <a href="{{ path('app_bibliothecaire_index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-user"></i>
+                                <div>Bibliothécaire</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
+
+
                 <!-- Students -->
                 <li class="menu-item {{ app.request.attributes.get('_route') == 'app_etudiant_index' ? 'active' : '' }}">
                     <a href="{{ path('app_etudiant_index') }}" class="menu-link">
@@ -121,29 +153,29 @@
                         </ul>
                     </div>
                 </li>
+
                 <li class="menu-item">
                     <a href="{{ path('app_foyer_index') }}" class="menu-link ">
                         <i class="menu-icon tf-icons bx bx-layout"></i>
-                        <div data-i18n="Layouts">Foyer   </div>
+                        <div data-i18n="Layouts">Foyer</div>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="{{ path('app_chambre_index') }}" class="menu-link ">
                         <i class="menu-icon tf-icons bx bx-layout"></i>
-                        <div data-i18n="Layouts">Chambre   </div>
+                        <div data-i18n="Layouts">Chambre</div>
                     </a>
                 </li>
+
                 <li class="menu-item">
                     <a href="{{ path('app_reservation_index') }}" class="menu-link ">
                         <i class="menu-icon tf-icons bx bx-layout"></i>
-                        <div data-i18n="Layouts">Reservation Chambre   </div>
+                        <div data-i18n="Layouts">Reservation Chambre</div>
                     </a>
                 </li>
-
-
             </ul>
         </aside>
-
         <!-- Layout container -->
         <div class="layout-page">
 
@@ -261,7 +293,280 @@
         </div>
     </div>
 </div>
+<style>
+    /* Styles de base pour le menu */
+    .menu-item {
+        margin: 10px 0;
+        transition: all 0.7s ease;
+    }
 
+    .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #6c757d;
+        transition: background-color 0.7s ease, color 0.7s ease, transform 0.7s ease;
+    }
+
+    /* Effet de survol avec légère translation */
+    .menu-link:hover {
+        transform: translateX(5px);
+    }
+
+    /* Couleurs spécifiques pour les icônes */
+    .menu-gestion-bibliotheques .menu-icon {
+        color: #8a2be2; /* Violet */
+    }
+
+    /* Animation des icônes */
+    .menu-link:hover .menu-icon {
+        transform: rotate(20deg);
+    }
+
+    /* Effet de survol pour chaque section */
+    .menu-item.menu-gestion-bibliotheques:hover .menu-link {
+        background-color: rgba(138, 43, 226, 0.7); /* Violet clair intermédiaire */
+        color: #8a2be2; /* Contraste violet foncé pour le texte */
+    }
+
+    /* Arrière-plans personnalisés (optionnel) */
+    .menu-gestion-bibliotheques:hover {
+        background-color: rgba(138, 43, 226, 0.3); /* Violet */
+        background-image: url('');
+        background-size: cover;
+    }
+
+    /* Sous-menu styling */
+    .submenu {
+        margin-left: 20px; /* Décalage pour indiquer qu'il s'agit d'un sous-menu */
+        padding-left: 10px;
+        border-left: 2px solid #e0e0e0; /* Ligne visuelle pour le sous-menu */
+    }
+
+    .submenu .menu-item {
+        margin: 5px 0;
+        transition: all 0.3s ease;
+    }
+
+    .menu-item > .submenu {
+        display: none; /* Masquer par défaut */
+    }
+
+    .menu-item:hover > .submenu {
+        display: block; /* Afficher lors du survol */
+    }
+
+    /* Gestion des catégories (non cliquables) */
+    .menu-header {
+        font-size: 14px;
+        font-weight: bold;
+        color: #495057; /* Couleur sombre pour différencier */
+        text-transform: uppercase;
+        margin: 15px 0 5px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0; /* Séparation visuelle */
+    }
+
+    /* Style du lien pour les sous-menus */
+    .submenu .menu-link {
+        color: #6c757d;
+        padding: 5px 10px;
+        border-radius: 3px;
+    }
+
+    .submenu .menu-link:hover {
+        background-color: #f8f9fa; /* Couleur de fond clair */
+        color: #495057; /* Couleur active */
+    }
+
+
+
+         /* Styles de base pour le menu */
+     .menu-item {
+         margin: 10px 0;
+         transition: all 0.7s ease;
+     }
+
+    .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #6c757d;
+        transition: background-color 0.7s ease, color 0.7s ease, transform 0.7s ease;
+    }
+
+    /* Effet de survol avec légère translation */
+    .menu-link:hover {
+        transform: translateX(5px);
+    }
+
+    /* Couleurs spécifiques pour les icônes */
+    .menu-bibliotheque .menu-icon {
+        color: #8a2be2; /* Violet */
+    }
+
+    .menu-livre .menu-icon {
+        color: #ff6347; /* Rouge */
+    }
+
+    .menu-bibliothecaire .menu-icon {
+        color: #4682b4; /* Bleu/Gris */
+    }
+
+    /* Animation des icônes */
+    .menu-link:hover .menu-icon {
+        transform: rotate(20deg);
+    }
+
+    /* Effet de survol pour chaque section */
+    .menu-item.menu-bibliotheque:hover .menu-link {
+        background-color: rgba(138, 43, 226, 0.7); /* Violet clair intermédiaire */
+        color: #8a2be2; /* Contraste violet foncé pour le texte */
+    }
+
+    .menu-item.menu-livre:hover .menu-link {
+        background-color: rgba(255, 99, 71, 0.7); /* Rouge clair intermédiaire */
+        color: #ff6347; /* Contraste rouge foncé pour le texte */
+    }
+
+    .menu-item.menu-bibliothecaire:hover .menu-link {
+        background-color: rgba(70, 130, 180, 0.7); /* Bleu clair intermédiaire */
+        color: #4682b4; /* Contraste bleu foncé pour le texte */
+    }
+
+    /* Arrière-plans personnalisés (optionnel) */
+    .menu-bibliotheque:hover {
+        background-color: rgba(138, 43, 226, 0.3); /* Violet */
+        background-image: url('path/to/library-pattern.png');
+        background-size: cover;
+    }
+
+    .menu-livre:hover {
+        background-color: rgba(255, 99, 71, 0.3); /* Rouge */
+        background-image: url('path/to/book-pattern.png');
+        background-size: cover;
+    }
+
+    .menu-bibliothecaire:hover {
+        background-color: rgba(70, 130, 180, 0.3); /* Bleu/Gris */
+        background-image: url('path/to/librarian-pattern.png');
+        background-size: cover;
+    }
+
+    /* Sous-menu styling */
+    .submenu {
+        margin-left: 20px; /* Décalage pour indiquer qu'il s'agit d'un sous-menu */
+        padding-left: 10px;
+        border-left: 2px solid #e0e0e0; /* Ligne visuelle pour le sous-menu */
+    }
+
+    .submenu .menu-item {
+        margin: 5px 0;
+        transition: all 0.3s ease;
+    }
+
+    .menu-item > .submenu {
+        display: none; /* Masquer par défaut */
+    }
+
+    .menu-item:hover > .submenu {
+        display: block; /* Afficher lors du survol */
+    }
+
+    /* Gestion des catégories (non cliquables) */
+    .menu-header {
+        font-size: 14px;
+        font-weight: bold;
+        color: #495057; /* Couleur sombre pour différencier */
+        text-transform: uppercase;
+        margin: 15px 0 5px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0; /* Séparation visuelle */
+    }
+
+    /* Style du lien pour les sous-menus */
+    .submenu .menu-link {
+        color: #6c757d;
+        padding: 5px 10px;
+        border-radius: 3px;
+    }
+
+    .submenu .menu-link:hover {
+        background-color: #f8f9fa; /* Couleur de fond clair */
+        color: #495057; /* Couleur active */
+    }
+
+    /* Masquer le message de bienvenue au départ */
+    .welcome-message {
+        display: none;
+        opacity: 0;
+        animation: fadeIn 2s ease-in forwards;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .welcome-text {
+        font-size: 24px;
+        color: #6c757d;
+        font-weight: bold;
+        animation: textAnimation 2s ease-out infinite alternate;
+    }
+
+    .sub-text {
+        font-size: 16px;
+        color: #495057;
+        margin-top: 10px;
+        animation: textSlide 2s ease-out infinite alternate;
+    }
+
+    /* Animation de fade-in */
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            display: block; /* Affiche l'élément */
+        }
+    }
+
+    /* Animation pour le texte */
+    @keyframes textAnimation {
+        0% {
+            color: #6c757d;
+            transform: scale(1);
+        }
+        100% {
+            color: #007bff;
+            transform: scale(1.2);
+        }
+    }
+
+    /* Animation du texte qui glisse */
+    @keyframes textSlide {
+        0% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(10px);
+        }
+    }
+
+    /* Effet de survol pour la section de bienvenue */
+    .menu-item.menu-welcome:hover .menu-link {
+        background-color: rgba(0, 123, 255, 0.1); /* Un léger bleu de fond */
+        color: #007bff;
+        transform: translateX(10px);
+        transition: all 0.3s ease;
+    }
+
+    /* Icone animée */
+    .menu-item.menu-welcome:hover .menu-icon {
+        transform: rotate(360deg);
+        transition: transform 0.7s ease;
+    }
+</style>
 <script src="{{ asset('vendor1/bootstrap/js/bootstrap.min.js') }}"></script>
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5/css/bootstrap.min.css" rel="stylesheet">
