@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre Panier{% endblock %}
+
+{% block body %}
+<div class="panier-container">
+    <h1>Votre Panier</h1>
+
+    {% if panier is not empty %}
+        <div class="panier-details">
+            {% for panierProduit in panier.testPanierProduits %}
+                <div class="panier-item">
+                    <div class="produit-image">
+                        <img src="{{ asset('uploads/images/' ~ panierProduit.produit.image) }}" alt="{{ panierProduit.produit.nom }}">
+                    </div>
+                    <div class="produit-details">
+                        <h2>{{ panierProduit.produit.nom }}</h2>
+                        <p class="prix">{{ panierProduit.produit.prix }} €</p>
+                        
+                        <div class="quantite">
+                            <a href="{{ path('panier_ajouter_quantite', {'id': panierProduit.produit.id}) }}" class="increment-arrow">+</a>
+                            <span>{{ panierProduit.quantite }}</span>
+                            <a href="{{ path('panier_reduire_quantite', {'id': panierProduit.produit.id}) }}" class="decrement-arrow">-</a>
+                        </div>
+
+                        <p class="prix-total">
+                            Prix Total : {{ panierProduit.produit.prix * panierProduit.quantite }} €
+                        </p>
+
+                        <form action="{{ path('panier_supprimer', {'id': panierProduit.produit.id}) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn-supprimer">❌ Retirer</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="panier-total">
+            <h3>Total : {{ panier.prixTotal }} €</h3>
+        </div>
+
+        <!-- Ajouter un bouton de commande -->
+        <div class="commande-btn">
+            <a href="{{ path('app_commande') }}" class="btn-commander">Commander</a>
+        </div>
+
+    {% else %}
+        <p class="panier-vide">Votre panier est vide.</p>
+    {% endif %}
+</div>
+
+<style>
+    .panier-container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #f9fafc;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        font-family: 'Arial', sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2.8rem;
+        margin-bottom: 40px;
+        color: #2c3e50;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .panier-item {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 20px;
+        align-items: center;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #e1e8ed;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .panier-item:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Image du produit */
+    .produit-image {
+        text-align: center;
+    }
+
+    .produit-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Détails du produit */
+    .produit-details {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .produit-details h2 {
+        font-size: 1.6rem;
+        color: #34495e;
+        margin: 0;
+    }
+
+    .produit-details .prix {
+        font-size: 1.4rem;
+        color: #16a085;
+        font-weight: bold;
+    }
+
+    /* Section quantité */
+    .quantite {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .increment-arrow,
+    .decrement-arrow {
+        padding: 10px;
+        background-color: #ecf0f1;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 1.4rem;
+        cursor: pointer;
+        color: #34495e;
+        transition: background-color 0.2s ease;
+    }
+
+    .increment-arrow:hover,
+    .decrement-arrow:hover {
+        background-color: #d5dadd;
+    }
+
+    .quantite span {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #34495e;
+    }
+
+    /* Prix total */
+    .prix-total {
+        font-size: 1.2rem;
+        color: #34495e;
+        font-weight: 500;
+    }
+
+    /* Bouton de suppression */
+    .btn-supprimer {
+        background-color: #e74c3c;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-supprimer:hover {
+        background-color: #c0392b;
+    }
+
+    /* Total du panier */
+    .panier-total {
+        text-align: right;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #34495e;
+        margin-top: 20px;
+    }
+
+    .panier-total h3 {
+        font-size: 1.8rem;
+        color: #16a085;
+    }
+
+    /* Message panier vide */
+    .panier-vide {
+        text-align: center;
+        font-size: 1.4rem;
+        color: #95a5a6;
+    }
+
+    /* Bouton commander */
+    .btn-commander {
+        display: inline-block;
+        background-color: #27ae60;
+        color: white;
+        padding: 15px 25px;
+        font-size: 1.5rem;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-commander:hover {
+        background-color: #2ecc71;
+    }
+
+    .commande-btn {
+        text-align: center;
+    }
+</style>
+
+{% endblock %}

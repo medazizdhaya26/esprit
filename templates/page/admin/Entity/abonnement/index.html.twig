@@ -1,0 +1,22 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block body %}
+    <div class="abonnement-list">
+        <h1>Mes Abonnements</h1>
+
+        {% if abonnements is not empty %}
+            <ul>
+                {% for abonnement in abonnements %}
+                    <li>
+                        <strong>{{ abonnement.nom }}</strong><br>
+                        <p>{{ abonnement.description }}</p>
+                        <p><strong>Date de début :</strong> {{ abonnement.dateDebut|date('d/m/Y') }}</p>
+                        <p><strong>Date de fin :</strong> {{ abonnement.dateFin|date('d/m/Y') }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Vous n'avez aucun abonnement actif.</p>
+        {% endif %}
+    </div>
+{% endblock %}

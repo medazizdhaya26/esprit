@@ -35,19 +35,20 @@
                     </div>
 
                     <div class="row grid">
+                        {% if recommendations is  empty %}
                         {% for event in events %}
                             {% if  event.valider %}
                                 <div class="col-lg-4 templatemo-item-col all">
                                     <div class="meeting-item">
                                         <div class="thumb">
-                                            <div class="price"><span>{{ event.typeEvents }}</span></div>
+                                            <div class="price"><span>{{ event.typeevents }}</span></div>
                                             <a href="{{ path('app_event_details', {id: event.id}) }}">
                                                 <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
                                             </a>
                                         </div>
                                         <div class="down-content">
                                             <div class="date">
-                                                <h6>{{ event.dateDebut|date('M') }} <span>{{ event.dateDebut|date('d') }}</span></h6>
+                                                <h6>{{ event.datedebut|date('M') }} <span>{{ event.datedebut|date('d') }}</span></h6>
                                             </div>                                            <a href="{{ path('app_event_details', {id: event.id}) }}">
                                                 <h4>{{ event.titreevets }}</h4>
                                             </a>
@@ -56,7 +57,36 @@
                                     </div>
                                 </div>
                             {% endif %}
+
                         {% endfor %}
+                        {% else %}
+
+                            {% for event in recommendations %}
+                                {% if  event.valider %}
+                                    <div class="col-lg-4 templatemo-item-col all">
+                                        <div class="meeting-item">
+                                            <div class="thumb">
+                                                <div class="price"><span>{{ event.type_events }}</span></div>
+                                                <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                    <img src="{{ asset(event.image ? 'photo_dir/' ~ event.image : 'images/meeting-02.jpg') }}" alt="Event Image">
+                                                </a>
+                                            </div>
+                                            <div class="down-content">
+                                                <div class="date">
+                                                    <h6>{{ event.date_debut|date('M') }} <span>{{ event.date_debut|date('d') }}</span></h6>
+                                                </div>                                            <a href="{{ path('app_event_details', {id: event.id}) }}">
+                                                    <h4>{{ event.titreevets }}</h4>
+                                                </a>
+                                                <p class="description">{{ event.description }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            {% endfor %}
+
+                        {% endif %}
+
                     </div>
                 </div>
             </div>

@@ -1,0 +1,59 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block title %}Salle de Sport{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="display-4 text-center">Salle de Sport</h1>
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary">
+            <h5 class="card-title mb-0 text-white">Détails de la salle</h5>
+        </div>
+        
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ salle.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ salle.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Capacité</th>
+                        <td>{{ salle.capacite }}</td>
+                    </tr>
+                    <tr>
+                        <th>Équipements</th>
+                        <td>
+                            {% if salle.equipements is not empty %}
+                                <ul>
+                                    {% for equipement in salle.equipements %}
+                                        <li>{{ equipement }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                Aucun équipement
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Horaires d'ouverture</th>
+                        <td>{{ salle.horairesOuverture }}</td>
+                    </tr>
+                    <tr>
+                        <th>Contact Administratif</th>
+                        <td>{{ salle.contactAdministratif }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-center">
+            <a href="{{ path('app_salle_de_sport_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Ajouter un entraîneur -->
+    <div class="row mb-4">
+        <div class="col-md-12 text-end">
+            <!-- Bouton qui ouvre la modal -->
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addSalleModal">
+                <i class="bx bx-user-plus"></i> Ajouter un entraîneur
+            </button>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <!-- Formulaire de recherche -->
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <input type="text" name="specialite" value="{{ searchSpecialite }}" class="form-control" placeholder="Rechercher par spécialité">
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="salle" value="{{ searchSalle }}" class="form-control" placeholder="Rechercher par salle">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bx bx-search"></i> Rechercher
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    
+    <!-- Tableau des entraîneurs -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Spécialité</th>
+                    <th>Salle de Sport</th>
+                    <th>Description</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entraineur in entraineurs %}
+                    <tr>
+                        <td>{{ entraineur.id }}</td>
+                        <td>{{ entraineur.nom }}</td>
+                        <td>{{ entraineur.prenom }}</td>
+                        <td>{{ entraineur.email }}</td>
+                        <td>{{ entraineur.specialite }}</td>
+                        <td>{{ entraineur.salle ? entraineur.salle.nom : 'No Salle' }}</td>
+                        <td>{{ entraineur.description }}</td>
+                        <td>
+                            {% if entraineur.image %}
+                                <img src="{{ asset('uploads/images/' ~ entraineur.image) }}" alt="Image de {{ entraineur.nom }}" style="width: 50px; height: 50px; object-fit: cover;">
+                            {% else %}
+                                <span class="text-muted">Pas d'image</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="{{ path('app_entraineur_show', {'id': entraineur.id}) }}" class="dropdown-item text-dark">
+                                        <i class="bx bx-show"></i> Show
+                                    </a>
+                                    <a type="button" class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editTrainerModal-{{ entraineur.id }}">
+                                        <i class="bx bx-edit-alt"></i> Edit
+                                    </a>
+                                    <form method="post" action="{{ path('app_entraineur_delete', {'id': entraineur.id}) }}" style="display:inline;">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entraineur.id) }}">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bx bx-trash me-1"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    
+                <!-- Modal pour modifier l'entraîneur -->
+<div class="modal fade" id="editTrainerModal-{{ entraineur.id }}" tabindex="-1" aria-labelledby="editTrainerModalLabel-{{ entraineur.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="editTrainerModalLabel-{{ entraineur.id }}">Modifier l'Entraîneur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form_edit[entraineur.id]) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form_edit[entraineur.id].nom, 'Nom') }}
+                        {{ form_widget(form_edit[entraineur.id].nom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nom'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form_edit[entraineur.id].prenom, 'Prénom') }}
+                        {{ form_widget(form_edit[entraineur.id].prenom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le prénom'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form_edit[entraineur.id].email, 'Email') }}
+                        {{ form_widget(form_edit[entraineur.id].email, {'attr': {'class': 'form-control', 'placeholder': 'Entrez l\'email'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form_edit[entraineur.id].telephone, 'Téléphone') }}
+                        {{ form_widget(form_edit[entraineur.id].telephone, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le téléphone'}}) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form_edit[entraineur.id].adresse, 'Adresse') }}
+                        {{ form_widget(form_edit[entraineur.id].adresse, {'attr': {'class': 'form-control', 'placeholder': 'Entrez l\'adresse'}}) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form_edit[entraineur.id].dateNaissance, 'Date de naissance') }}
+                        {{ form_widget(form_edit[entraineur.id].dateNaissance, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form_edit[entraineur.id].qualifications, 'Qualifications') }}
+                        {{ form_widget(form_edit[entraineur.id].qualifications, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form_edit[entraineur.id].specialite, 'Spécialité') }}
+                        {{ form_widget(form_edit[entraineur.id].specialite, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <!-- Ajout des champs Description, Salle de Sport et Image -->
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form_edit[entraineur.id].description, 'Description') }}
+                        {{ form_widget(form_edit[entraineur.id].description, {'attr': {'class': 'form-control', 'placeholder': 'Entrez une description'}}) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form_edit[entraineur.id].salle, 'Salle de Sport') }}
+                        {{ form_widget(form_edit[entraineur.id].salle, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form_edit[entraineur.id].image, 'Télécharger une image (fichiers JPG ou PNG)') }}
+                        {{ form_widget(form_edit[entraineur.id].image, {'attr': {'class': 'form-control-file'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark text-black-100" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+            </div>
+            {{ form_end(form_edit[entraineur.id]) }}
+        </div>
+    </div>
+</div>
+
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="text-muted text-center">Aucun entraîneur trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal pour Ajouter un Entraîneur -->
+<div class="modal fade" id="addSalleModal" tabindex="-1" aria-labelledby="addSalleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="addSalleModalLabel" style="font-weight: bold; color: white;">Ajouter un Entraîneur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.nom, 'Nom') }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le nom'}}) }}
+                        {{ form_errors(form.nom) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.prenom, 'Prénom') }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le prénom'}}) }}
+                        {{ form_errors(form.prenom) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.email, 'Email') }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Entrez l\'email'}}) }}
+                        {{ form_errors(form.email) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.telephone, 'Numéro de téléphone') }}
+                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Entrez le téléphone'}}) }}
+                        {{ form_errors(form.telephone) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.adresse, 'Adresse') }}
+                        {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Entrez l\'adresse'}}) }}
+                        {{ form_errors(form.adresse) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.dateNaissance, 'Date de naissance') }}
+                        {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.dateNaissance) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.qualifications, 'Qualifications') }}
+                        {{ form_widget(form.qualifications, {'attr': {'class': 'form-control', 'placeholder': 'Entrez les qualifications'}}) }}
+                        {{ form_errors(form.qualifications) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.specialite, 'Spécialité') }}
+                        {{ form_widget(form.specialite, {'attr': {'class': 'form-control', 'placeholder': 'Entrez la spécialité'}}) }}
+                        {{ form_errors(form.specialite) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.description, 'Description') }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Entrez une description'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.salle, 'Salle') }}
+                        {{ form_widget(form.salle, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.salle) }}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.image, 'Télécharger une image (fichiers JPG ou PNG)') }}
+                        {{ form_widget(form.image, {'attr': {'class': 'form-control-file'}}) }}
+                        {{ form_errors(form.image) }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark text-black-100" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

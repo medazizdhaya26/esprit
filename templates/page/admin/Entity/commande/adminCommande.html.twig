@@ -1,0 +1,100 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+    {% if commande is defined %}
+        <div class="card shadow-lg rounded border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <h1 class="h5 mb-0 text-white">Modifier la Commande</h1>
+            </div>
+            <div class="card-body p-5">
+                <form method="post">
+                    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                    <div class="mb-4">
+                        <label class="form-label text-muted">Informations de la commande</label>
+                        <div class="row">
+                            {% for field in form %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        {{ form_label(field, null, {'attr': {'class': 'form-label'}}) }}
+                                        <div class="input-group">
+                                            {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-4 py-2 shadow">Enregistrer les modifications</button>
+                        <a href="{{ path('admin_commandes') }}" class="btn btn-outline-secondary btn-lg px-4 py-2 shadow">Retour à la liste</a>
+                    </div>
+                    {{ form_end(form) }}
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="card shadow-lg rounded border-0 mb-4">
+            <div class="card-header" style="background-color: #f8f9fa; color: #343a40;">
+                <h3 class="h5 mb-0 text-danger font-weight-bold">Liste des Commandes</h3>
+
+
+
+            </div>
+            <div class="card-body p-4">
+                <table class="table table-hover table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Utilisateur</th>
+                            <th>Status</th>
+                            <th>Date de création</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for commande in commandes %}
+                            {% if commande.status != 'Livrée' %}
+                            <tr>
+
+                                <td>{{ commande.id }}</td>
+                                <td>{{ commande.user.email }}</td>
+                                <td>
+                                    {% if commande.status == 'Livrée' %}
+                                        <span class="badge bg-success">{{ commande.status }}</span>
+                                    {% elseif commande.status == 'En cours' %}
+                                        <span class="badge bg-warning text-dark">{{ commande.status }}</span>
+                                    {% elseif commande.status == 'Annulée' %}
+                                        <span class="badge bg-danger">{{ commande.status }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ commande.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ commande.dateCreation|date('d/m/Y H:i') }}</td>
+                                <td>{{ commande.total }} €</td>
+
+                                <td>
+                                    <a href="{{ path('admin_commande_edit', { id: commande.id }) }}" class="text-dark d-flex justify-content-center align-items-center">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    
+                                    
+                                    
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <style>
+            a.text-warning:hover {
+    color: #12110f; /* Couleur de l'icône au survol (jaune plus prononcé) */
+}
+
+        </style>
+    {% endif %}
+{% endblock %}

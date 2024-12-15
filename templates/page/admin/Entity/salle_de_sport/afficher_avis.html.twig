@@ -1,0 +1,144 @@
+{# afficher_avis.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <!-- Titre principal -->
+        <h1 class="text-center mb-4 title">Avis pour {{ salle.nom }}</h1>
+
+        <!-- Affichage de la moyenne des évaluations -->
+        <div class="mt-4 mb-4">
+            <h3 class="text-center average-rating">
+                Moyenne des évaluations : 
+                <span class="badge {{ moyenne > 0 ? 'badge-custom-red' : 'badge-secondary' }}">
+                    {{ moyenne > 0 ? moyenne : 'Aucune évaluation' }}
+                </span>
+            </h3>
+            <!-- Affichage des étoiles pour la moyenne -->
+            {% if moyenne > 0 %}
+                <div class="d-flex justify-content-center stars">
+                    {% for i in 1..5 %}
+                        <i class="fa {{ i <= moyenne ? 'fa-star' : 'fa-star-o' }}"></i>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Section des commentaires des utilisateurs -->
+        <div class="mt-5">
+            <h3 class="text-center comments-title">Commentaires des utilisateurs</h3>
+
+            {% if avis|length > 0 %}
+                <ul class="list-group">
+                    {% for commentaire in avis %}
+                        <li class="list-group-item comment-card">
+                            <!-- Section de l'en-tête du commentaire avec avatar -->
+                            <div class="d-flex align-items-center">
+                                <!-- Avatar (photo de profil) -->
+                                <div class="avatar mr-3">
+                                    <img src="{{ asset(app.user.image ? 'photo_dir/' ~ app.user.image : 'images/user_avatar.png') }}" alt="User Avatar" class="rounded-circle" style="width: 40px; height: 40px;">
+                                </div>
+                                <div>
+                                    <strong>{{ commentaire.pseudo }}</strong>
+                                </div>
+                            </div>
+                            <!-- Affichage des étoiles pour la note -->
+                            <div class="stars mt-2">
+                                {% for i in 1..5 %}
+                                    <i class="fa {{ i <= commentaire.note ? 'fa-star' : 'fa-star-o' }}"></i>
+                                {% endfor %}
+                            </div>
+                            <!-- Commentaire -->
+                            <p class="mt-2">{{ commentaire.commentaire }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">Aucun commentaire pour cette salle pour le moment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Bouton pour ajouter un avis -->
+        <div class="mt-5 text-center">
+            <a href="{{ path('salle_avis', {'id': salle.id}) }}" class="btn btn-primary btn-lg">Ajouter un avis</a>
+        </div>
+    </div>
+
+    <style>
+        /* Style général */
+        body {
+            background-color: #f5f5f5;
+        }
+
+        /* Titre principal */
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #343a40;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Moyenne d'évaluation */
+        .average-rating {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .badge-custom-red {
+            background-color: #ff4d4d; /* Rouge clair */
+            color: white;
+        }
+
+        .stars {
+            font-size: 1.5rem;
+            color: gold;
+        }
+
+        /* Style des cartes de commentaire */
+        .comment-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Avatar */
+        .avatar {
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Bouton principal */
+        .btn-primary {
+            background-color: #b70808;
+            border-color: #b70808;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #900606;
+            border-color: #900606;
+        }
+
+        .mt-5 {
+            padding-top: 80px;
+        }
+    </style>
+{% endblock %}

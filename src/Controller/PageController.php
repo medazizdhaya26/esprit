@@ -2,20 +2,27 @@
 
 namespace App\Controller;
 
+use App\Entity\Abonnement;
 use App\Entity\Evenement;
 use App\Entity\Reservation;
+use App\Entity\SalleDeSport;
 use App\Entity\User;
 use App\Form\EvenementType;
 use App\Form\EventuserType;
 use App\Repository\EvenementRepository;
+use App\Repository\ProduitRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PageController extends AbstractController
 {
@@ -54,6 +61,7 @@ class PageController extends AbstractController
     {
         $user = $this->getUser();
 
+        // Fetch user reservations
         $reservations = $entityManager->getRepository(Reservation::class)->findBy([
             'email' => $user->getUserIdentifier()
         ]);
@@ -91,26 +99,34 @@ class PageController extends AbstractController
             return $a->getDateDebut() <=> $b->getDateDebut();
         });
 
+        // Fetch user's abonnement
+        $abonnement = $entityManager->getRepository(Abonnement::class)->findOneBy([
+            'etudiant' => $user->getId() // Assuming 'user' is a foreign key in Abonnement
+        ]);
+
         return $this->render('page/user/profile.html.twig', [
             'validatedEvents' => $validatedEvents,
             'nonValidatedEvents' => $nonValidatedEvents,
             'reservedEvents' => $reservedEvents,
+            'abonnement' => $abonnement,
         ]);
     }
 
+
+
     #[Route('/Events/', name: 'app_page_event')]
-    public function event(Request $request, EntityManagerInterface $entityManager): Response
+    public function event(Request $request, EntityManagerInterface $entityManager, HttpClientInterface $client): Response
     {
         $user = $this->getUser();
 
         $event = new Evenement();
         $event->setValider(false);
+
         if ($user) {
             $event->setResponsableId($user->getId());
             $event->setResponsableEmail($user->getUserIdentifier());
         }
 
-        // Create and handle the form
         $form = $this->createForm(EvenementType::class, $event);
         $form->handleRequest($request);
 
@@ -123,24 +139,40 @@ class PageController extends AbstractController
             return $this->redirectToRoute('app_page_event');
         }
 
-        $currentDate = new DateTime();
+        $events = [];
+        $recommendations = [];
 
-        // Query events that are validated and have an end date greater than today
-        $events = $entityManager->getRepository(Evenement::class)->createQueryBuilder('e')
-            ->where('e.valider = :valider')
-            ->andWhere('e.date_fin > :currentDate')
-            ->setParameter('valider', true)
-            ->setParameter('currentDate', $currentDate)
-            ->getQuery()
-            ->getResult();
+        if ($user && $user->getUserIdentifier() !== null) {
+            try {
+                $response = $client->request('GET', 'http://127.0.0.1:5000/get_recommendations', [
+                    'query' => ['email' => $user->getUserIdentifier()]
+                ]);
+                $recommendations = $response->toArray();
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Error fetching recommendations from Flask API.');
+                $recommendations = [];
+            }
+        }
 
+        // If recommendations are empty or the user is logged in, fetch events from the database
+        if (empty($recommendations)) {
+            $currentDate = new DateTime();
+
+            $events = $entityManager->getRepository(Evenement::class)->createQueryBuilder('e')
+                ->where('e.valider = :valider')
+                ->andWhere('e.date_fin > :currentDate')
+                ->setParameter('valider', true)
+                ->setParameter('currentDate', $currentDate)
+                ->getQuery()
+                ->getResult();
+        }
 
         return $this->render('page/user/events/index.html.twig', [
             'events' => $events,
             'form' => $form->createView(),
+            'recommendations' => $recommendations // Fixed variable name for recommendations
         ]);
     }
-
 
     #[Route('/Club/', name: 'app_page_club')]
     public function club(): Response
@@ -222,6 +254,127 @@ class PageController extends AbstractController
     public function events(): Response
     {
         return $this->render('page/admin/Entity/evenement/index.html.twig');
+    }
+
+    #[Route('/salles', name: 'app_page_salle')]
+    public function salles(EntityManagerInterface $entityManager): Response
+    {
+        // Récupérer toutes les salles de sport
+        $salles = $entityManager->getRepository(SalleDeSport::class)->findAll();
+
+        return $this->render('page/admin/Entity/salle_de_sport/salleDeSport.html.twig', [
+            'salles' => $salles,
+        ]);
+    }
+
+
+
+
+
+    #[Route('/salles/{id}', name: 'app_salle_details', methods: ['GET'])]
+    public function details(int $id, EntityManagerInterface $em): Response
+    {
+        $salle = $em->getRepository(SalleDeSport::class)->find($id);
+
+        if (!$salle) {
+            throw $this->createNotFoundException('La salle de sport demandée n\'existe pas.');
+        }
+
+        return $this->render('page/admin/Entity/salle_de_sport/salleDeSport_details.html.twig', [
+            'salle' => $salle,
+        ]);
+    }
+
+
+
+
+
+    #[Route('/salles/{id}/abonnement', name: 'app_salle_abonnement')]
+    public function abonnement(Request $request, SalleDeSport $salle): Response
+    {
+        $form = $this->createFormBuilder()
+            ->add('nom', TextType::class, ['label' => 'Nom'])
+            ->add('prenom', TextType::class, ['label' => 'Prénom'])
+            ->add('age', IntegerType::class, ['label' => 'Âge'])
+            ->add('sexe', ChoiceType::class, [
+                'label' => 'Sexe',
+                'choices' => [
+                    'Homme' => 'Homme',
+                    'Femme' => 'Femme',
+
+                ],
+            ])
+            ->add('centresInteret', TextType::class, ['label' => 'Centres d\'intérêt en sport'])
+            ->add('typeAbonnement', ChoiceType::class, [
+                'label' => 'Type d\'abonnement',
+                'choices' => [
+                    'Mensuel' => 'Mensuel',
+                    'Trimestriel' => 'Trimestriel',
+                    'Annuel' => 'Annuel',
+                ],
+                'attr' => ['class' => 'type-abonnement'],
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $prix = 0;
+
+            switch ($data['typeAbonnement']) {
+                case 'Mensuel':
+                    $prix = 50;
+                    break;
+                case 'Trimestriel':
+                    $prix = 150;
+                    break;
+                case 'Annuel':
+                    $prix = 500;
+                    break;
+            }
+            $this->addFlash('success', 'Votre abonnement a été enregistré avec succès.');
+            return $this->redirectToRoute('app_page_salle');
+        }
+
+        return $this->render('page/admin/Entity/salle_de_sport/abonnement.html.twig', [
+            'form' => $form->createView(),
+           'salle' => $salle,
+        ]);
+    }
+
+
+
+
+
+    #[Route('/produits', name: 'app_produit_index', methods: ['GET'])]
+    public function indexProduit(ProduitRepository $produitRepository): Response
+    {
+        $produits = $produitRepository->findAll();
+
+        return $this->render('page/admin/Entity/produit/Produit.html.twig', [
+            'produits' => $produits,
+        ]);
+    }
+
+    /**
+     * Affiche les détails d'un produit spécifique.
+     *
+     * @param int $id
+     * @param ProduitRepository $produitRepository
+     * @return Response
+     */
+    #[Route('/produit/{id}', name: 'produit_details', methods: ['GET'])]
+    public function detailsProduit(int $id, ProduitRepository $produitRepository): Response
+    {
+        $produit = $produitRepository->find($id);
+
+        if (!$produit) {
+            throw $this->createNotFoundException("Le produit avec l'ID $id n'existe pas.");
+        }
+
+        return $this->render('page/admin/Entity/produit/details.html.twig', [
+            'produit' => $produit,
+        ]);
     }
 
 

@@ -190,17 +190,34 @@
                                         <tbody>
                                         <tr>
                                             <th scope="row">Name</th>
-                                            <td>  {{ app.user.prenom }}   {{ app.user.nom }}
-                                            </td>
+                                            <td>{{ app.user.prenom }} {{ app.user.nom }}</td>
                                         </tr><!-- end tr -->
-                                        <tr>
-                                            <th scope="row">Location</th>
-                                            <td></td>
-                                        </tr><!-- end tr -->
-
                                         <tr>
                                             <th scope="row">Class</th>
-                                            <td>{{ app.user.filiere }}</td>
+                                            <td>{{ app.user.filiere ? app.user.filiere : 'Not specified' }}</td>
+                                        </tr><!-- end tr -->
+                                        <tr>
+                                            <th scope="row">Email</th>
+                                            <td>{{ app.user.email }}</td>
+                                        </tr><!-- end tr -->
+                                        <tr>
+                                            <th scope="row">Subscription</th>
+                                            <td>
+                                                {% if abonnement %}
+                                                    <p><strong>Type:</strong> {{ abonnement.nom }}</p>
+                                                    <p><strong>Price:</strong> {{ abonnement.prix }} DT</p>
+                                                    <p><strong>Start Date:</strong> {{ abonnement.dateDebut|date('d/m/Y') }}</p>
+                                                    <p><strong>End Date:</strong> {{ abonnement.dateFin|date('d/m/Y') }}</p>
+
+                                                    {% if abonnement.dateFin < "now"|date('Y-m-d H:i:s') %}
+                                                        <span style="color: red; font-weight: bold;">Expired</span>
+                                                    {% else %}
+                                                        <span style="color: green; font-weight: bold;">Active</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    No subscription
+                                                {% endif %}
+                                            </td>
                                         </tr><!-- end tr -->
                                         </tbody><!-- end tbody -->
                                     </table><!-- end table -->

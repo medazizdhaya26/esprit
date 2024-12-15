@@ -1,0 +1,55 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block title %}Détails du Produit{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="display-4 text-center">Détails du Produit</h1>
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary">
+            <h5 class="card-title mb-0 text-white">Détails du produit</h5>
+        </div>
+        
+        <div class="card-body">
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ produit.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ produit.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ produit.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Prix</th>
+                        <td>{{ produit.prix }} dt</td>
+                    </tr>
+                    <tr>
+                        <th>Stock</th>
+                        <td>{{ produit.stock }}</td>
+                    </tr>
+                    <tr>
+                        <th>Image</th>
+                        <td>
+                            {% if produit.image %}
+                                <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.nom }}" class="img-fluid" width="200">
+                            {% else %}
+                                Aucune image disponible
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-center">
+            <a href="{{ path('admin_produit_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

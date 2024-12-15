@@ -16,6 +16,24 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+
+    /**
+     * Find users by email and/or nom (case-insensitive search)
+     */
+
+
+    public function findBySearchTerm(string $term): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb->where('u.nom LIKE :term')
+            ->orWhere('u.email LIKE :term')
+            ->setParameter('term', '%' . $term . '%');
+
+        return $qb->getQuery()->getResult();
+    }
+
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

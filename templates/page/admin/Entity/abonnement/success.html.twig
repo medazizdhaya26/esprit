@@ -1,0 +1,116 @@
+
+
+{% block body %}
+    <div class="success-page">
+        <div class="success-container">
+            <div class="icon-container">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 class="title">Félicitations !</h1>
+            <p class="message">Votre abonnement a été enregistré avec succès. Vous êtes prêt à profiter de toutes nos installations.</p>
+
+            <div class="cta-buttons">
+                <a href="{{ path('app_page_salle') }}" class="btn btn-primary">Voir mes abonnements</a>
+                <a href="{{ path('app_homepage') }}" class="btn btn-secondary">Retour à l'accueil</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .success-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .success-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .icon-container {
+            font-size: 5rem;
+            color: #4CAF50;  /* Icône verte */
+            margin-bottom: 20px;
+            animation: bounce 1.5s ease infinite;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2E3A59;  /* Couleur bleu-gris pour le titre */
+            margin-bottom: 15px;
+        }
+
+        .message {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+            border-left: 4px solid #D32F2F; /* Ligne rouge douce sur le côté */
+            padding-left: 15px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #D32F2F;  /* Rouge doux pour le bouton principal */
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #c2185b; /* Rouge plus foncé au survol */
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;  /* Gris clair */
+            color: #333;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #bdbdbd;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+{% endblock %}

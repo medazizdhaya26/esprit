@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Etudiant;
 use App\Form\EtudiantType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,6 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/dashboared/Student')]
  class EtudiantController extends AbstractController
 {
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
     #[Route('/', name: 'app_etudiant_index', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
@@ -112,4 +120,33 @@ use Symfony\Component\Routing\Annotation\Route;
 
         return $this->redirectToRoute('app_etudiant_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/ajax/user/search', name: 'ajax_user_search', methods: ['GET'])]
+
+
+    public function search(Request $request, UserRepository $userRepository): JsonResponse
+    {
+        $searchTerm = $request->query->get('term', '');
+
+        $users = $userRepository->findBySearchTerm($searchTerm);
+
+        // Log or Debug
+        if (empty($users)) {
+            return new JsonResponse(['error' => 'No users found'], 404);
+        }
+
+        $data = [];
+        foreach ($users as $user) {
+            $data[] = [
+                'id' => $user->getId(),
+                'nom' => $user->getNom(),
+                'prenom' => $user->getPrenom(),
+                'email' => $user->getEmail(),
+                'telephone' => $user->getTelephone(),
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+
 }

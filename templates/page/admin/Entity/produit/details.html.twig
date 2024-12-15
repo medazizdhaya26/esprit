@@ -1,0 +1,300 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="produit-details-container">
+        <div class="produit-details">
+            <!-- Image du produit agrandie, occupant la moitié de la page -->
+            <div class="produit-image">
+                <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.nom }}" class="produit-photo" id="produitImage">
+            </div>
+
+            <!-- Détails du produit à droite -->
+            <div class="produit-info">
+                <h1 class="produit-name">{{ produit.nom }}</h1>
+                <p class="prix">{{ produit.prix }} dt</p>
+
+                <div class="description-container">
+                    <strong>Description :</strong>
+                    <p class="description">{{ produit.description }}</p>
+                </div>
+
+                <!-- Bouton Ajouter au panier -->
+                <div class="ajouter-panier-container">
+                    <form action="{{ path('panier_ajouter_quantite', {'id': produit.id}) }}" method="POST">
+                        <button type="submit" class="btn-ajouter-panier">Ajouter au panier</button>
+                    </form>
+                </div>
+
+                <!-- Bouton retour à la liste -->
+                <div class="retour-liste-container">
+                    <a href="{{ path('app_produit_index') }}" class="btn-retour-liste">Retour à la liste</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for image enlargement -->
+    <div id="imageModal" class="modal">
+        <span class="close" id="closeModal">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <div id="caption"></div>
+    </div>
+
+    <style>
+        /* Style général de la page */
+        .produit-details-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px;
+            margin-top: 40px;
+            background: linear-gradient(135deg, #ffffff, #f8f8f8);
+            min-height: 100vh;
+        }
+
+        .produit-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1300px;
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .produit-details:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .produit-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 40px;
+            margin-bottom: 20px;
+        }
+
+        .produit-photo {
+            width: 100%;
+            max-width: 600px;
+            max-height: 600px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .produit-photo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .produit-info {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-left: 20px;
+            min-width: 300px;
+        }
+
+        .produit-name {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+            transition: color 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .produit-name:hover {
+            color: #2980b9;
+        }
+
+        .prix {
+            font-size: 2rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: left;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .description-container {
+            margin-bottom: 20px;
+        }
+
+        .description {
+            color: #777;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            text-align: justify;
+        }
+
+        .ajouter-panier-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn-ajouter-panier {
+            padding: 16px 32px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: #c00808;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-ajouter-panier:hover {
+            background-color: #932525;
+            transform: translateY(-4px);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-ajouter-panier:active {
+            transform: scale(0.98);
+        }
+
+        /* Nouveau bouton retour à la liste */
+        .retour-liste-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn-retour-liste {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-retour-liste:hover {
+            background-color: #2980b9;
+            transform: translateY(-4px);
+        }
+
+        .btn-retour-liste:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 900px;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        #caption {
+            text-align: center;
+            color: #ccc;
+            font-size: 1.2rem;
+            padding: 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .produit-details {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .produit-image {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .produit-info {
+                padding-left: 0;
+            }
+
+            .produit-name {
+                font-size: 2.2rem;
+            }
+
+            .prix {
+                font-size: 1.8rem;
+            }
+
+            .description {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        // JavaScript to open and close modal
+        var modal = document.getElementById("imageModal");
+        var img = document.getElementById("produitImage");
+        var modalImg = document.getElementById("modalImage");
+        var captionText = document.getElementById("caption");
+        var span = document.getElementById("closeModal");
+
+        img.onclick = function() {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+            captionText.innerHTML = this.alt;
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal if clicked outside the image
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+{% endblock %}

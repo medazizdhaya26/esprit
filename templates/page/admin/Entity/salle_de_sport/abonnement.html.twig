@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="heading-page header-text" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>S'abonner à {{ salle.nom }}</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="meetings-page" id="meetings">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                        <div class="form-group">
+                            {{ form_label(form.nom, 'Nom') }}
+                            {{ form_widget(form.nom, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.prenom, 'Prénom') }}
+                            {{ form_widget(form.prenom, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.age, 'Âge') }}
+                            {{ form_widget(form.age, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.sexe, 'Sexe') }}
+                            {{ form_widget(form.sexe, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.centresInteret, 'Centres d\'intérêt en sport') }}
+                            {{ form_widget(form.centresInteret, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.typeAbonnement, 'Type d\'abonnement') }}
+                            {{ form_widget(form.typeAbonnement, { 'attr': {'class': 'form-control abonnement-type'} }) }}
+                        </div>
+                        <div class="form-group prix-group" style="display: none;">
+                            <label for="prix">Prix</label>
+                            <input type="text" id="prix" class="form-control" readonly>
+                        </div>
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">S'abonner</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .form-container {
+        background: #f9f9f9;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        background-color: #97031c;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    .btn-primary:hover {
+        background-color: #c70202;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeAbonnement = document.querySelector('.abonnement-type');
+        const prixGroup = document.querySelector('.prix-group');
+        const prixField = document.querySelector('#prix');
+
+        typeAbonnement.addEventListener('change', function () {
+            let prix = '';
+            switch (typeAbonnement.value) {
+                case 'Mensuel':
+                    prix = '50 DT';
+                    break;
+                case 'Trimestriel':
+                    prix = '150 DT';
+                    break;
+                case 'Annuel':
+                    prix = '500 DT';
+                    break;
+            }
+
+            if (prix) {
+                prixField.value = prix;
+                prixGroup.style.display = 'block';
+            } else {
+                prixGroup.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

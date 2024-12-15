@@ -30,10 +30,8 @@ class RegistrationController extends AbstractController
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function apiRegister(Request $request): JsonResponse
     {
-        // Decode JSON data
         $data = json_decode($request->getContent(), true);
 
-        // Validate JSON structure
         if (!$data) {
             return new JsonResponse(['error' => 'Invalid JSON'], JsonResponse::HTTP_BAD_REQUEST);
         }

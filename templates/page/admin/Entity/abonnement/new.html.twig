@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="heading-page header-text" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>S'abonner à un abonnement sportif</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="abonnement-page" id="abonnement">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="form-container">
+                        {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+
+                        <!-- Type d'abonnement (liste déroulante) -->
+                        <div class="form-group">
+                            {{ form_label(form.nom, 'Type d\'abonnement') }}
+                            {{ form_widget(form.nom, { 'attr': {'class': 'form-control abonnement-type'} }) }}
+                            <div class="form-error">
+                                {{ form_errors(form.nom) }}
+                            </div>
+                        </div>
+
+                        <!-- Prix -->
+                        <div class="form-group">
+                            {{ form_label(form.prix, 'Prix') }}
+                            {{ form_widget(form.prix, { 'attr': {'class': 'form-control', 'readonly': true} }) }}
+                            <div class="form-error">
+                                {{ form_errors(form.prix) }}
+                            </div>
+                        </div>
+
+                        <!-- Date de début -->
+                        <div class="form-group">
+                            {{ form_label(form.dateDebut, 'Date de début') }}
+                            {{ form_widget(form.dateDebut, { 'attr': {'class': 'form-control'} }) }}
+                            <div class="form-error">
+                                {{ form_errors(form.dateDebut) }}
+                            </div>
+                        </div>
+
+                        <!-- Date de fin -->
+                        <div class="form-group">
+                            {{ form_label(form.dateFin, 'Date de fin') }}
+                            {{ form_widget(form.dateFin, { 'attr': {'class': 'form-control'} }) }}
+                            <div class="form-error">
+                                {{ form_errors(form.dateFin) }}
+                            </div>
+                        </div>
+
+                        <!-- Bouton de soumission -->
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">S'abonner</button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .form-container {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .form-error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .btn-primary {
+            background-color: #97031c;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            background-color: #c70202;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const abonnementType = document.querySelector('.abonnement-type');
+            const prixField = document.querySelector('#{{ form.prix.vars.id }}');
+
+            abonnementType.addEventListener('change', function () {
+                let prix = '';
+                switch (abonnementType.value) {
+                    case 'Mensuel':
+                        prix = '50 DT';
+                        break;
+                    case 'Trimestriel':
+                        prix = '150 DT';
+                        break;
+                    case 'Annuel':
+                        prix = '500 DT';
+                        break;
+                    default:
+                        prix = '';
+                }
+
+                prixField.value = prix;
+            });
+        });
+    </script>
+{% endblock %}

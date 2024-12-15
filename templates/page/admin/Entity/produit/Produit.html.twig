@@ -1,0 +1,190 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits{% endblock %}
+
+{% block body %}
+    <!-- Carousel d'images déroulantes en haut de la page -->
+    <div id="productCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000"> <!-- Ajout de l'intervalle de 4 secondes -->
+        <div class="carousel-inner">
+            <!-- Image 1 -->
+            <div class="carousel-item active">
+                <img src="{{ asset('uploads/images/image1.jpg') }}" class="d-block w-100" alt="Image 1">
+            </div>
+            <!-- Image 2 -->
+            <div class="carousel-item">
+                <img src="{{ asset('uploads/images/image2.jpg') }}" class="d-block w-100" alt="Image 2">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Précédent</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suivant</span>
+        </button>
+    </div>
+
+    <h1 class="text-center mb-5">Découvrez notre sélection de produits!</h1>
+
+    <div class="produits">
+        {% for produit in produits %}
+            <div class="produit">
+                <div class="produit-image">
+                    <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.nom }}" class="produit-photo" data-bs-toggle="modal" data-bs-target="#imageModal{{ produit.id }}">
+                </div>
+                <div class="produit-info">
+                    <h3 class="produit-title">{{ produit.nom }}</h3>
+                    <p class="produit-prix"><strong>Prix :</strong> {{ produit.prix }} €</p>
+                    <p class="produit-description">
+                        <strong>Description :</strong>
+                        <span class="description-truncated">{{ produit.description|slice(0, 20) ~ '...' }}</span>
+                    </p>
+                    <a href="{{ path('produit_details', {'id': produit.id}) }}" class="btn btn-link details-link">Voir plus</a>
+                </div>
+            </div>
+
+            <!-- Modale pour l'affichage en grande taille de l'image -->
+            <div class="modal fade" id="imageModal{{ produit.id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ produit.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="imageModalLabel{{ produit.id }}">{{ produit.nom }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="{{ produit.nom }}" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun produit disponible.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Styles pour le carousel */
+        .carousel-inner img {
+            max-height: 400px; /* Hauteur des images du carousel */
+            object-fit: cover; /* Pour que l'image remplisse toute la largeur */
+        }
+
+        /* Styles de la page produits */
+        .produits {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .produit {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .produit:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .produit-image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .produit-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        .produit-image:hover .produit-photo {
+            transform: scale(1.1);
+        }
+
+        .produit-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .produit-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: capitalize;
+        }
+
+        .produit-prix {
+            font-size: 1.1rem;
+            color: #e74c3c;
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        .produit-description {
+            font-size: 1rem;
+            color: #777;
+            margin: 10px 0;
+        }
+
+        .description-truncated {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .details-link {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        .details-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        /* Style de la modale */
+        .modal-body img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .produits {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .produit-image {
+                height: 200px;
+            }
+
+            .produit-info {
+                padding: 15px;
+            }
+        }
+    </style>
+
+{% endblock %}

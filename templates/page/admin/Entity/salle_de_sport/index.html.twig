@@ -1,0 +1,263 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block content %}
+<div class="card shadow-lg mt-4 border-0 rounded-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Toutes les Salles de Sport</h5>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#addSalleModal">
+            <i class="bx bx-building-house"></i> Ajouter une Salle de Sport
+        </button>
+    </div>
+
+    <div class="table-border-bottom-0">
+        <table class="table table-hover table-striped text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Horaire d'ouverture</th>
+                    <th>Capacité</th>
+                    <th>Contact administratif</th>
+                    <th>Image</th>
+
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for salle in salles %}
+                <tr>
+                    <td>{{ salle.id }}</td>
+                    <td>{{ salle.nom }}</td>
+                    <td>{{ salle.horairesOuverture}}</td>
+                    <td>{{ salle.capacite }}</td>
+
+                    <td>{{ salle.contactAdministratif }}</td>
+                    <td>
+                        <img src="{{ asset('uploads/images/' ~ salle.image) }}" alt="{{ salle.nom }}" class="img-fluid img-thumbnail">
+                    </td>
+                    
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ path('app_salle_de_sport_show', {'id': salle.id}) }}" class="dropdown-item text-dark">
+                                    <i class="bx bx-show"></i> Voir
+                                </a>
+                                <a class="dropdown-item text-dark" data-bs-toggle="modal" data-bs-target="#editSalleModal-{{ salle.id }}">
+                                    <i class="bx bx-edit-alt"></i> Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_salle_de_sport_delete', {'id': salle.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ salle.id) }}">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bx bx-trash me-1"></i> Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-muted">Aucun enregistrement trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Ajouter Salle de Sport -->
+<div class="modal fade" id="addSalleModal" tabindex="-1" aria-labelledby="addSalleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title text-white" id="addSalleModalLabel">Ajouter une Salle de Sport</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_label(form.nom) }}
+                        {{ form_widget(form.nom) }}
+                        {% if form.nom.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form.nom.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.capacite) }}
+                        {{ form_widget(form.capacite) }}
+                        {% if form.capacite.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form.capacite.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ form_label(form.equipements) }}</label>
+                        <div class="form-check">
+                            {% for choice in form.equipements %}
+                                <div class="form-check">
+                                    {{ form_widget(choice) }}
+                                    {{ form_label(choice) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.equipements.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form.equipements.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.horairesOuverture) }}
+                        {{ form_widget(form.horairesOuverture) }}
+                        {% if form.horairesOuverture.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form.horairesOuverture.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.contactAdministratif) }}
+                        {{ form_widget(form.contactAdministratif) }}
+                        {% if form.contactAdministratif.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form.contactAdministratif.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark text-black-100" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier Salle de Sport -->
+{% for salle in salles %}
+<div class="modal fade" id="editSalleModal-{{ salle.id }}" tabindex="-1" aria-labelledby="editSalleModalLabel-{{ salle.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editSalleModalLabel-{{ salle.id }}"  style>Modifier la Salle de Sport</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_start(form_edit[salle.id]) }}
+                    <div class="form-group">
+                        {{ form_label(form_edit[salle.id].nom) }}
+                        {{ form_widget(form_edit[salle.id].nom) }}
+                        {% if form_edit[salle.id].nom.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form_edit[salle.id].nom.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form_edit[salle.id].capacite) }}
+                        {{ form_widget(form_edit[salle.id].capacite) }}
+                        {% if form_edit[salle.id].capacite.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form_edit[salle.id].capacite.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ form_label(form_edit[salle.id].equipements) }}</label>
+                        <div class="form-check">
+                            {% for choice in form_edit[salle.id].equipements %}
+                                <div class="form-check">
+                                    {{ form_widget(choice) }}
+                                    {{ form_label(choice) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if form_edit[salle.id].equipements.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form_edit[salle.id].equipements.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form_edit[salle.id].horairesOuverture) }}
+                        {{ form_widget(form_edit[salle.id].horairesOuverture) }}
+                        {% if form_edit[salle.id].horairesOuverture.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form_edit[salle.id].horairesOuverture.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form_edit[salle.id].contactAdministratif) }}
+                        {{ form_widget(form_edit[salle.id].contactAdministratif) }}
+                        {% if form_edit[salle.id].contactAdministratif.vars.errors is not empty %}
+                            <div class="text-danger">
+                                {% for error in form_edit[salle.id].contactAdministratif.vars.errors %}
+                                    <p>{{ error.message }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark text-black-100" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn bg-primary text-white">Enregistrer</button>
+                    </div>
+
+                {{ form_end(form_edit[salle.id]) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Limite la taille des images dans la colonne */
+.img-thumbnail {
+    max-width: 100px;   /* Ajustez cette valeur selon la taille souhaitée */
+    max-height: 100px;  /* Ajustez cette valeur selon la taille souhaitée */
+    object-fit: cover;  /* Maintient l'aspect de l'image tout en remplissant la boîte */
+}
+
+.text-danger {
+    color: red;
+}
+</style>
+
+{% endfor %}
+
+{% endblock %}

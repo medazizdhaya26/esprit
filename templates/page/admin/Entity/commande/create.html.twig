@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="commande-container">
+        <h1>Passer votre commande</h1>
+
+        <div class="commande-form">
+            {{ form_start(form) }}
+                <div class="form-group">
+                    <label for="{{ form.adresse.vars.id }}">Adresse de livraison</label>
+                    {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.commentaire.vars.id }}">Commentaire</label>
+                    {{ form_widget(form.commentaire, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.mode_paiement.vars.id }}">Mode de paiement</label>
+                    {{ form_widget(form.mode_paiement, {'attr': {'class': 'form-control'}}) }}
+                </div>
+
+               
+
+                <div class="form-submit">
+                    <button type="submit" class="btn-commander">{{ form.submit.vars.label }}</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <style>
+        /* Container général */
+        .commande-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+            font-family: 'Arial', sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        /* Formulaire */
+        .commande-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Champs du formulaire */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-control {
+            padding: 14px;
+            font-size: 1.1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #27ae60;
+            box-shadow: 0 0 5px rgba(39, 174, 96, 0.5);
+        }
+
+        /* Bouton de soumission */
+        .form-submit {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-commander {
+            padding: 15px 35px;
+            background-color: #27ae60;
+            color: white;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-commander:hover {
+            background-color: #2ecc71;
+            transform: scale(1.05);
+        }
+
+        /* Responsivité */
+        @media (max-width: 768px) {
+            .commande-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .form-control {
+                font-size: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn-commander {
+                padding: 12px 28px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+{% endblock %}

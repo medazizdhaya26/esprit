@@ -1,0 +1,205 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="heading-page header-text" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="text-center">{{ salle.nom }}</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="meetings-page" id="meetings">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="meeting-single-item">
+                    <!-- Image de la salle -->
+                    <div class="thumb">
+                        <a href="{{ path('app_salle_details', {id: salle.id}) }}">
+                            <!-- Affichage de l'image associée à chaque salle -->
+                            <img src="{{ asset('uploads/images/' ~ (salle.image ? salle.image : 'salleDeSport.jpg')) }}" alt="{{ salle.nom }}" class="img-fluid salle-image">
+                        </a>
+                    </div>
+
+                    <!-- Contenu détaillé -->
+                    <div class="down-content">
+                        <div class="attribute">
+                            <strong class="attribute-title">Capacité:</strong>
+                            <span class="attribute-value">{{ salle.capacite }} personnes</span>
+                        </div>
+
+                        <div class="attribute">
+                            <strong class="attribute-title">Équipements:</strong>
+                            <div class="attribute-value">
+                                {% if salle.equipements|length > 0 %}
+                                    <ul class="equipment-list">
+                                        {% for equipement in salle.equipements %}
+                                            <li>{{ equipement }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Aucun équipement disponible</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="attribute">
+                            <strong class="attribute-title">Contact administratif:</strong>
+                            <span class="attribute-value">{{ salle.contactAdministratif }}</span>
+                        </div>
+
+                        <div class="attribute">
+                            <strong class="attribute-title">Horaire:</strong>
+                            <span class="attribute-value">{{ salle.horairesOuverture }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section des avis des utilisateurs -->
+                <div class="reviews-section mt-4">
+                    <h3>Avis des utilisateurs</h3>
+
+                    {% for avis in salle.avis %}
+                    
+                    {% endfor %}
+
+                    <p>Moyenne des évaluations: 
+                        {% if salle.avis|length > 0 %}
+                            {% set totalNotes = salle.avis|map(avis => avis.note)|reduce((acc, note) => acc + note, 0) %}
+                            {% set moyenneAvis = totalNotes / salle.avis|length %}
+                            {{ moyenneAvis }}
+                        {% else %}
+                            Aucune évaluation
+                        {% endif %}
+                    </p>
+                    
+
+                    <a href="{{ path('salle_avis', {'id': salle.id}) }}" class="btn-custom btn-primary">
+                        Ajouter un avis
+                    </a>
+                </div>
+
+                <!-- Boutons créatifs avec une disposition moderne -->
+                <div class="buttons-container">
+                    <div class="button-box">
+                        <a href="{{ path('app_abonnement_new', { id: salle.id }) }}" class="btn-custom btn-primary">
+                            <i class="fas fa-user-plus"></i> Devenir membre
+                        </a>
+                    </div>
+
+                    <div class="button-box">
+                        <a href="{{ path('app_salle_de_sport_entraineurs', { id: salle.id }) }}" class="btn-custom btn-info">
+                            <i class="fas fa-chalkboard-teacher"></i> Voir entraîneurs
+                        </a>
+                    </div>
+
+                    <div class="button-box">
+                        <a href="{{ path('app_page_salle') }}" class="btn-custom btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste des salles
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="footer mt-4">
+        <p>&copy; 2024 <strong>Esprit.tn</strong> - Tous droits réservés.</p>
+    </div>
+</section>
+
+<style>
+/* Conteneur des boutons */
+.buttons-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 30px;
+    gap: 20px; /* Espacement entre les boutons */
+}
+
+/* Chaque bouton */
+.button-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Style des boutons */
+.btn-custom {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+    transform: translateY(-5px); /* Animation légère pour le survol */
+}
+
+.btn-primary {
+    background-color: #aa1403;
+}
+
+.btn-primary:hover {
+    background-color: #6c0b00; 
+}
+
+.btn-info {
+    background-color: #6c757d;
+}
+
+.btn-info:hover {
+    background-color: #5a6268;
+}
+
+.btn-secondary {
+    background-color: #424242; 
+}
+
+.btn-secondary:hover {
+    background-color: #333333; /* Blanc cassé pour le survol */
+}
+
+/* Icônes des boutons */
+.btn-custom i {
+    margin-right: 10px; /* Espacement entre l'icône et le texte */
+    font-size: 18px; /* Taille des icônes */
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 30px;
+    color: #777;
+}
+
+/* Section des avis */
+.reviews-section {
+    margin-top: 30px;
+}
+
+.avis {
+    margin-bottom: 15px;
+}
+
+.avis p {
+    margin: 5px 0;
+}
+
+
+
+
+</style>
+
+{% endblock %}

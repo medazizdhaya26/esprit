@@ -9,8 +9,18 @@
                     <ul class="nav">
                         <li><a href="{{ path('app_homepage') }}" class="active">Accueil</a></li>
                         <li><a href="{{ path('app_page_event') }}">Événements</a></li>
-                        <li><a href="{{ path('app_page_club') }}" class="scroll-to-section">Clubs</a></li>
-                        <li><a href="#" class="scroll-to-section">Cours</a></li>
+                        <li class="has-sub">
+                            <a href="">Services</a>
+                            <ul class="sub-menu">
+                                <li><a href="">Foyers</a></li>
+                                <li><a href="{{ path('app_page_salle') }}">salle de sport</a></li>
+
+                                <li><a href="">bibliotheque</a></li>
+                                <li><a href="{{ path('app_produit_index') }}">boutique</a></li>
+
+                            </ul>
+                        </li>
+
                         <li><a href="{{ path('app_page_contact') }}">Contact</a></li>
 
                         <!-- User section -->
@@ -56,26 +66,26 @@
                     <div class="form-container1 sign-up-container1">
                         <form method="post" id="registrationForm">
                             <h1>Créer un Compte</h1>
-                            <div class="col-12 mb-1">
+                            <div class="col-12">
                                 <input type="text" name="prenom" class="form-control no-margin" placeholder="Votre Prénom" required />
                             </div>
-                            <div class="col-12 mb-3">
+                            <div class="col-12 ">
                                 <input type="text" name="nom" class="form-control no-margin" placeholder="Votre Nom" required />
                             </div>
-                            <div class="col-12 mb-3">
+                            <div class="col-12 ">
                                 <input type="email" name="email" class="form-control no-margin" placeholder="Votre Email" required />
                                 <div class="input-error text-danger" id="email-error" style="display: none;"></div>
                             </div>
-                            <div class="col-12 mb-3">
+                            <div class="col-12 ">
                                 <input type="text" name="telephone" class="form-control no-margin" placeholder="Numéro de téléphone" required />
                             </div>
-                            <div class="col-12 mb-3">
+                            <div class="col-12 ">
                                 <input type="date" name="birthday" class="form-control no-margin" placeholder="Date de Naissance" required />
                             </div>
-                            <div class="col-12 mb-3">
+                            <div class="col-12 ">
                                 <input type="password" name="password" class="form-control no-margin" placeholder="Mot de Passe" required />
                             </div>
-                            <div class="col-12 mb-3">
+                            <div class="col-12 ">
                                 <input type="password" name="password_confirmation" class="form-control no-margin" placeholder="Confirmer le Mot de Passe" required />
                             </div>
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -89,7 +99,7 @@
                                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                                 {% endif %}
 
-                                <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+                                <h1 class="h3  font-weight-normal">Please sign in</h1>
                                 <label for="inputEmail">Email</label>
                                 <input type="email" value="{{ last_username | default('')}}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
                                 <label for="inputPassword">Password</label>
@@ -124,10 +134,7 @@
 </div>
 
 <script>
-    document.getElementById('navbarDropdown').addEventListener('click', function() {
-        var dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="navbarDropdown"]');
-        dropdownMenu.classList.toggle('show');
-    });
+
     document.addEventListener("DOMContentLoaded", function () {
         const container1 = document.getElementById('container1');
         const signUpButton = document.getElementById('signUp');
@@ -219,6 +226,11 @@
             const errorElements = form.querySelectorAll(".input-error, .general-error");
             errorElements.forEach((el) => el.remove());
         }
+    });
+
+    document.getElementById('navbarDropdown').addEventListener('click', function() {
+        var dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="navbarDropdown"]');
+        dropdownMenu.classList.toggle('show');
     });
 </script>
 

@@ -1,0 +1,72 @@
+{% extends 'layout_dashboared.html.twig' %}
+
+{% block title %}Entraîneur{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="display-4 text-center" style="color: black;">Entraîneur</h1>
+
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0" style="font-weight: bold; color: white;">Détails de l'entraîneur</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td>{{ entraineur.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom</th>
+                            <td>{{ entraineur.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Prénom</th>
+                            <td>{{ entraineur.prenom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ entraineur.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Téléphone</th>
+                            <td>{{ entraineur.telephone }}</td>
+                        </tr>
+                        <tr>
+                            <th>Adresse</th>
+                            <td>{{ entraineur.adresse }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date de Naissance</th>
+                            <td>{{ entraineur.dateNaissance|date('d/m/Y') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Qualifications</th>
+                            <td>
+                                <ul>
+                                    {% for qualification in entraineur.qualifications %}
+                                        <li>{{ qualification }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Spécialité</th>
+                            <td>{{ entraineur.specialite }}</td>
+                        </tr>
+                   
+                        <!-- New row for Description -->
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ entraineur.description }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ path('app_entraineur_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

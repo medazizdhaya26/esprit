@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <section class="heading-page header-text" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h6>Explorez nos espaces sportifs</h6>
+                    <h2>Salles de sport</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="meetings-page" id="meetings">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="filters d-flex justify-content-between align-items-center">
+                        <ul class="d-inline-flex">
+                            <li data-filter="*" class="active">Nos salles de sport</li>
+                        </ul>
+                    </div>
+                </div7>
+            </div>
+
+            <!-- Sports Halls Items -->
+            <div class="row grid">
+                {% for salle in salles %}
+                    <div class="col-lg-4 templatemo-item-col all">
+                        <div class="meeting-item">
+                            <div class="thumb">
+                                <a href="{{ path('app_salle_details', {id: salle.id}) }}">
+                                    <!-- Image part: large area for the image -->
+                                    <img src="{{ asset('uploads/images/' ~ (salle.image ? salle.image : 'salleDeSport.jpg')) }}" alt="{{ salle.nom }}" class="img-fluid salle-image">
+                                </a>
+                            </div>
+                            <div class="down-content">
+                                <a href="{{ path('app_salle_details', {id: salle.id}) }}">
+                                    <h4>{{ salle.nom }}</h4>
+                                </a>
+                                <!-- Opening hours part: smaller section -->
+                                <p class="description">Horaire: {{ salle.horairesOuverture }}</p>
+                                <!-- Button to view details -->
+                                <a href="{{ path('app_salle_details', {id: salle.id}) }}" class="btn btn-danger mt-3">Voir les détails</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .meeting-item {
+            width: 100%;
+            max-width: 350px;
+            height: 450px; /* Increased height to accommodate the button */
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px auto;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .meeting-item .thumb {
+            width: 100%;
+            height: 60%; /* 60% for the image */
+        }
+
+        .meeting-item .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image scales properly */
+        }
+
+        .down-content {
+            padding: 10px;
+            height: 40%; /* 40% for the description and hours */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .down-content h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-align: center; /* Center the name */
+        }
+
+        .down-content p {
+            font-size: 14px;
+            color: #666;
+            text-align: center; /* Center the hours */
+        }
+
+        .description {
+            font-size: 14px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        /* Style for the default image if not provided */
+        .salle-image {
+            object-fit: cover;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #97031c;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px; /* Space above the button */
+        }
+
+        .btn:hover {
+            background-color: #c70202;
+        }
+
+        .btn:active {
+            background-color: #dd031c;
+        }
+    </style>
+
+{% endblock %}
