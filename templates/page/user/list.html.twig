@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <section class="heading-page header-text" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h6>Discover Our Libraries</h6>
+                    <h2>Bibliothèque List</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="meetings-page" id="meetings">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row grid">
+                        {% if bibliotheques is empty %}
+                            <p class="text-muted text-center">Aucune bibliothèque trouvée.</p>
+                        {% else %}
+                            {% for bibliotheque in bibliotheques %}
+                                <div class="col-lg-4 templatemo-item-col all">
+                                    <div class="meeting-item">
+                                        <div class="thumb">
+                                            <div class="price"><span>{{ bibliotheque.nom }}</span></div>
+{#
+                                            <a href="{{ path('show_bibliotheque', {id: bibliotheque.id}) }}">
+#}
+                                                <img src="{{ asset('images/meeting-03.jpg') }}" alt="Bibliothèque Image">
+                                            </a>
+                                        </div>
+                                        <div class="down-content">
+                                            <div class="date">
+                                            </div>
+                                            <a href="{{ path('show_bibliotheque', { id: bibliotheque.id }) }}">
+                                                {{ bibliotheque.nom }}
+                                            </a>
+                                            <p class="description">
+                                                Capacité: <strong>{{ bibliotheque.capacite }}</strong>
+                                            </p>
+                                            <p class="description">
+                                                Horaires: <strong>{{ bibliotheque.horairesOuverture }}</strong>
+                                            </p>
+                                            <p class="description">
+                                                Contact: <strong>{{ bibliotheque.contactAdministratif }}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .description {
+            display: -webkit-box; /* Needed for WebKit-based browsers */
+            -webkit-box-orient: vertical; /* Vertical text layout */
+            overflow: hidden; /* Hide overflowing content */
+            text-overflow: ellipsis; /* Add ellipsis at the end of truncated text */
+            -webkit-line-clamp: 3; /* Limit to 3 lines */
+            line-height: 1.5; /* Adjust line height */
+            max-height: calc(1.5em * 3); /* Calculate max height based on line height */
+        }
+
+        .meeting-item {
+            width: 100%;
+            max-width: 350px;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            overflow: hidden;
+            margin: 10px auto;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .meeting-item .thumb img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .down-content {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .down-content h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .down-content p {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+
+{% endblock %}

@@ -24,10 +24,9 @@ class Bibliotheque
     #[Assert\Positive(message: 'La capacité doit être un nombre positif.')]
     private ?int $capacite = null;
 
-    
     #[ORM\Column(type: 'string')]
     #[Assert\NotBlank(message: 'Les horaires d\'ouverture sont obligatoires.')]
-    private ?string $horairesOuverture = null;  
+    private ?string $horairesOuverture = null;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'Le contact administratif est obligatoire.')]
@@ -41,15 +40,19 @@ class Bibliotheque
     #[Assert\Length(max: 1000, maxMessage: 'La description ne peut pas dépasser 1000 caractères.')]
     private ?string $description = null;
 
+    #[ORM\OneToMany(mappedBy: 'bibliotheque', targetEntity: BiblioAbonement::class, cascade: ['persist', 'remove'])]
+    private Collection $abonnements;
+
     #[ORM\OneToMany(mappedBy: 'bibliotheque', targetEntity: Bibliothecaire::class, cascade: ['persist', 'remove'])]
     private Collection $bibliothecaires;
 
     public function __construct()
     {
         $this->bibliothecaires = new ArrayCollection();
+        $this->abonnements = new ArrayCollection();
     }
 
-    // Getters and Setters
+    // Getters and setters...
 
     public function getId(): ?int
     {
@@ -84,15 +87,14 @@ class Bibliotheque
     }
 
     public function setHorairesOuverture($horairesOuverture): self
-{
-    // Si c'est un array, on le convertit en string
-    if (is_array($horairesOuverture)) {
-        $this->horairesOuverture = implode(', ', $horairesOuverture);
-    } else {
-        $this->horairesOuverture = $horairesOuverture;
+    {
+        if (is_array($horairesOuverture)) {
+            $this->horairesOuverture = implode(', ', $horairesOuverture);
+        } else {
+            $this->horairesOuverture = $horairesOuverture;
+        }
+        return $this;
     }
-    return $this;
-}
 
     public function getContactAdministratif(): ?string
     {
@@ -127,9 +129,6 @@ class Bibliotheque
         return $this;
     }
 
-    /**
-     * @return Collection|Bibliothecaire[]
-     */
     public function getBibliothecaires(): Collection
     {
         return $this->bibliothecaires;
@@ -146,14 +145,53 @@ class Bibliotheque
     }
 
     public function removeBibliothecaire(Bibliothecaire $bibliothecaire): self
-{
-    if ($this->bibliothecaires->contains($bibliothecaire)) {
-        $this->bibliothecaires->removeElement($bibliothecaire);
-        $bibliothecaire->setBibliotheque(null); // Si la relation est bidirectionnelle
+    {
+        if ($this->bibliothecaires->removeElement($bibliothecaire)) {
+            if ($bibliothecaire->getBibliotheque() === $this) {
+                $bibliothecaire->setBibliotheque(null);
+            }
+        }
+
+        return $this;
     }
 
-    return $this;
-}
+    public function getAbonnements(): Collection
+    {
+        return $this->abonnements;
+    }
 
-    
+    public function addAbonnement(BiblioAbonement $abonnement): self
+    {
+        if (!$this->abonnements->contains($abonnement)) {
+            $this->abonnements[] = $abonnement;
+            $abonnement->setBibliotheque($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAbonnement(BiblioAbonement $abonnement): self
+    {
+        if ($this->abonnements->removeElement($abonnement)) {
+            if ($abonnement->getBibliotheque() === $this) {
+                $abonnement->setBibliotheque(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function canAddSubscriber(): bool
+    {
+        $activeSubscriptionsCount = 0;
+        $today = new \DateTime();
+
+        foreach ($this->abonnements as $abonnement) {
+            if ($abonnement->getDateFin() >= $today) {
+                $activeSubscriptionsCount++;
+            }
+        }
+
+        return $activeSubscriptionsCount < $this->capacite;
+    }
 }

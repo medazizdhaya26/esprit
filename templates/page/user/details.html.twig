@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <section class="heading-page header-text" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h6>Détails de la Bibliothèque</h6>
+                    <h2>{{ bibliotheque.nom }}</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;"></div>
+
+    <section class="meetings-page" id="meetings">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+
+
+                    <div class="card shadow-lg border-0 mb-4">
+                        <div class="thumb">
+                            <img src="{{ asset('images/jeune-etudiant-recherche-livre-dans-bibliotheque_23-2149215403.avif') }}" alt="Bibliothèque Image" class="img-fluid" style="border-radius: 8px ;height: 200px ;width:900px">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="fw-bold text-dark">{{ bibliotheque.nom }}</h3>
+                            <p><strong>Capacité:</strong> {{ bibliotheque.capacite }}</p>
+                            <p><strong>Horaires d'ouverture:</strong> {{ bibliotheque.horairesOuverture }}</p>
+                            <p><strong>Contact Administratif:</strong> {{ bibliotheque.contactAdministratif }}</p>
+                            <p><strong>Description:</strong> {{ bibliotheque.description | default('Aucune description disponible.') }}</p>
+
+
+                            {% if app.user %}
+                                <form action="{{ path('create_abonnement', {'bibliothequeId': bibliotheque.id}) }}" method="post">
+                                    <button type="submit" class="btn btn-danger" style="border-radius: 25px">S'abonner</button>
+                                </form>
+x
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .list-group-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .list-group-item a:hover {
+            color: #a11515;
+        }
+    </style>
+
+{% endblock %}

@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\BiblioAbonement;
 
 use App\Entity\Abonnement;
+use App\Entity\Bibliotheque;
 use App\Entity\Chambre;
 use App\Entity\Evenement;
 use App\Entity\Notification;
@@ -14,6 +16,7 @@ use App\Form\EvenementType;
 use App\Form\EventuserType;
 use App\Form\ReservChambreType;
 use App\Message\NewReservationNotificationMessage;
+use App\Repository\BibliothequeRepository;
 use App\Repository\EvenementRepository;
 use App\Repository\FoyerRepository;
 use App\Repository\ProduitRepository;
@@ -536,9 +539,100 @@ class PageController extends AbstractController
 
 
 
+    #[Route('/bibliotheques', name: 'list_bibliotheques')]
+    public function listBibliotheques(EntityManagerInterface $entityManager): Response
+    {
+        $bibliotheques = $entityManager->getRepository(Bibliotheque::class)->findAll();
+
+        return $this->render('page/user/list.html.twig', [
+            'bibliotheques' => $bibliotheques,
+        ]);
+    }
 
 
+    #[Route("/bibliotheque/{id}", name:'show_bibliotheque')]
 
+    public function showBibliotheque(EntityManagerInterface $entityManager, int $id): Response
+    {
+        $bibliotheque = $entityManager->getRepository(Bibliotheque::class)->find($id);
+        $allBibliotheques = $entityManager->getRepository(Bibliotheque::class)->findAll();
+
+        if (!$bibliotheque) {
+            throw $this->createNotFoundException('Bibliothèque non trouvée.');
+        }
+
+        return $this->render('page/user/details.html.twig', [
+            'bibliotheque' => $bibliotheque,
+            'bibliotheques' => $allBibliotheques,
+        ]);
+    }
+    #[Route('/abonnement/create/{bibliothequeId}', name: 'create_abonnement')]
+    public function createAbonnement(
+        int $bibliothequeId,
+        BibliothequeRepository $repository, // Inject the BibliothequeRepository
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Fetch the bibliothèque
+        $bibliotheque = $repository->find($bibliothequeId);
+        if (!$bibliotheque) {
+            throw $this->createNotFoundException('Bibliothèque non trouvée.');
+        }
+
+        // Check if the user is logged in
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour vous abonner.');
+        }
+
+
+        // Check if the user already has an active abonnement
+        $existingAbonnement = $entityManager->getRepository(BiblioAbonement::class)->findOneBy([
+            'id_bibliotheque' => $bibliotheque->getId(),
+            'email' => $user->getUserIdentifier(),
+        ]);
+
+        $today = new \DateTime(); // Today's date
+
+        if ($existingAbonnement && $existingAbonnement->getDateFin() >= $today) {
+
+            $this->addFlash('error', 'Vous avez déjà un abonnement actif pour cette bibliothèque.');
+            return $this->redirectToRoute('show_bibliotheque', ['id' => $bibliotheque->getId()]);
+        }
+
+        // Check bibliothèque capacity
+        $capacity = $bibliotheque->getCapacite();
+        $activeSubscriptionsCount = $entityManager->createQueryBuilder()
+            ->select('COUNT(a.id)')
+            ->from(BiblioAbonement::class, 'a')
+            ->where('a.id_bibliotheque = :bibliothequeId')
+            ->andWhere('a.dateFin >= :today')
+            ->setParameter('bibliothequeId', $bibliotheque->getId())
+            ->setParameter('today', $today)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($activeSubscriptionsCount >= $capacity) {
+            $this->addFlash('error', 'La capacité maximale de cette bibliothèque a été atteinte.');
+            return $this->redirectToRoute('show_bibliotheque', ['id' => $bibliotheque->getId()]);
+        }
+
+        // Create a new abonnement
+        $abonnement = new BiblioAbonement();
+        $abonnement->setIdBibliotheque($bibliotheque->getId());
+        $abonnement->setEmail($user->getUserIdentifier());
+        $abonnement->setDateDebut($today);
+        $abonnement->setDateFin((clone $today)->modify('+30 days'));
+
+        // Persist the new abonnement
+        $entityManager->persist($abonnement);
+        $entityManager->flush();
+
+        // Success message
+        $this->addFlash('success', 'Votre abonnement a été créé avec succès.');
+
+        // Redirect to bibliothèque details
+        return $this->redirectToRoute('show_bibliotheque', ['id' => $bibliotheque->getId()]);
+    }
 
 
 
